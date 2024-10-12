@@ -29,7 +29,7 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
-
+#добавил в перечень приложений продукты и аккаунты
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -37,6 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework_simplejwt',
+    'accounts',
+    'products',
 ]
 
 MIDDLEWARE = [
@@ -73,14 +77,15 @@ WSGI_APPLICATION = 'marketplace.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+#поменял базу данных на постгри
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME':  'marketplace_db',
-        'USER':  'admin',
-        'PASSWORD':  'admin',
-        'HOST':  'localhost',
-        'PORT':  '5432'
+        'NAME': 'accounts_marketplace',
+        'USER': 'postgres',
+        'PASSWORD': 'W9#hB1n%4qV3zK7',# может быть опасно тк это пароль от постгри но тут я ничего не мог поделать ....
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
@@ -125,3 +130,12 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+AUTH_USER_MODEL = 'accounts.CustomUser'
