@@ -12,3 +12,14 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
+    
+    
+
+class CheckUserSerializer(serializers.Serializer):
+    username = serializers.CharField(required=False)
+    email = serializers.EmailField(required=False)
+
+    def validate(self, attrs):
+        if not attrs.get('username') and not attrs.get('email'):
+            raise serializers.ValidationError("Provide at least a username or an email.")
+        return attrs
