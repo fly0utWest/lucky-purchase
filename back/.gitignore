@@ -1,15 +1,18 @@
-# Python
-__pycache__/
-*.py[cod]
-*.pyo
-*.pyd
-
-# Virtual environment
+# Игнорируем виртуальное окружение
 venv/
-.env
 
-# Django stuff:
-*.sqlite3
-db.sqlite3
-media/
-staticfiles/
+# Игнорируем папку __pycache__
+*/__pycache__/
+
+# Игнорируем все файлы .pyc
+*.pyc
+
+# Игнорируем файлы и директории, связанные с системами сборки
+*.pdb
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Игнорируем файлы конфигурации среды
+.env
