@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-0qxd&&x=k9r^sq4x6qr++vp8s+jn(b3o71lxnwhp$6#4pc2*3u'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -84,7 +84,7 @@ DATABASES = {
         'NAME': 'accounts_marketplace',
         'USER': 'postgres',
         'PASSWORD': 'W9#hB1n%4qV3zK7',# может быть опасно тк это пароль от постгри но тут я ничего не мог поделать ....
-        'HOST': 'localhost',
+        'HOST': 'db',
         'PORT': '5432',
     }
 }

@@ -1,0 +1,26 @@
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      - DATABASE_URL=postgres://postgres:W9#hB1n%4qV3zK7@db:5432/accounts_marketplace
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=accounts_marketplace
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=W9#hB1n%4qV3zK7
+    ports:
+      - "5432:5432"
+
+# Объявляем том для базы данных
+volumes:
+  postgres_data:
