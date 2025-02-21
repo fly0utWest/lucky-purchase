@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono, EB_Garamond } from "next/font/google";
 import "./globals.css";
 import {
   SidebarInset,
   SidebarProvider,
-  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
+import Header from "@/components/header";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const EBGaramond = EB_Garamond({
+  variable: "--font-eb-garamond-sans",
+  subsets: ["latin", "cyrillic-ext"],
 });
 
 const geistMono = Geist_Mono({
@@ -31,12 +31,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${EBGaramond.variable} ${geistMono.variable} antialiased`}
       >
         <SidebarProvider>
           <AppSidebar />
           <SidebarInset>
-            <SidebarTrigger />
+            <Header />
             {children}
           </SidebarInset>
         </SidebarProvider>
