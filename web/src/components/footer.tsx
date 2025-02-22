@@ -7,7 +7,7 @@ export default function Footer() {
     <footer className="border-t bg-muted/50 p-6 text-center text-sm text-muted-foreground">
       <div className="container mx-auto flex flex-col items-center gap-4 ">
         {/* Логотип */}
-        <div className=" mx-auto flex flex-col items-center gap-4 md:flex-row md:justify-between">
+        <div className="w-full mx-auto flex flex-col items-center gap-4 md:flex-row md:justify-between">
           <Link href="/" className="text-lg font-bold">
             Удачная покупка
           </Link>
@@ -35,6 +35,18 @@ export default function Footer() {
           </div>
         </div>
       </div>
+      <nav className="flex justify-center w-full gap-6">
+        <Link href="/about" className="hover:underline">
+          О нас
+        </Link>
+        <Link href="/contact" className="hover:underline">
+          Контакты
+        </Link>
+        <Link href="/terms" className="hover:underline">
+          Условия
+        </Link>
+      </nav>{" "}
+      {/* Навигация */}
       {/* Копирайт */}
       <p className="mt-4 text-xs">
         &copy; 2025 Удачная покупка. Все права защищены.
