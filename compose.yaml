@@ -1,14 +1,28 @@
-  version: '3.8'
-  services:
-    db:
-      image: postgres:13
-      environment:
-        POSTGRES_USER: ${DB_LOGIN}
-        POSTGRES_PASSWORD: ${DB_PASSWORD}
-        POSTGRES_DB: ${DB_NAME}
-      ports:
-        - '5432:5432'
-      volumes:
-        - pgdata:/var/lib/postgresql/data
-  volumes:
-    pgdata:
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: lucky_purchase
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    restart: always
+
+volumes:
+  pgdata:
+  pgadmin-data:
