@@ -35,7 +35,7 @@ const items = [
   },
   {
     title: "Избранное",
-    url: "/favorite",
+    url: "/favorites",
     icon: Heart,
   },
   {
