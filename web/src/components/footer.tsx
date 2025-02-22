@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Twitter, Facebook, Instagram } from "lucide-react";
+import Logo  from "./logo";
 
 export default function Footer() {
   return (
@@ -9,7 +10,7 @@ export default function Footer() {
         {/* Логотип */}
         <div className="w-full mx-auto flex flex-col items-center gap-4 md:flex-row md:justify-between">
           <Link href="/" className="text-lg font-bold">
-            Удачная покупка
+            <Logo />
           </Link>
 
           {/* Социальные сети */}
