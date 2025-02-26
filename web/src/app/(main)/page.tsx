@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Search, MessageCircle, CreditCard } from "lucide-react";
 
 export const generateMetadata = (): Metadata => {
   return {
@@ -76,20 +77,23 @@ export default function HomePage() {
       {/* Секция "Как это работает" */}
       <h2 className="text-2xl font-bold mt-6">Как это работает?</h2>
       <div className="grid gap-4 md:grid-cols-3">
-        <div className="p-4 rounded-xl bg-muted/50 text-center">
-          <h3 className="text-lg font-semibold">🔍 Найдите товар</h3>
+        <div className="p-4 rounded-xl bg-muted/50 text-center flex flex-col items-center">
+          <Search className="w-8 h-8 text-primary" />
+          <h3 className="text-lg font-semibold mt-2">Найдите товар</h3>
           <p className="text-sm text-muted-foreground mt-1">
             Используйте поиск и фильтры для удобного выбора.
           </p>
         </div>
-        <div className="p-4 rounded-xl bg-muted/50 text-center">
-          <h3 className="text-lg font-semibold">💬 Свяжитесь с продавцом</h3>
+        <div className="p-4 rounded-xl bg-muted/50 text-center flex flex-col items-center">
+          <MessageCircle className="w-8 h-8 text-primary" />
+          <h3 className="text-lg font-semibold mt-2">Свяжитесь с продавцом</h3>
           <p className="text-sm text-muted-foreground mt-1">
             Задайте вопросы и уточните детали.
           </p>
         </div>
-        <div className="p-4 rounded-xl bg-muted/50 text-center">
-          <h3 className="text-lg font-semibold">💳 Совершите сделку</h3>
+        <div className="p-4 rounded-xl bg-muted/50 text-center flex flex-col items-center">
+          <CreditCard className="w-8 h-8 text-primary" />
+          <h3 className="text-lg font-semibold mt-2">Совершите сделку</h3>
           <p className="text-sm text-muted-foreground mt-1">
             Договоритесь о покупке и получите товар.
           </p>
