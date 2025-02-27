@@ -61,7 +61,7 @@ export default function HomePage() {
         </p>
         <div className="mt-4">
           <Button asChild>
-            <Link href="/sign_up">Присоединиться</Link>
+            <Link href="/auth">Присоединиться</Link>
           </Button>
         </div>
       </div>
