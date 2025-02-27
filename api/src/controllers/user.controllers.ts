@@ -8,14 +8,14 @@ export const registerUser = async (
   next: NextFunction
 ) => {
   try {
-    const { login, password } = req.body;
+    const { login, name, password } = req.body;
 
     const existentUser = await getUserByLogin(login);
     if (existentUser) {
       throw new AppError("User already exists", 400);
     }
 
-    const user = await createUser(login, password);
+    const user = await createUser(login, name, password);
     return res
       .status(201)
       .json({ id: user.id, login: user.login, createdAt: user.createdAt });

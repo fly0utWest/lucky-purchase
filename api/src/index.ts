@@ -1,9 +1,10 @@
-import express, { NextFunction, Request, Response } from "express";
+import express from "express";
 import "@dotenvx/dotenvx/config";
 import userRoutes from "./routes/user.routes";
 import authRoutes from "./routes/auth.routes";
 import cors from "cors";
-import { AppError } from "./utils/errors";
+import { errorHandler } from "./middleware/error.middleware";
+import { notFoundHandler } from "./middleware/notFound.middleware";
 
 const PORT = process.env.PORT || 3000;
 
@@ -17,16 +18,9 @@ app.get("/", (req, res) => {
 app.use("/user", userRoutes);
 app.use("/auth", authRoutes);
 
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  if (err instanceof AppError) {
-    res.status(err.statusCode).json({ error: err.message });
-    return;
-  }
+app.use(notFoundHandler);
 
-  console.error("Unexpected error:", err);
-  res.status(500).json({ error: "Internal server error" });
-  return;
-});
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server running on ${PORT} port`);
