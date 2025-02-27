@@ -24,12 +24,7 @@ export default [
   {
     rules: {
       "@typescript-eslint/no-unused-vars": "off",
-      "prettier/prettier": [
-        "error",
-        {
-          endOfLine: "auto",
-        },
-      ],
+      "prettier/prettier": ["error", "never"],
     },
   },
   eslintPluginPrettierRecommended,
