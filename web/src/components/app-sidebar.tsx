@@ -1,4 +1,12 @@
-import { Search, Home, ShoppingBasketIcon, Heart, Settings, User2, ChevronUp } from "lucide-react"
+import {
+  Search,
+  Home,
+  ShoppingBasketIcon,
+  Heart,
+  Settings,
+  User2,
+  ChevronUp,
+} from "lucide-react";
 
 import {
   Sidebar,
@@ -8,13 +16,13 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
-import { DropdownMenu } from "./ui/dropdown-menu"
-import { DropdownMenuContent } from "./ui/dropdown-menu"
-import { DropdownMenuItem } from "./ui/dropdown-menu"
-import { DropdownMenuTrigger } from "./ui/dropdown-menu"
-import { SidebarFooter } from "@/components/ui/sidebar"
+import { DropdownMenu } from "./ui/dropdown-menu";
+import { DropdownMenuContent } from "./ui/dropdown-menu";
+import { DropdownMenuItem } from "./ui/dropdown-menu";
+import { DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { SidebarFooter } from "@/components/ui/sidebar";
 
 // Menu items.
 const items = [
@@ -43,7 +51,7 @@ const items = [
     url: "/settings",
     icon: Settings,
   },
-]
+];
 
 export function AppSidebar() {
   return (
@@ -68,30 +76,32 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <SidebarMenuButton>
-                    <User2 /> Аккаунт
-                    <ChevronUp className="ml-auto" />
-                  </SidebarMenuButton>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  side="top"
-                  className="w-[--radix-popper-anchor-width]"
-                >
-                  <DropdownMenuItem>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <SidebarMenuButton>
+                  <User2 /> Аккаунт
+                  <ChevronUp className="ml-auto" />
+                </SidebarMenuButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                side="top"
+                className="w-[--radix-popper-anchor-width]"
+              >
+                <DropdownMenuItem>
+                  <a href="./profile">
                     <span>Account</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <span>Sign out</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarFooter>
+                  </a>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <span>Sign out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
-  )
+  );
 }

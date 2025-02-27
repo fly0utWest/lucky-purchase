@@ -20,12 +20,12 @@ const ProductCard: React.FC< ProductCardProps > = ({ product: { name, descriptio
       </CardHeader>
       <CardContent>
         <CardTitle className="text-xl font-semibold">{name}</CardTitle>
-        <p className="text-gray-600 text-sm mt-2">{description}</p>
+        <p className="text-gray-600 font-bold text-sm mt-2">{description}</p>
         <div className="flex justify-between items-center mt-4">
-          <span className="text-lg font-bold text-blue-600">
+          <span className="font-bold">
             ${price}
           </span>
-          <Button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+          <Button >
             Добавить в корзину
           </Button>
         </div>
