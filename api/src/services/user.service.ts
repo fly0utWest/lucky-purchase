@@ -4,14 +4,27 @@ import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
-export async function createUser(login: string, name: string, password: string) {
+export async function createUser(
+  login: string,
+  name: string,
+  password: string
+) {
   const encryptedPassword = await bcrypt.hash(password, 10);
 
-  return prisma.user.create({ data: { login, name, password: encryptedPassword } });
+  return prisma.user.create({
+    data: { login, name, password: encryptedPassword },
+  });
 }
 
 export async function getUserByLogin(login: string) {
   return prisma.user.findUnique({ where: { login } });
+}
+
+export async function getUserById(userId: string) {
+  return prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true, login: true, name: true, createdAt: true },
+  });
 }
 
 export async function generateToken(userId: string) {

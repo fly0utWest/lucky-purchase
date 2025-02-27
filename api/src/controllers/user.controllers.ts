@@ -1,5 +1,9 @@
 import { Request, Response, NextFunction, RequestHandler } from "express";
-import { getUserByLogin, createUser } from "../services/user.service";
+import {
+  getUserByLogin,
+  createUser,
+  getUserById,
+} from "../services/user.service";
 import { AppError } from "../utils/errors";
 
 export const registerUser = async (
@@ -19,6 +23,26 @@ export const registerUser = async (
     return res
       .status(201)
       .json({ id: user.id, login: user.login, createdAt: user.createdAt });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getUserByIdController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+
+    const user = await getUserById(id);
+
+    if (!user) {
+      throw new AppError("User not found", 404);
+    }
+
+    return res.status(200).json(user);
   } catch (error) {
     next(error);
   }

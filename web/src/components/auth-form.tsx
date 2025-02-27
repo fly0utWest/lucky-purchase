@@ -31,9 +31,12 @@ const LoginSchema = z.object({
     .min(6, { message: "Пароль должен быть более 6 символов" }),
 });
 
+type RegistrationFormData = z.infer<typeof RegistrationSchema>;
+type LoginFormData = z.infer<typeof LoginSchema>;
+
 export function AuthForm() {
-  const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-  const [tab, setTab] = useState("sign-up");
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const [tab, setTab] = useState<"sign-in" | "sign-up">("sign-up");
   const [successMessage, setSuccessMessage] = useState("");
 
   const {
@@ -41,11 +44,11 @@ export function AuthForm() {
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
-  } = useForm({
+  } = useForm<RegistrationFormData | LoginFormData>({
     resolver: zodResolver(tab === "sign-up" ? RegistrationSchema : LoginSchema),
   });
 
-  const handleTabChange = (value) => {
+  const handleTabChange = (value: string) => {
     if (value === "sign-in" || value === "sign-up") {
       setTab(value);
       setSuccessMessage("");
@@ -53,13 +56,15 @@ export function AuthForm() {
     }
   };
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: RegistrationFormData | LoginFormData) => {
     const isSignUp = tab === "sign-up";
-    const { confirmPassword, ...filteredData } = isSignUp ? data : {};
+    const { confirmPassword, ...filteredData } = isSignUp
+      ? (data as RegistrationFormData)
+      : data;
 
     try {
       const endpoint = isSignUp ? "/user/register" : "/auth/login";
-      const response = await fetch(`${NEXT_PUBLIC_API_BASE_URL}${endpoint}`, {
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(filteredData),
@@ -71,7 +76,9 @@ export function AuthForm() {
 
       reset();
       if (isSignUp) {
-        setSuccessMessage("Регистрация прошла успешно! Теперь вы можете войти в систему.");
+        setSuccessMessage(
+          "Регистрация прошла успешно! Теперь вы можете войти в систему."
+        );
         setTab("sign-in");
       }
     } catch (error) {
@@ -94,17 +101,33 @@ export function AuthForm() {
             <TabsTrigger value="sign-up">Регистрация</TabsTrigger>
           </TabsList>
 
+          {/* 🔹 Sign-in Form */}
           <TabsContent value="sign-in">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div>
                 <Label htmlFor="email">Электронная почта</Label>
-                <Input id="email" type="text" {...register("login")} placeholder="example@mail.com" />
-                {errors.login && <p className="text-red-500 text-sm">{errors.login.message}</p>}
+                <Input
+                  id="email"
+                  type="text"
+                  {...register("login")}
+                  placeholder="example@mail.com"
+                />
+                {errors.login && (
+                  <p className="text-red-500 text-sm">{errors.login.message}</p>
+                )}
               </div>
               <div>
                 <Label htmlFor="password">Пароль</Label>
-                <Input id="password" type="password" {...register("password")} />
-                {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+                <Input
+                  id="password"
+                  type="password"
+                  {...register("password")}
+                />
+                {errors.password && (
+                  <p className="text-red-500 text-sm">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
               <Button type="submit" className="w-full" disabled={isSubmitting}>
                 {isSubmitting ? "Загрузка..." : "Войти"}
@@ -112,27 +135,58 @@ export function AuthForm() {
             </form>
           </TabsContent>
 
+          {/* 🔹 Sign-up Form */}
           <TabsContent value="sign-up">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div>
                 <Label htmlFor="name">Имя</Label>
-                <Input id="name" type="text" {...register("name")} placeholder="Ваше имя" />
-                {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+                <Input
+                  id="name"
+                  type="text"
+                  {...register("name")}
+                  placeholder="Ваше имя"
+                />
+                {tab === "sign-up" && errors.name && (
+                  <p className="text-red-500 text-sm">{errors.name.message}</p>
+                )}
               </div>
               <div>
                 <Label htmlFor="email">Электронная почта</Label>
-                <Input id="email" type="text" {...register("login")} placeholder="example@mail.com" />
-                {errors.login && <p className="text-red-500 text-sm">{errors.login.message}</p>}
+                <Input
+                  id="email"
+                  type="text"
+                  {...register("login")}
+                  placeholder="example@mail.com"
+                />
+                {tab === "sign-up" && errors.login && (
+                  <p className="text-red-500 text-sm">{errors.login.message}</p>
+                )}
               </div>
               <div>
                 <Label htmlFor="password">Пароль</Label>
-                <Input id="password" type="password" {...register("password")} />
-                {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+                <Input
+                  id="password"
+                  type="password"
+                  {...register("password")}
+                />
+                {tab === "sign-up" && errors.password && (
+                  <p className="text-red-500 text-sm">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
               <div>
                 <Label htmlFor="confirmPassword">Подтвердите пароль</Label>
-                <Input id="confirmPassword" type="password" {...register("confirmPassword")} />
-                {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword.message}</p>}
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  {...register("confirmPassword")}
+                />
+                {tab === "sign-up" && errors.confirmPassword && (
+                  <p className="text-red-500 text-sm">
+                    {errors.confirmPassword.message}
+                  </p>
+                )}
               </div>
               <Button type="submit" className="w-full" disabled={isSubmitting}>
                 {isSubmitting ? "Загрузка..." : "Зарегистрироваться"}
