@@ -85,9 +85,6 @@ export function AppSidebar() {
                     <span>Account</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem>
-                    <span>Billing</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
                     <span>Sign out</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
