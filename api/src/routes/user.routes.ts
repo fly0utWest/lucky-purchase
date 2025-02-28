@@ -1,10 +1,15 @@
 import { RequestHandler, Router } from "express";
 import {
+  getAuthedUser,
   getUserByIdController,
   registerUser,
 } from "../controllers/user.controllers";
 import { validate } from "../middleware/validate.middleware";
-import { RegisterUserSchema, userIdSchema } from "../validators/user.validator";
+import {
+  RegisterUserSchema,
+  UserByIdSchema,
+} from "../validators/user.validator";
+import { authenticateJWT } from "../middleware/auth.middleware";
 
 const router = Router();
 
@@ -15,8 +20,15 @@ router.post(
 );
 
 router.get(
+  "/me",
+  authenticateJWT as RequestHandler,
+  validate(UserByIdSchema, "userId") as RequestHandler,
+  getAuthedUser
+);
+
+router.get(
   "/:id",
-  validate(userIdSchema, "params") as RequestHandler,
+  validate(UserByIdSchema, "params") as RequestHandler,
   getUserByIdController as RequestHandler
 );
 

@@ -1,8 +1,5 @@
 import { prisma } from "../db/config";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-
-const JWT_SECRET = process.env.JWT_SECRET as string;
 
 export async function createUser(
   login: string,
@@ -23,12 +20,13 @@ export async function getUserByLogin(login: string) {
 export async function getUserById(userId: string) {
   return prisma.user.findUnique({
     where: { id: userId },
-    select: { id: true, login: true, name: true, createdAt: true },
+    select: { id: true, name: true },
   });
 }
 
-export async function generateToken(userId: string) {
-  return jwt.sign({ userId }, JWT_SECRET, {
-    expiresIn: "30 days",
+export async function getAuthenticatedUserById(userId: string) {
+  return prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true, name: true, login: true, createdAt: true },
   });
 }

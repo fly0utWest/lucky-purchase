@@ -5,6 +5,8 @@ import {
   getUserById,
 } from "../services/user.service";
 import { AppError } from "../utils/errors";
+import { AuthRequest } from "../middleware/auth.middleware";
+import { getAuthenticatedUserById } from "../services/user.service";
 
 export const registerUser = async (
   req: Request,
@@ -47,3 +49,24 @@ export const getUserByIdController = async (
     next(error);
   }
 };
+
+export async function getAuthedUser(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    if (!req.userId) {
+      throw new AppError("Unauthorized", 401);
+    }
+
+    const user = await getAuthenticatedUserById(req.userId);
+    if (!user) {
+      throw new AppError("User not found", 404);
+    }
+
+    res.json(user);
+  } catch (error) {
+    next(error);
+  }
+}

@@ -1,14 +1,25 @@
 import { Request, Response, NextFunction } from "express";
 import { ZodSchema } from "zod";
 
-export function validate(schema: ZodSchema, type: "body" | "params" = "body") {
+export function validate(
+  schema: ZodSchema,
+  type: "body" | "params" | "userId" = "body"
+) {
   return (req: Request, res: Response, next: NextFunction) => {
-    const data = type === "body" ? req.body : req.params;
-    const result = schema.safeParse(data);
+    let data;
 
+    if (type === "body") {
+      data = req.body;
+    } else if (type === "params") {
+      data = req.params;
+    } else if (type === "userId") {
+      data = { id: (req as any).userId };
+    }
+
+    const result = schema.safeParse(data);
     if (!result.success) {
       return res.status(400).json({
-        error: `Validation for request ${type} failed`,
+        error: `Invalid request ${type}`,
         details: result.error.errors,
       });
     }

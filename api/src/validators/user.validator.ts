@@ -6,6 +6,6 @@ export const RegisterUserSchema = z.object({
   name: z.string(),
 });
 
-export const userIdSchema = z.object({
+export const UserByIdSchema = z.object({
   id: z.string().uuid("Id is invalid")
 })

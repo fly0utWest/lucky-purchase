@@ -3,7 +3,7 @@ import { AppError } from "../utils/errors";
 import { ZodError } from "zod";
 
 export function errorHandler(
-  err: Error,
+  err: unknown,
   req: Request,
   res: Response,
   next: NextFunction
@@ -15,6 +15,7 @@ export function errorHandler(
 
   if (err instanceof ZodError) {
     res.status(400).json({ message: "Validation failed!", errors: err.errors });
+    return;
   }
 
   console.error("Unexpected error:", err);
