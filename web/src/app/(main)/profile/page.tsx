@@ -9,9 +9,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import ProductCard from "@/components/product-card"; // Импортируем ваш компонент карточки товара
 import { Product } from "@/shared/models"; // Импортируем тип Product
+import { useAuthStore } from "@/store/authStore";
 
 export default function ProfilePage() {
   const [editMode, setEditMode] = useState(false);
+  const { user } = useAuthStore();
 
   // Пример данных о товарах
   const products: Product[] = [
@@ -40,19 +42,35 @@ export default function ProfilePage() {
 
   // Пример данных о заказах
   const orders = [
-    { id: 1, product: "Клавиатура Razer", amount: "$150", status: "Доставлено" },
+    {
+      id: 1,
+      product: "Клавиатура Razer",
+      amount: "$150",
+      status: "Доставлено",
+    },
     { id: 2, product: "Монитор Samsung", amount: "$300", status: "В пути" },
-    { id: 3, product: "Мышь Logitech MX Master 3", amount: "$100", status: "Обработка" },
+    {
+      id: 3,
+      product: "Мышь Logitech MX Master 3",
+      amount: "$100",
+      status: "Обработка",
+    },
   ];
 
   return (
     <div className="container mx-auto py-10 grid grid-cols-1 md:grid-cols-3 gap-6 ">
       {/* Левая колонка: профиль */}
       <div className="col-span-1 flex flex-col items-center space-y-4 p-6 border rounded-lg shadow-md">
-        <Avatar className="w-24 h-24"><AvatarFallback>CN</AvatarFallback></Avatar>
-        <h2 className="text-xl font-semibold">Иван Иванов</h2>
+        <Avatar className="w-24 h-24">
+          <AvatarFallback>CN</AvatarFallback>
+        </Avatar>
+        <h2 className="text-xl font-semibold">
+          {user ? user.name : "Пользователь"}
+        </h2>
         <p className="text-gray-500">ivan@example.com</p>
-        <Button onClick={() => setEditMode(!editMode)}>Редактировать профиль</Button>
+        <Button onClick={() => setEditMode(!editMode)}>
+          Редактировать профиль
+        </Button>
       </div>
 
       {/* Правая колонка: контент */}
@@ -95,9 +113,19 @@ export default function ProfilePage() {
                         <div className="flex justify-between items-center">
                           <div>
                             <p className="font-semibold">{order.product}</p>
-                            <p className="text-sm text-gray-500">{order.amount}</p>
+                            <p className="text-sm text-gray-500">
+                              {order.amount}
+                            </p>
                           </div>
-                          <span className={`px-3 py-1 rounded-full text-sm ${order.status === "Доставлено" ? "bg-green-100 text-green-800" : order.status === "В пути" ? "bg-yellow-100 text-yellow-800" : "bg-gray-100 text-gray-800"}`}>
+                          <span
+                            className={`px-3 py-1 rounded-full text-sm ${
+                              order.status === "Доставлено"
+                                ? "bg-green-100 text-green-800"
+                                : order.status === "В пути"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : "bg-gray-100 text-gray-800"
+                            }`}
+                          >
                             {order.status}
                           </span>
                         </div>
@@ -123,17 +151,28 @@ export default function ProfilePage() {
                   </div>
                   <div>
                     <Label>Email</Label>
-                    <Input defaultValue="ivan@example.com" disabled={!editMode} />
+                    <Input
+                      defaultValue="ivan@example.com"
+                      disabled={!editMode}
+                    />
                   </div>
                   <div>
                     <Label>Телефон</Label>
-                    <Input defaultValue="+7 (999) 123-45-67" disabled={!editMode} />
+                    <Input
+                      defaultValue="+7 (999) 123-45-67"
+                      disabled={!editMode}
+                    />
                   </div>
                   <div>
                     <Label>Адрес</Label>
-                    <Input defaultValue="ул. Пушкина, д. 10" disabled={!editMode} />
+                    <Input
+                      defaultValue="ул. Пушкина, д. 10"
+                      disabled={!editMode}
+                    />
                   </div>
-                  <Button className="mt-4" disabled={!editMode}>Сохранить изменения</Button>
+                  <Button className="mt-4" disabled={!editMode}>
+                    Сохранить изменения
+                  </Button>
                 </div>
               </CardContent>
             </Card>

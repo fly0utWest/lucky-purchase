@@ -8,7 +8,7 @@ interface AuthState {
   logout: () => void;
 }
 
-export const useAuth = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>((set) => ({
   token: typeof window === undefined ? null : localStorage.getItem("jwtToken"),
   user: null,
   setToken: (token) => {

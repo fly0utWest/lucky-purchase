@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Search,
   Home,
@@ -23,6 +25,7 @@ import { DropdownMenuContent } from "./ui/dropdown-menu";
 import { DropdownMenuItem } from "./ui/dropdown-menu";
 import { DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { SidebarFooter } from "@/components/ui/sidebar";
+import { useAuthStore } from "@/store/authStore";
 
 // Menu items.
 const items = [
@@ -54,6 +57,8 @@ const items = [
 ];
 
 export function AppSidebar() {
+  const { user, logout } = useAuthStore();
+
   return (
     <Sidebar>
       <SidebarContent>
@@ -94,8 +99,8 @@ export function AppSidebar() {
                     <span>Account</span>
                   </a>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <span>Sign out</span>
+                <DropdownMenuItem onClick={logout}>
+                  <span>{user ? "Выйти из аккаунта" : "Войти в аккаунт"}</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -9,6 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { useAuthStore } from "@/store/authStore";
+import { useRouter } from "next/navigation";
 
 const RegistrationSchema = z
   .object({
@@ -16,7 +18,7 @@ const RegistrationSchema = z
     name: z.string().min(1, { message: "Пожалуйста, введите своё имя" }),
     password: z
       .string()
-      .min(6, { message: "Пароль должен быть более 6 символов" }),
+      .min(6, { message: "Пароль должен быть 6 символов или больше" }),
     confirmPassword: z.string().min(6, { message: "Подтвердите пароль" }),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -36,8 +38,10 @@ type LoginFormData = z.infer<typeof LoginSchema>;
 
 export function AuthForm() {
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
   const [tab, setTab] = useState<"sign-in" | "sign-up">("sign-up");
   const [successMessage, setSuccessMessage] = useState("");
+  const { setToken } = useAuthStore();
 
   const {
     register,
@@ -74,12 +78,16 @@ export function AuthForm() {
         throw new Error("Ошибка запроса");
       }
 
-      reset();
       if (isSignUp) {
+        reset();
         setSuccessMessage(
           "Регистрация прошла успешно! Теперь вы можете войти в систему."
         );
         setTab("sign-in");
+      } else {
+        const fetchedToken = await response.json();
+
+        setToken(fetchedToken.token);
       }
     } catch (error) {
       console.error("Ошибка:", error);
