@@ -1,0 +1,4 @@
+:5555 {
+    root * /srv/static
+    file_server 
+}
