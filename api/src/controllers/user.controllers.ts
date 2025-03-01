@@ -18,7 +18,7 @@ export const registerUser = async (
 
     const existentUser = await getUserByLogin(login);
     if (existentUser) {
-      throw new AppError("User already exists", 400);
+      throw new AppError("Пользователь уже зарегистрирован", 400);
     }
 
     const user = await createUser(login, name, password);
@@ -41,7 +41,7 @@ export const getUserByIdController = async (
     const user = await getUserById(id);
 
     if (!user) {
-      throw new AppError("User not found", 404);
+      throw new AppError("Пользователь не найден", 404);
     }
 
     return res.status(200).json(user);
@@ -57,12 +57,12 @@ export async function getAuthedUser(
 ) {
   try {
     if (!req.userId) {
-      throw new AppError("Unauthorized", 401);
+      throw new AppError("Доступ запрещен", 401);
     }
 
     const user = await getAuthenticatedUserById(req.userId);
     if (!user) {
-      throw new AppError("User not found", 404);
+      throw new AppError("Пользователь не найден", 404);
     }
 
     res.json(user);

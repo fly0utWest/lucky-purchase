@@ -14,11 +14,11 @@ export function errorHandler(
   }
 
   if (err instanceof ZodError) {
-    res.status(400).json({ message: "Validation failed!", errors: err.errors });
+    res.status(400).json({ message: "Валидация не прошла успешно!", errors: err.errors });
     return;
   }
 
-  console.error("Unexpected error:", err);
-  res.status(500).json({ error: "Internal server error" });
+  console.error("Произошла неожиданная ошибка:", err);
+  res.status(500).json({ error: "Внутренняя ошибка сервера" });
   return;
 }

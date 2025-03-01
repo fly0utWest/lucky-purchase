@@ -6,5 +6,5 @@ export function notFoundHandler(
   res: Response,
   next: NextFunction
 ) {
-  next(new AppError("Route was not found", 404));
+  next(new AppError("Маршрут не найден", 404));
 }

@@ -19,7 +19,7 @@ export function validate(
     const result = schema.safeParse(data);
     if (!result.success) {
       return res.status(400).json({
-        error: `Invalid request ${type}`,
+        error: `Запрос с типом ${type} повреждён`,
         details: result.error.errors,
       });
     }

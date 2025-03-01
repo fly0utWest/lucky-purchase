@@ -14,12 +14,12 @@ export async function generateToken(userId: string) {
 export const authenticateUser = async (login: string, password: string) => {
   const user = await getUserByLogin(login);
   if (!user) {
-    throw new AppError("Invalid login credentials", 401);
+    throw new AppError("Неправильные данные для входа", 401);
   }
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) {
-    throw new AppError("Invalid login credentials", 401);
+    throw new AppError("Неправильные данные для входа", 401);
   }
 
   const token = await generateToken(user.id);

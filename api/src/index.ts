@@ -13,7 +13,7 @@ app.use(cors({ origin: "*" }));
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.json({ message: "Welcome to Lucky Purchase API!" });
+  res.json({ message: 'Я API магазина "Удачная покупка", привет ;)!' });
 });
 app.use("/user", userRoutes);
 app.use("/auth", authRoutes);
@@ -23,5 +23,5 @@ app.use(notFoundHandler);
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.log(`Server running on ${PORT} port`);
+  console.log(`Сервер крутится на ${PORT} порту`);
 });
