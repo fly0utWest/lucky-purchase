@@ -8,13 +8,13 @@ import { useRouter } from "next/navigation";
 export default function SignUpPage() {
   const router = useRouter();
 
-  const { user } = useAuthStore();
+  const { authenticatedUser } = useAuthStore();
 
   useEffect(() => {
-    if (user) {
+    if (authenticatedUser) {
       router.push("/");
     }
-  }, [router, user]);
+  }, [router, authenticatedUser]);
 
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">

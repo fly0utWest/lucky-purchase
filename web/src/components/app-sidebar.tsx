@@ -1,4 +1,5 @@
 "use client";
+import { useEffect } from "react";
 
 import {
   Search,
@@ -26,6 +27,9 @@ import { DropdownMenuItem } from "./ui/dropdown-menu";
 import { DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { SidebarFooter } from "@/components/ui/sidebar";
 import { useAuthStore } from "@/store/authStore";
+import Link from "next/link";
+import { Button } from "./ui/button";
+import { useState } from "react";
 
 // Menu items.
 const items = [
@@ -57,7 +61,16 @@ const items = [
 ];
 
 export function AppSidebar() {
-  const { user, logout } = useAuthStore();
+  const { authenticatedUser, logout } = useAuthStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <Sidebar>
@@ -69,10 +82,10 @@ export function AppSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                    <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -81,31 +94,42 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton>
-                  <User2 /> Аккаунт
-                  <ChevronUp className="ml-auto" />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                side="top"
-                className="w-[--radix-popper-anchor-width]"
-              >
-                <DropdownMenuItem>
-                  <a href="./profile">
-                    <span>Account</span>
-                  </a>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={logout}>
-                  <span>{user ? "Выйти из аккаунта" : "Войти в аккаунт"}</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        {authenticatedUser ? (
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <SidebarMenuButton>
+                    <User2 /> Аккаунт
+                    <ChevronUp className="ml-auto" />
+                  </SidebarMenuButton>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  side="top"
+                  className="w-[--radix-popper-anchor-width]"
+                >
+                  <DropdownMenuItem>
+                    <Link
+                      className="w-full flex-1"
+                      href={`/profile/${authenticatedUser?.id}`}
+                    >
+                      Аккаунт
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={logout}>
+                    <span>Выйти из аккаунта</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        ) : (
+          <Button className="font-bold text-lg">
+            <Link className="w-full" href="/auth">
+              Войти
+            </Link>
+          </Button>
+        )}
       </SidebarFooter>
     </Sidebar>
   );

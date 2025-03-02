@@ -20,7 +20,7 @@ export async function getUserByLogin(login: string) {
 export async function getUserById(userId: string) {
   return prisma.user.findUnique({
     where: { id: userId },
-    select: { id: true, name: true, avatar: true },
+    select: { id: true, name: true, avatar: true, createdAt: true },
   });
 }
 

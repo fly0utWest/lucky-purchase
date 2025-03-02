@@ -5,17 +5,17 @@ import { useAuthStore } from "@/store/authStore";
 import { fetchUserWithJWT } from "@/lib/auth";
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const { token, user, setUser } = useAuthStore();
+  const { token, authenticatedUser, setAuthenticatedUser } = useAuthStore();
 
   useEffect(() => {
     async function conditionalUserFetch() {
-      if (token && !user) {
+      if (token && !authenticatedUser) {
         const fetchedUser = await fetchUserWithJWT(token);
-        setUser(fetchedUser);
+        if (fetchedUser) setAuthenticatedUser(fetchedUser);
       }
     }
     conditionalUserFetch();
-  }, [token, setUser, user]);
+  }, [token, setAuthenticatedUser, authenticatedUser]);
 
   return <>{children}</>;
 };

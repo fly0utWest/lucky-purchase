@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/store/authStore";
-import { useRouter } from "next/navigation";
+import { env } from "@/env.mjs";
 
 const RegistrationSchema = z
   .object({
@@ -37,8 +37,6 @@ type RegistrationFormData = z.infer<typeof RegistrationSchema>;
 type LoginFormData = z.infer<typeof LoginSchema>;
 
 export function AuthForm() {
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-
   const [tab, setTab] = useState<"sign-in" | "sign-up">("sign-up");
   const [successMessage, setSuccessMessage] = useState("");
   const { setToken } = useAuthStore();
@@ -47,6 +45,7 @@ export function AuthForm() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    setError,
     reset,
   } = useForm<RegistrationFormData | LoginFormData>({
     resolver: zodResolver(tab === "sign-up" ? RegistrationSchema : LoginSchema),
@@ -61,21 +60,28 @@ export function AuthForm() {
   };
 
   const onSubmit = async (data: RegistrationFormData | LoginFormData) => {
-    const isSignUp = tab === "sign-up";
-    const { confirmPassword, ...filteredData } = isSignUp
-      ? (data as RegistrationFormData)
-      : data;
-
     try {
+      const isSignUp = tab === "sign-up";
+      const { confirmPassword, ...filteredData } = isSignUp
+        ? (data as RegistrationFormData)
+        : data;
+
       const endpoint = isSignUp ? "/user/register" : "/auth/login";
-      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(filteredData),
-      });
+      const response = await fetch(
+        `${env.NEXT_PUBLIC_API_BASE_URL}${endpoint}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(filteredData),
+        }
+      );
 
       if (!response.ok) {
-        throw new Error("Ошибка запроса");
+        const errorResponse = await response.json();
+        reset();
+        setSuccessMessage("");
+        setError("root", { type: "server", message: errorResponse.error });
+        return;
       }
 
       if (isSignUp) {
@@ -86,11 +92,15 @@ export function AuthForm() {
         setTab("sign-in");
       } else {
         const fetchedToken = await response.json();
-
         setToken(fetchedToken.token);
       }
     } catch (error) {
-      console.error("Ошибка:", error);
+      console.error("Ошибка при авторизации:", error);
+      setSuccessMessage("");
+      setError("root", {
+        type: "server",
+        message: error,
+      });
     }
   };
 
@@ -102,6 +112,9 @@ export function AuthForm() {
       <CardContent>
         {successMessage && (
           <p className="text-green-500 text-center mb-4">{successMessage}</p>
+        )}
+        {errors.root && (
+          <p className="text-red-500 text-center mb-4">{errors.root.message}</p>
         )}
         <Tabs value={tab} onValueChange={handleTabChange} className="w-full">
           <TabsList className="grid grid-cols-2">

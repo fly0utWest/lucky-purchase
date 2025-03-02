@@ -15,6 +15,8 @@ const ProductCard: React.FC< ProductCardProps > = ({ product: { name, descriptio
         <Image
           src={image}
           alt={name}
+          width={100}
+          height={100}
           className="w-full h-48 object-cover rounded-lg"
         />
       </CardHeader>
