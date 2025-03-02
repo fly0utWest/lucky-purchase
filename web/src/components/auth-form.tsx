@@ -36,37 +36,168 @@ const LoginSchema = z.object({
 type RegistrationFormData = z.infer<typeof RegistrationSchema>;
 type LoginFormData = z.infer<typeof LoginSchema>;
 
-export function AuthForm() {
-  const [tab, setTab] = useState<"sign-in" | "sign-up">("sign-up");
-  const [successMessage, setSuccessMessage] = useState("");
-  const { setToken } = useAuthStore();
+function isNetworkError(error: unknown): boolean {
+  return (
+    error instanceof TypeError && error.message.includes("Failed to fetch")
+  );
+}
 
+function SignInForm({
+  onSubmit,
+}: {
+  onSubmit: (data: LoginFormData) => Promise<void>;
+}) {
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    setError,
-    reset,
-  } = useForm<RegistrationFormData | LoginFormData>({
-    resolver: zodResolver(tab === "sign-up" ? RegistrationSchema : LoginSchema),
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(LoginSchema),
   });
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <div>
+        <Label htmlFor="email">Электронная почта</Label>
+        <Input
+          id="email"
+          type="text"
+          {...register("login")}
+          placeholder="example@mail.com"
+        />
+        {errors.login?.message && (
+          <p className="text-destructive text-sm">{errors.login.message}</p>
+        )}
+      </div>
+      <div>
+        <Label htmlFor="password">Пароль</Label>
+        <Input id="password" type="password" {...register("password")} />
+        {errors.password?.message && (
+          <p className="text-destructive text-sm">{errors.password.message}</p>
+        )}
+      </div>
+      <Button type="submit" className="w-full" disabled={isSubmitting}>
+        {isSubmitting ? "Загрузка..." : "Войти"}
+      </Button>
+    </form>
+  );
+}
+
+function SignUpForm({
+  onSubmit,
+}: {
+  onSubmit: (data: RegistrationFormData) => Promise<void>;
+}) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<RegistrationFormData>({
+    resolver: zodResolver(RegistrationSchema),
+  });
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <div>
+        <Label htmlFor="name">Имя</Label>
+        <Input
+          id="name"
+          type="text"
+          {...register("name")}
+          placeholder="Ваше имя"
+        />
+        {errors.name?.message && (
+          <p className="text-destructive text-sm">{errors.name.message}</p>
+        )}
+      </div>
+      <div>
+        <Label htmlFor="email">Электронная почта</Label>
+        <Input
+          id="email"
+          type="text"
+          {...register("login")}
+          placeholder="example@mail.com"
+        />
+        {errors.login?.message && (
+          <p className="text-destructive text-sm">{errors.login.message}</p>
+        )}
+      </div>
+      <div>
+        <Label htmlFor="password">Пароль</Label>
+        <Input id="password" type="password" {...register("password")} />
+        {errors.password?.message && (
+          <p className="text-destructive text-sm">{errors.password.message}</p>
+        )}
+      </div>
+      <div>
+        <Label htmlFor="confirmPassword">Подтвердите пароль</Label>
+        <Input
+          id="confirmPassword"
+          type="password"
+          {...register("confirmPassword")}
+        />
+        {errors.confirmPassword?.message && (
+          <p className="text-destructive text-sm">
+            {errors.confirmPassword.message}
+          </p>
+        )}
+      </div>
+      <Button type="submit" className="w-full" disabled={isSubmitting}>
+        {isSubmitting ? "Загрузка..." : "Зарегистрироваться"}
+      </Button>
+    </form>
+  );
+}
+
+export function AuthForm() {
+  const [tab, setTab] = useState<"sign-in" | "sign-up">("sign-up");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const { setToken } = useAuthStore();
 
   const handleTabChange = (value: string) => {
     if (value === "sign-in" || value === "sign-up") {
       setTab(value);
       setSuccessMessage("");
-      reset();
+      setErrorMessage("");
     }
   };
 
-  const onSubmit = async (data: RegistrationFormData | LoginFormData) => {
+  const onSignInSubmit = async (data: LoginFormData) => {
     try {
-      const isSignUp = tab === "sign-up";
-      const { confirmPassword, ...filteredData } = isSignUp
-        ? (data as RegistrationFormData)
-        : data;
+      setErrorMessage("");
+      setSuccessMessage("");
+      const endpoint = "/auth/login";
+      const response = await fetch(
+        `${env.NEXT_PUBLIC_API_BASE_URL}${endpoint}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        }
+      );
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        throw new Error(errorResponse.error || "Ошибка авторизации");
+      }
+      const fetchedToken = await response.json();
+      setSuccessMessage("");
+      setToken(fetchedToken.token);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Ошибка при авторизации:", error);
+        setSuccessMessage("");
+        const msg = isNetworkError(error)
+          ? "Сетевая ошибка. Проверьте соединение и попробуйте еще раз."
+          : error.message;
+        setErrorMessage(msg || "Произошла ошибка. Попробуйте еще раз.");
+      }
+    }
+  };
 
-      const endpoint = isSignUp ? "/user/register" : "/auth/login";
+  const onSignUpSubmit = async (data: RegistrationFormData) => {
+    try {
+      setErrorMessage("");
+      const { confirmPassword, ...filteredData } = data;
+      const endpoint = "/user/register";
       const response = await fetch(
         `${env.NEXT_PUBLIC_API_BASE_URL}${endpoint}`,
         {
@@ -75,32 +206,23 @@ export function AuthForm() {
           body: JSON.stringify(filteredData),
         }
       );
-
       if (!response.ok) {
         const errorResponse = await response.json();
-        reset();
-        setSuccessMessage("");
-        setError("root", { type: "server", message: errorResponse.error });
-        return;
+        throw new Error(errorResponse.error || "Ошибка регистрации");
       }
-
-      if (isSignUp) {
-        reset();
-        setSuccessMessage(
-          "Регистрация прошла успешно! Теперь вы можете войти в систему."
-        );
-        setTab("sign-in");
-      } else {
-        const fetchedToken = await response.json();
-        setToken(fetchedToken.token);
-      }
+      setSuccessMessage(
+        "Регистрация прошла успешно! Теперь вы можете войти в систему."
+      );
+      setErrorMessage("");
+      setTab("sign-in");
     } catch (error) {
-      console.error("Ошибка при авторизации:", error);
-      setSuccessMessage("");
-      setError("root", {
-        type: "server",
-        message: error,
-      });
+      if (error instanceof Error) {
+        console.error("Ошибка при регистрации:", error);
+        const msg = isNetworkError(error)
+          ? "Сетевая ошибка. Проверьте соединение и попробуйте еще раз."
+          : error.message;
+        setErrorMessage(msg || "Произошла ошибка. Попробуйте еще раз.");
+      }
     }
   };
 
@@ -111,108 +233,21 @@ export function AuthForm() {
       </CardHeader>
       <CardContent>
         {successMessage && (
-          <p className="text-green-500 text-center mb-4">{successMessage}</p>
+          <p className="text-chart-2 text-center mb-4">{successMessage}</p>
         )}
-        {errors.root && (
-          <p className="text-red-500 text-center mb-4">{errors.root.message}</p>
+        {errorMessage && (
+          <p className="text-destructive text-center mb-4">{errorMessage}</p>
         )}
         <Tabs value={tab} onValueChange={handleTabChange} className="w-full">
           <TabsList className="grid grid-cols-2">
             <TabsTrigger value="sign-in">Вход</TabsTrigger>
             <TabsTrigger value="sign-up">Регистрация</TabsTrigger>
           </TabsList>
-
-          {/* 🔹 Sign-in Form */}
           <TabsContent value="sign-in">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div>
-                <Label htmlFor="email">Электронная почта</Label>
-                <Input
-                  id="email"
-                  type="text"
-                  {...register("login")}
-                  placeholder="example@mail.com"
-                />
-                {errors.login && (
-                  <p className="text-red-500 text-sm">{errors.login.message}</p>
-                )}
-              </div>
-              <div>
-                <Label htmlFor="password">Пароль</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  {...register("password")}
-                />
-                {errors.password && (
-                  <p className="text-red-500 text-sm">
-                    {errors.password.message}
-                  </p>
-                )}
-              </div>
-              <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? "Загрузка..." : "Войти"}
-              </Button>
-            </form>
+            <SignInForm onSubmit={onSignInSubmit} />
           </TabsContent>
-
-          {/* 🔹 Sign-up Form */}
           <TabsContent value="sign-up">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div>
-                <Label htmlFor="name">Имя</Label>
-                <Input
-                  id="name"
-                  type="text"
-                  {...register("name")}
-                  placeholder="Ваше имя"
-                />
-                {tab === "sign-up" && errors.name && (
-                  <p className="text-red-500 text-sm">{errors.name.message}</p>
-                )}
-              </div>
-              <div>
-                <Label htmlFor="email">Электронная почта</Label>
-                <Input
-                  id="email"
-                  type="text"
-                  {...register("login")}
-                  placeholder="example@mail.com"
-                />
-                {tab === "sign-up" && errors.login && (
-                  <p className="text-red-500 text-sm">{errors.login.message}</p>
-                )}
-              </div>
-              <div>
-                <Label htmlFor="password">Пароль</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  {...register("password")}
-                />
-                {tab === "sign-up" && errors.password && (
-                  <p className="text-red-500 text-sm">
-                    {errors.password.message}
-                  </p>
-                )}
-              </div>
-              <div>
-                <Label htmlFor="confirmPassword">Подтвердите пароль</Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  {...register("confirmPassword")}
-                />
-                {tab === "sign-up" && errors.confirmPassword && (
-                  <p className="text-red-500 text-sm">
-                    {errors.confirmPassword.message}
-                  </p>
-                )}
-              </div>
-              <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? "Загрузка..." : "Зарегистрироваться"}
-              </Button>
-            </form>
+            <SignUpForm onSubmit={onSignUpSubmit} />
           </TabsContent>
         </Tabs>
       </CardContent>
