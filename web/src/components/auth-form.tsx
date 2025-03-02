@@ -38,7 +38,7 @@ type LoginFormData = z.infer<typeof LoginSchema>;
 
 function isNetworkError(error: unknown): boolean {
   return (
-    error instanceof TypeError && error.message.includes("Failed to fetch")
+    error instanceof TypeError && error.message.includes("fetch")
   );
 }
 
