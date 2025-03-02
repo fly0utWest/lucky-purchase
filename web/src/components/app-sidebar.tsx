@@ -1,6 +1,13 @@
 "use client";
 import { useEffect } from "react";
 
+import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
+import {
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuGroup,
+} from "@radix-ui/react-dropdown-menu";
+
 import {
   Search,
   Home,
@@ -9,6 +16,12 @@ import {
   Settings,
   User2,
   ChevronUp,
+  Sparkles,
+  LogOut,
+  BadgeCheck,
+  CreditCard,
+  ChevronsUpDown,
+  Bell,
 } from "lucide-react";
 
 import {
@@ -95,40 +108,70 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
         {authenticatedUser ? (
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <SidebarMenuButton>
-                    <User2 /> Аккаунт
-                    <ChevronUp className="ml-auto" />
-                  </SidebarMenuButton>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  side="top"
-                  className="w-[--radix-popper-anchor-width]"
+          <SidebarMenuItem>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <SidebarMenuButton
+                  size="lg"
+                  className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                 >
+                  <Avatar className="h-8 w-8 rounded-lg flex items-center justify-center">
+                    <AvatarFallback className="rounded-lg uppercase">
+                      {authenticatedUser.name[0]}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-semibold">
+                      {authenticatedUser.name}
+                    </span>
+                    <span className="truncate text-xs">
+                      {authenticatedUser.login}
+                    </span>
+                  </div>
+                  <ChevronsUpDown className="ml-auto size-4" />
+                </SidebarMenuButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+                align="end"
+                sideOffset={4}
+              >
+                <DropdownMenuLabel className="p-0 font-normal">
+                  <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                    <Avatar className="h-8 w-8 rounded-lg flex items-center justify-center">
+                      <AvatarFallback className="rounded-lg uppercase">
+                        {authenticatedUser.name[0]}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="grid flex-1 text-left text-sm leading-tight">
+                      <span className="truncate text-xs">
+                        {authenticatedUser.login}
+                      </span>
+                    </div>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup></DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
                   <DropdownMenuItem>
-                    <Link
-                      className="w-full flex-1"
-                      href={`/profile/${authenticatedUser?.id}`}
-                    >
-                      Аккаунт
-                    </Link>
+                    <BadgeCheck />
+                    Аккаунт
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={logout}>
-                    <span>Выйти из аккаунта</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </SidebarMenuItem>
-          </SidebarMenu>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={logout}
+                  className="text-destructive cursor-pointer hover:text-destructive"
+                >
+                  <LogOut />
+                  Log out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </SidebarMenuItem>
         ) : (
-          <Button className="font-bold text-lg">
-            <Link className="w-full" href="/auth">
-              Войти
-            </Link>
-          </Button>
+          <Link href={"/auth"}>Войти</Link>
         )}
       </SidebarFooter>
     </Sidebar>

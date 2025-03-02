@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Twitter, Facebook, Instagram } from "lucide-react";
-import Logo  from "./logo";
+import Logo from "./logo";
 
 export default function Footer() {
   return (
@@ -14,44 +14,40 @@ export default function Footer() {
           </Link>
 
           {/* Социальные сети */}
-          <div className="flex gap-4 ">
-            <Button variant="link" asChild>
-              <Link href="#">
-                {" "}
-                <Twitter /> Twitter
-              </Link>
-            </Button>
-            <Button variant="link" asChild>
-              <Link href="#">
-                {" "}
-                <Facebook /> Facebook
-              </Link>
-            </Button>
-            <Button variant="link" asChild>
-              <Link href="#">
-                {" "}
-                <Instagram /> Instagram
-              </Link>
-            </Button>
+          <div className="flex flex-col gap-4 items-center md:flex-row *:text-ring *:flex *:flex-row *:gap-2">
+            <Link href="#">
+              {" "}
+              <Twitter /> <span className="md:hidden">Twitter</span>
+            </Link>
+            <Link href="#">
+              {" "}
+              <Facebook /> <span className="md:hidden">Facebook</span>
+            </Link>
+            <Link href="#">
+              {" "}
+              <Instagram /> <span className="md:hidden">Instagram</span>
+            </Link>
           </div>
         </div>
+        <div>
+          <nav className="flex justify-center w-full gap-6">
+            <Link href="/about" className="hover:underline">
+              О нас
+            </Link>
+            <Link href="/contact" className="hover:underline">
+              Контакты
+            </Link>
+            <Link href="/terms" className="hover:underline">
+              Условия
+            </Link>
+          </nav>{" "}
+          {/* Навигация */}
+          {/* Копирайт */}
+          <p className="mt-4 text-xs">
+            &copy; 2025 Удачная покупка. Все права защищены.
+          </p>
+        </div>
       </div>
-      <nav className="flex justify-center w-full gap-6">
-        <Link href="/about" className="hover:underline">
-          О нас
-        </Link>
-        <Link href="/contact" className="hover:underline">
-          Контакты
-        </Link>
-        <Link href="/terms" className="hover:underline">
-          Условия
-        </Link>
-      </nav>{" "}
-      {/* Навигация */}
-      {/* Копирайт */}
-      <p className="mt-4 text-xs">
-        &copy; 2025 Удачная покупка. Все права защищены.
-      </p>
     </footer>
   );
 }

@@ -1,13 +1,8 @@
-import { Metadata } from "next";
-import Link from "next/link";
+"use client";
+import { useAuthStore } from "@/store/authStore";
 import { Button } from "@/components/ui/button";
 import { Search, MessageCircle, CreditCard } from "lucide-react";
-
-export const generateMetadata = (): Metadata => {
-  return {
-    title: "Главная",
-  };
-};
+import Link from "next/link";
 
 // Данные о популярных товарах
 const products = [
@@ -51,20 +46,32 @@ const ProductCard = ({ product }: { product: (typeof products)[0] }) => {
 };
 
 export default function HomePage() {
+  const { authenticatedUser } = useAuthStore();
+
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
       {/* Блок заголовка и призыва к действию */}
-      <div className="rounded-xl bg-muted/50 p-6 text-center">
-        <h1 className="text-4xl font-bold">Добро пожаловать в Marketplace!</h1>
-        <p className="text-muted-foreground mt-2 text-lg">
-          Покупайте и продавайте товары легко и быстро.
-        </p>
-        <div className="mt-4">
-          <Button asChild>
-            <Link href="/auth">Присоединиться</Link>
-          </Button>
+      {authenticatedUser ? (
+        <div className="rounded-xl bg-muted/50 p-6 text-center">
+          <h1 className="text-4xl font-bold">
+            Привет, {authenticatedUser.name}
+          </h1>
         </div>
-      </div>
+      ) : (
+        <div className="rounded-xl bg-muted/50 p-6 text-center">
+          <h1 className="text-4xl font-bold">
+            Добро пожаловать в Marketplace!
+          </h1>
+          <p className="text-muted-foreground mt-2 text-lg">
+            Покупайте и продавайте товары легко и быстро.
+          </p>
+          <div className="mt-4">
+            <Button asChild>
+              <Link href="/auth">Присоединиться</Link>
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Раздел популярных товаров */}
       <h2 className="text-2xl font-bold">Популярные товары</h2>
