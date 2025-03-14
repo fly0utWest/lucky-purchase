@@ -9,6 +9,17 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+  api:
+    build: ./api
+    container_name: lp-api
+    ports:
+      - "7777:7777"
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: "postgresql://admin:admin@postgres:5432/lucky_purchase"
+      PORT: 7777
+    restart: always
 
   pgadmin:
     image: dpage/pgadmin4
