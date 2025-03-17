@@ -14,10 +14,16 @@ model User {
   password  String
   avatar    String?
   createdAt DateTime @default(now())
+
+  items Item[]
 }
 
 model Item {
-  id     String   @id @default(uuid())
-  title  String
-  images String[]
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  images      String[]
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
 }
