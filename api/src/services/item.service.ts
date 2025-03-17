@@ -1,7 +1,7 @@
 import { prisma } from "../db/config";
-import { CreateItemDTO } from "../validators/item.validator";
+import { Item } from "@prisma/client";
 
-export async function createItem(data: CreateItemDTO) {
+export async function createItem(data: Item) {
   const { userId, ...itemData } = data;
 
   return prisma.item.create({
