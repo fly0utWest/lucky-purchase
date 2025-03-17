@@ -41,10 +41,9 @@ import { DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { SidebarFooter } from "@/components/ui/sidebar";
 import { useAuthStore } from "@/store/authStore";
 import Link from "next/link";
-import { Button } from "./ui/button";
 import { useState } from "react";
+import { Button } from "./ui/button";
 
-// Menu items.
 const items = [
   {
     title: "Домой",
@@ -89,7 +88,6 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          {/* <SidebarGroupLabel className="text-xl">Удачная покупка</SidebarGroupLabel> */}
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
@@ -155,8 +153,8 @@ export function AppSidebar() {
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
                   <DropdownMenuItem>
-                    <BadgeCheck />
-                    Аккаунт
+                      <BadgeCheck />
+                      Аккаунт
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
@@ -165,13 +163,15 @@ export function AppSidebar() {
                   className="text-destructive cursor-pointer hover:text-destructive"
                 >
                   <LogOut />
-                  Log out
+                  Выйти из аккаунта
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>
         ) : (
-          <Link href={"/auth"}>Войти</Link>
+          <Button asChild>
+            <Link href={"/auth"}>Войти</Link>
+          </Button>
         )}
       </SidebarFooter>
     </Sidebar>
