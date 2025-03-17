@@ -43,7 +43,7 @@ export default function ProfilePage() {
             <strong>Имя:</strong> {authenticatedUser.name}
           </p>
           <p>
-            <strong>Email:</strong> {authenticatedUser.email}
+            <strong>Email:</strong> {authenticatedUser.login}
           </p>
           <p>
             <strong>Дата регистрации:</strong>{" "}

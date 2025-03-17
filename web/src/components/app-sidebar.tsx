@@ -106,7 +106,7 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
         {authenticatedUser ? (
-          <SidebarMenuItem>
+          <SidebarMenuItem className="list-none">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton
@@ -149,12 +149,16 @@ export function AppSidebar() {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuGroup></DropdownMenuGroup>
-                <DropdownMenuSeparator />
+
                 <DropdownMenuGroup>
                   <DropdownMenuItem>
-                      <BadgeCheck />
+                    <BadgeCheck />
+                    <Link
+                      className="w-full"
+                      href={`/profile/${authenticatedUser.id}`}
+                    >
                       Аккаунт
+                    </Link>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
