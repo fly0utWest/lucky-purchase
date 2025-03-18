@@ -1,11 +1,8 @@
 import { prisma } from "../db/config";
 import bcrypt from "bcrypt";
+import { RegisterUserDTO } from "../validators/user.validator";
 
-export async function createUser(
-  login: string,
-  name: string,
-  password: string
-) {
+export async function createUser({ login, password, name }: RegisterUserDTO) {
   const encryptedPassword = await bcrypt.hash(password, 10);
 
   return prisma.user.create({

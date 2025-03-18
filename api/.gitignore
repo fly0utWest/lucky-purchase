@@ -2,5 +2,3 @@ node_modules
 dist
 .env
 
-prisma/migrations/*      # Ignore all migration files
-!prisma/migrations/migration_lock.toml  # Keep migration_lock.toml

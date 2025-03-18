@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import { getUserByLogin } from "../services/user.service";
 import bcrypt from "bcrypt";
 import { AppError } from "../utils/errors";
+import { LoginUserDTO } from "../validators/auth.validator";
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
@@ -11,7 +12,7 @@ export async function generateToken(userId: string) {
   });
 }
 
-export const authenticateUser = async (login: string, password: string) => {
+export const authenticateUser = async ({ login, password }: LoginUserDTO) => {
   const user = await getUserByLogin(login);
   if (!user) {
     throw new AppError("Неправильные данные для входа", 401);

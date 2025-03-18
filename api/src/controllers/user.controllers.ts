@@ -21,7 +21,7 @@ export const registerUser = async (
       throw new AppError("Пользователь уже зарегистрирован", 400);
     }
 
-    const user = await createUser(login, name, password);
+    const user = await createUser({login, name, password});
     return res
       .status(201)
       .json({ id: user.id, login: user.login, createdAt: user.createdAt });
