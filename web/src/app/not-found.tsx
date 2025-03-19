@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { AlertTriangle } from "lucide-react";
+import { Metadata } from "next";
 
 export default function NotFoundPage() {
   const router = useRouter();

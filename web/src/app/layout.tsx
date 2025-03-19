@@ -5,6 +5,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { AuthProvider } from "@/shared/providers/AuthProvider";
+import { Metadata } from "next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,6 +16,9 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+export const metadata: Metadata = {
+  title: 'Торговая площадка "Удачная покупка"',
+};
 
 export default function RootLayout({
   children,

@@ -3,8 +3,10 @@ import { useAuthStore } from "@/store/authStore";
 import { Button } from "@/components/ui/button";
 import { Search, MessageCircle, CreditCard } from "lucide-react";
 import Link from "next/link";
+import { Metadata } from "next";
 
-// Данные о популярных товарах
+
+
 const products = [
   {
     id: 1,
