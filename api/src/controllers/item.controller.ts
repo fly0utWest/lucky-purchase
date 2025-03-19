@@ -19,6 +19,7 @@ export async function registerItem(
       throw new AppError("Не удалось создать новое объявление", 400);
     }
 
+    console.log(`[SUCCESS]: Item was added by user with id ${req.userId}`)
     return res.status(201).json({ ...newItem });
   } catch (error) {
     next(error);
