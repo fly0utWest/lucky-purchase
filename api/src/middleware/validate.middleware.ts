@@ -3,17 +3,27 @@ import { ZodSchema } from "zod";
 
 export function validate(
   schema: ZodSchema,
-  type: "body" | "params" | "userId" = "body"
+  type: "body" | "params" | "userId" | "query" = "body"
 ) {
   return (req: Request, res: Response, next: NextFunction) => {
     let data;
 
-    if (type === "body") {
-      data = req.body;
-    } else if (type === "params") {
-      data = req.params;
-    } else if (type === "userId") {
-      data = { id: (req as any).userId };
+
+    switch (type) {
+      case "body":
+        data = req.body;
+        break;
+      case "params":
+        data = req.params;
+        break;
+      case "query":
+        data = req.query;
+        break;
+      case "userId":
+        data = { id: (req as any).userId };
+        break;
+      default:
+        return res.status(400).json({ error: "Недопустимый тип валидации" });
     }
 
     const result = schema.safeParse(data);
@@ -24,6 +34,7 @@ export function validate(
       });
     }
 
+    res.locals.validatedData = data;
     next();
   };
 }

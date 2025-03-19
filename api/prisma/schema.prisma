@@ -24,6 +24,7 @@ model Item {
   description String
   images      String[]
   price       Int
+  createdAt   DateTime @default(now())
 
   userId String
   user   User   @relation(fields: [userId], references: [id])

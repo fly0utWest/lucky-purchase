@@ -21,3 +21,23 @@ export const CreateItemSchema: z.ZodType<
 });
 
 export type CreateItemDTO = z.infer<typeof CreateItemSchema>;
+
+export const GetItemsSchema = z.object({
+  limit: z
+    .string()
+    .optional()
+    .transform((val) => (val ? parseInt(val, 10) : 10))
+    .refine((val) => val > 0, { message: "Лимит должен быть положительным числом" }),
+
+  skip: z
+    .string()
+    .optional()
+    .transform((val) => (val ? parseInt(val, 10) : 0))
+    .refine((val) => val >= 0, {
+      message: "Пропуск должен быть положительным числом",
+    }),
+
+  sort: z.enum(["asc", "desc"]).optional().default("desc"),
+});
+
+export type GetItemsDTO = z.infer<typeof GetItemsSchema>;

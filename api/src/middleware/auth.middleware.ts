@@ -2,14 +2,11 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { AppError } from "../utils/errors";
 
-export interface AuthRequest extends Request {
-  userId?: string;
-}
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
 export function authenticateJWT(
-  req: AuthRequest,
+  req: Request,
   res: Response,
   next: NextFunction
 ) {
@@ -26,7 +23,7 @@ export function authenticateJWT(
       return next(new AppError("Отказано в доступе: повреждённый токен", 403));
     }
 
-    req.userId = decoded.userId;
+    res.locals.userId = decoded.userId;
     next();
   } catch (error) {
     return next(new AppError("Отказано в доступе: повреждённый токен", 403));

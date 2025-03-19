@@ -11,3 +11,15 @@ export async function createItem(data: CreateItemDTO & { userId: string }) {
     },
   });
 }
+
+export async function getItems(
+  limit: number,
+  skip: number,
+  sort: "desc" | "asc"
+) {
+  return prisma.item.findMany({
+    take: limit,
+    skip,
+    orderBy: { createdAt: sort },
+  });
+}

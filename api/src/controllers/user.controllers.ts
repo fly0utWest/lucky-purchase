@@ -5,7 +5,6 @@ import {
   getUserById,
 } from "../services/user.service";
 import { AppError } from "../utils/errors";
-import { AuthRequest } from "../middleware/auth.middleware";
 import { getAuthenticatedUserById } from "../services/user.service";
 
 export const registerUser = async (
@@ -51,16 +50,16 @@ export const getUserByIdController = async (
 };
 
 export async function getAuthedUser(
-  req: AuthRequest,
+  req: Request,
   res: Response,
   next: NextFunction
 ) {
   try {
-    if (!req.userId) {
+    if (!res.locals.userId) {
       throw new AppError("Доступ запрещен", 401);
     }
 
-    const user = await getAuthenticatedUserById(req.userId);
+    const user = await getAuthenticatedUserById(res.locals.userId);
     if (!user) {
       throw new AppError("Пользователь не найден", 404);
     }

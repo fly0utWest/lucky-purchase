@@ -1,26 +1,47 @@
-import { NextFunction, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { createItem } from "../services/item.service";
 import { AppError } from "../utils/errors";
-import { AuthRequest } from "../middleware/auth.middleware";
+import { getItems } from "../services/item.service";
 
 export async function registerItem(
-  req: AuthRequest,
+  req: Request,
   res: Response,
   next: NextFunction
 ) {
   try {
-    if (!req.userId) {
+    if (!res.locals.userId) {
       throw new AppError("Доступ запрещен", 401);
     }
 
-    const newItem = await createItem({ ...req.body, userId: req.userId });
+    const newItem = await createItem({
+      ...req.body,
+      userId: res.locals.userId,
+    });
 
-    if (!newItem) {
-      throw new AppError("Не удалось создать новое объявление", 400);
-    }
-
-    console.log(`[УСПЕХ]: Объявление добавлено пользователем с id ${req.userId}`)
+    console.log(
+      `[УСПЕХ]: Объявление добавлено пользователем с id ${res.locals.userId}`
+    );
     return res.status(201).json({ ...newItem });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function getItemsController(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const { limit, skip, sort } = res.locals.validatedData as {
+      limit: number;
+      skip: number;
+      sort: "asc" | "desc";
+    };
+
+    const items = await getItems(limit, skip, sort);
+
+    return res.status(200).json({ items, count: items.length });
   } catch (error) {
     next(error);
   }
