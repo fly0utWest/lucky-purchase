@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { ZodSchema } from "zod";
+import { ZodError, ZodSchema } from "zod";
 
 export function validate(
   schema: ZodSchema,
@@ -7,7 +7,6 @@ export function validate(
 ) {
   return (req: Request, res: Response, next: NextFunction) => {
     let data;
-
 
     switch (type) {
       case "body":
@@ -28,10 +27,7 @@ export function validate(
 
     const result = schema.safeParse(data);
     if (!result.success) {
-      return res.status(400).json({
-        error: `Запрос с типом ${type} повреждён`,
-        details: result.error.errors,
-      });
+      return next(new ZodError(result.error.errors));
     }
 
     res.locals.validatedData = data;

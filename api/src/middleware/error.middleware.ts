@@ -15,7 +15,9 @@ export function errorHandler(
   }
 
   if (err instanceof ZodError) {
-    console.error(`[ОШИБКА]: 404, валидация не прошла успешно, ${err.errors}`);
+    console.error(
+      `[ОШИБКА]: 400, валидация не прошла успешно, ${JSON.stringify(err.errors, undefined, 2)}`
+    );
     res
       .status(400)
       .json({ message: "Валидация не прошла успешно!", errors: err.errors });
