@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import ProductCard from "@/components/product-card"; // Подключаем карточку товара
+import ProductCard from "@/components/item-card"; // Подключаем карточку товара
 import { Button } from "@/components/ui/button";
 import { Product } from "@/shared/models";
 
