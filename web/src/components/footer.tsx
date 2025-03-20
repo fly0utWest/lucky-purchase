@@ -7,7 +7,6 @@ export default function Footer() {
   return (
     <footer className="border-t bg-muted/50 p-6 text-center text-sm text-muted-foreground">
       <div className="container mx-auto flex flex-col items-center gap-4 ">
-        {/* Логотип */}
         <div className="w-full mx-auto flex flex-col items-center gap-4 md:flex-row md:justify-between">
           <Link href="/" className="text-lg font-bold">
             <Logo />

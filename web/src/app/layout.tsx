@@ -5,7 +5,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import Footer from "@/components/footer";
 import { AuthProvider } from "@/shared/providers/AuthProvider";
 import { Metadata } from "next";
-import Breadcrumbs from "@/components/breadcrumbs";
+import Header from "@/components/header";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,7 +34,7 @@ export default function RootLayout({
           <SidebarProvider>
             <AppSidebar />
             <SidebarInset>
-              <Breadcrumbs />
+              <Header />
               {children}
               <Footer />
             </SidebarInset>

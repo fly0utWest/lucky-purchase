@@ -3,49 +3,23 @@ import { useAuthStore } from "@/store/authStore";
 import { Button } from "@/components/ui/button";
 import { Search, MessageCircle, CreditCard } from "lucide-react";
 import Link from "next/link";
-import { Metadata } from "next";
+import Image from "next/image";
 
-
-
-const products = [
-  {
-    id: 1,
-    name: "Беспроводные наушники",
-    description: "Наушники с шумоподавлением и длительной автономностью.",
-    price: "129.99$",
-    image: "https://via.placeholder.com/300",
-  },
-  {
-    id: 2,
-    name: "Игровая клавиатура",
-    description: "Механическая клавиатура с RGB-подсветкой.",
-    price: "79.99$",
-    image: "https://via.placeholder.com/300",
-  },
-  {
-    id: 3,
-    name: "Умные часы",
-    description: "Мониторинг активности и уведомления прямо на запястье.",
-    price: "99.99$",
-    image: "https://via.placeholder.com/300",
-  },
-];
-
-const ProductCard = ({ product }: { product: (typeof products)[0] }) => {
-  return (
-    <div className="rounded-xl bg-muted/50 shadow-md p-4 flex flex-col items-center">
-      <img
-        src={product.image}
-        alt={product.name}
-        className="rounded-lg w-full h-40 object-cover"
-      />
-      <h3 className="text-lg font-semibold mt-2">{product.name}</h3>
-      <p className="text-sm text-muted-foreground">{product.description}</p>
-      <p className="text-xl font-bold mt-2">{product.price}</p>
-      <Button className="mt-4">Купить</Button>
-    </div>
-  );
-};
+// const ProductCard = () => {
+//   return (
+//     <div className="rounded-xl bg-muted/50 shadow-md p-4 flex flex-col items-center">
+//       <image
+//         src={product.image}
+//         alt={product.name}
+//         className="rounded-lg w-full h-40 object-cover"
+//       />
+//       <h3 className="text-lg font-semibold mt-2">{product.name}</h3>
+//       <p className="text-sm text-muted-foreground">{product.description}</p>
+//       <p className="text-xl font-bold mt-2">{product.price}</p>
+//       <Button className="mt-4">Купить</Button>
+//     </div>
+//   );
+// };
 
 export default function HomePage() {
   const { authenticatedUser } = useAuthStore();
@@ -78,9 +52,9 @@ export default function HomePage() {
       {/* Раздел популярных товаров */}
       <h2 className="text-2xl font-bold">Популярные товары</h2>
       <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-        {products.map((product) => (
+        {/* {products.map((product) => (
           <ProductCard key={product.id} product={product} />
-        ))}
+        ))} */}
       </div>
 
       {/* Секция "Как это работает" */}
