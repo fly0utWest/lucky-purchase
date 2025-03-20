@@ -3,9 +3,10 @@ import "./globals.css";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import Footer from "@/components/footer";
-import { AuthProvider } from "@/shared/providers/AuthProvider";
 import { Metadata } from "next";
 import Header from "@/components/header";
+import { AuthProvider } from "@/shared/providers/auth-provider";
+import ReactQueryProvider from "@/shared/providers/react-query-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,16 +31,18 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthProvider>
-          <SidebarProvider>
-            <AppSidebar />
-            <SidebarInset>
-              <Header />
-              {children}
-              <Footer />
-            </SidebarInset>
-          </SidebarProvider>
-        </AuthProvider>
+        <ReactQueryProvider>
+          <AuthProvider>
+            <SidebarProvider>
+              <AppSidebar />
+              <SidebarInset>
+                <Header />
+                {children}
+                <Footer />
+              </SidebarInset>
+            </SidebarProvider>
+          </AuthProvider>
+        </ReactQueryProvider>
       </body>
     </html>
   );

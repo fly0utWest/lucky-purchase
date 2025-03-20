@@ -73,7 +73,7 @@ const items = [
 ];
 
 export function AppSidebar() {
-  const { authenticatedUser, logout } = useAuthStore();
+  const { logout, authenticatedUser } = useAuthStore();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {

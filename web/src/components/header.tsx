@@ -14,7 +14,7 @@ const Header = () => {
       </div>
       <div>
         <Link href="/" className="text-lg text-primary font-bold">
-          <Logo mobile/>
+          <Logo mobile />
         </Link>
       </div>
     </nav>
