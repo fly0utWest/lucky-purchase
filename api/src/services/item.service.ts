@@ -1,5 +1,5 @@
 import { prisma } from "../db/config";
-import { CreateItemDTO } from "../validators/item.validator";
+import { CreateItemDTO, GetItemsDTO } from "../validators/item.validator";
 
 export async function createItem(data: CreateItemDTO & { userId: string }) {
   const { userId, ...itemData } = data;
@@ -12,11 +12,7 @@ export async function createItem(data: CreateItemDTO & { userId: string }) {
   });
 }
 
-export async function getItems(
-  limit: number,
-  skip: number,
-  sort: "desc" | "asc"
-) {
+export async function getItems({ limit, skip, sort }: GetItemsDTO) {
   return prisma.item.findMany({
     take: limit,
     skip,

@@ -6,37 +6,27 @@ import {
 } from "../services/user.service";
 import { AppError } from "../utils/errors";
 import { getAuthenticatedUserById } from "../services/user.service";
+import asyncHandler from "../utils/asyncHandler";
 
-export const registerUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { login, name, password } = req.body;
+export const registerUserHandler = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { login, name, password } = res.locals.validatedData;
 
     const existentUser = await getUserByLogin(login);
     if (existentUser) {
       throw new AppError("Пользователь уже зарегистрирован", 400);
     }
 
-    const user = await createUser({login, name, password});
+    const user = await createUser({ login, name, password });
     return res
       .status(201)
       .json({ id: user.id, login: user.login, createdAt: user.createdAt });
-  } catch (error) {
-    next(error);
   }
-};
+);
 
-export const getUserByIdController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { id } = req.params;
-
+export const getUserByIdHandler = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { id } = res.locals.id;
     const user = await getUserById(id);
 
     if (!user) {
@@ -44,17 +34,11 @@ export const getUserByIdController = async (
     }
 
     return res.status(200).json(user);
-  } catch (error) {
-    next(error);
   }
-};
+);
 
-export async function getAuthedUser(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  try {
+export const getAuthedUserHandler = asyncHandler(
+  async (req: Request, res: Response) => {
     if (!res.locals.userId) {
       throw new AppError("Доступ запрещен", 401);
     }
@@ -65,7 +49,5 @@ export async function getAuthedUser(
     }
 
     res.json(user);
-  } catch (error) {
-    next(error);
   }
-}
+);

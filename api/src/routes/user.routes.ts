@@ -1,8 +1,8 @@
 import { RequestHandler, Router } from "express";
 import {
-  getAuthedUser,
-  getUserByIdController,
-  registerUser,
+  getAuthedUserHandler,
+  getUserByIdHandler,
+  registerUserHandler,
 } from "../controllers/user.controllers";
 import { validate } from "../middleware/validate.middleware";
 import {
@@ -16,20 +16,20 @@ const router = Router();
 router.post(
   "/register",
   validate(RegisterUserSchema) as RequestHandler,
-  registerUser as RequestHandler
+  registerUserHandler as RequestHandler
 );
 
 router.get(
   "/me",
   authenticateJWT as RequestHandler,
   validate(UserByIdSchema, "userId") as RequestHandler,
-  getAuthedUser
+  getAuthedUserHandler
 );
 
 router.get(
   "/:id",
   validate(UserByIdSchema, "params") as RequestHandler,
-  getUserByIdController as RequestHandler
+  getUserByIdHandler as RequestHandler
 );
 
 export default router;

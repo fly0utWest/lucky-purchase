@@ -1,48 +1,37 @@
-import { NextFunction, Request, Response } from "express";
-import { createItem } from "../services/item.service";
+import { Request, Response } from "express";
+import { createItem, getItems } from "../services/item.service";
 import { AppError } from "../utils/errors";
-import { getItems } from "../services/item.service";
+import asyncHandler from "../utils/asyncHandler";
 
-export async function registerItem(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  try {
+export const registerItemHandler = asyncHandler(
+  async (req: Request, res: Response) => {
     if (!res.locals.userId) {
       throw new AppError("Доступ запрещен", 401);
     }
 
     const newItem = await createItem({
-      ...req.body,
+      ...res.locals.validatedData,
       userId: res.locals.userId,
     });
 
     console.log(
       `[УСПЕХ]: Объявление добавлено пользователем с id ${res.locals.userId}`
     );
-    return res.status(201).json({ ...newItem });
-  } catch (error) {
-    next(error);
-  }
-}
 
-export async function getItemsController(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  try {
+    res.status(201).json({ ...newItem });
+  }
+);
+
+export const getItemsHandler = asyncHandler(
+  async (req: Request, res: Response) => {
     const { limit, skip, sort } = res.locals.validatedData as {
       limit: number;
       skip: number;
       sort: "asc" | "desc";
     };
 
-    const items = await getItems(limit, skip, sort);
+    const items = await getItems({limit, skip, sort});
 
-    return res.status(200).json({ items, count: items.length });
-  } catch (error) {
-    next(error);
+    res.status(200).json({ items, count: items.length });
   }
-}
+);
