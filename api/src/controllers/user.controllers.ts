@@ -27,7 +27,7 @@ export const registerUserHandler = asyncHandler(
 
 export const getUserByIdHandler = asyncHandler(
   async (req: Request, res: Response) => {
-    const { id } = res.locals.id;
+    const { id } = res.locals.userId;
     const user = await getUserById(id);
 
     if (!user) {
@@ -50,7 +50,7 @@ export const getAuthedUserHandler = asyncHandler(
       throw new AppError("Пользователь не найден", 404);
     }
     console.log(
-      `[УСПЕХ]: Данные пользователя ${user.login} запрошены`
+      `[УСПЕХ]: Данные авторизованного пользователя ${user.login} запрошены`
     );
     res.json(user);
   }
