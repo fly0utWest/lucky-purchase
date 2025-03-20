@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import {
   getUserByLogin,
   createUser,
@@ -18,6 +18,7 @@ export const registerUserHandler = asyncHandler(
     }
 
     const user = await createUser({ login, name, password });
+    console.log(`[УСПЕХ]: пользователь ${login} зарегистрирован`);
     return res
       .status(201)
       .json({ id: user.id, login: user.login, createdAt: user.createdAt });
@@ -33,6 +34,7 @@ export const getUserByIdHandler = asyncHandler(
       throw new AppError("Пользователь не найден", 404);
     }
 
+    console.log(`[УСПЕХ]: Пользователь по id ${user.id} запрошен`)
     return res.status(200).json(user);
   }
 );
@@ -47,7 +49,9 @@ export const getAuthedUserHandler = asyncHandler(
     if (!user) {
       throw new AppError("Пользователь не найден", 404);
     }
-
+    console.log(
+      `[УСПЕХ]: Данные пользователя ${user.login} запрошены`
+    );
     res.json(user);
   }
 );

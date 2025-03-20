@@ -17,21 +17,16 @@ export const registerItemHandler = asyncHandler(
     console.log(
       `[УСПЕХ]: Объявление добавлено пользователем с id ${res.locals.userId}`
     );
-
     res.status(201).json({ ...newItem });
   }
 );
 
 export const getItemsHandler = asyncHandler(
   async (req: Request, res: Response) => {
-    const { limit, skip, sort } = res.locals.validatedData as {
-      limit: number;
-      skip: number;
-      sort: "asc" | "desc";
-    };
+    const { limit, skip, sort } = res.locals.validatedData;
+    const items = await getItems({ limit, skip, sort });
 
-    const items = await getItems({limit, skip, sort});
-
+    console.log(`[УСПЕХ]: было запрошено ${items.length} объявлений`);
     res.status(200).json({ items, count: items.length });
   }
 );

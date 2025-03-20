@@ -9,12 +9,16 @@ export function errorHandler(
   next: NextFunction
 ) {
   if (err instanceof AppError) {
+    console.error(`[ОШИБКА]: ${err.statusCode}, ${err.message}`);
     res.status(err.statusCode).json({ error: err.message });
     return;
   }
 
   if (err instanceof ZodError) {
-    res.status(400).json({ message: "Валидация не прошла успешно!", errors: err.errors });
+    console.error(`[ОШИБКА]: 404, валидация не прошла успешно, ${err.errors}`);
+    res
+      .status(400)
+      .json({ message: "Валидация не прошла успешно!", errors: err.errors });
     return;
   }
 
