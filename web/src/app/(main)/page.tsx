@@ -1,11 +1,13 @@
 "use client";
 import { useAuthStore } from "@/store/authStore";
 import { Button } from "@/components/ui/button";
-import { Search, MessageCircle, CreditCard } from "lucide-react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { env } from "@/env.mjs";
 import { Item } from "@/shared/models";
+import PopularItems from "./_sections/popular-items";
+import ItemCard from "@/components/item-card";
+import HowItWorks from "./_sections/how-it-works";
 
 const fetchPopularItems = async (): Promise<Item[]> => {
   const response = await fetch(
@@ -17,12 +19,17 @@ const fetchPopularItems = async (): Promise<Item[]> => {
   }
 
   const data = await response.json();
+  console.log(data);
 
-  return data;
+  return data.items;
 };
 
 export default function HomePage() {
   const { authenticatedUser } = useAuthStore();
+  const { isLoading, data: popularItems } = useQuery<Item[]>({
+    queryFn: fetchPopularItems,
+    queryKey: ["popularItems"],
+  });
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
@@ -49,33 +56,16 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* Раздел популярных товаров */}
-
-      {/* Секция "Как это работает" */}
-      <h2 className="text-2xl font-bold mt-6">Как это работает?</h2>
-      <div className="grid gap-4 md:grid-cols-3">
-        <div className="p-4 rounded-xl bg-muted/50 text-center flex flex-col items-center">
-          <Search className="w-8 h-8 text-primary" />
-          <h3 className="text-lg font-semibold mt-2">Найдите товар</h3>
-          <p className="text-sm text-muted-foreground mt-1">
-            Используйте поиск и фильтры для удобного выбора.
-          </p>
-        </div>
-        <div className="p-4 rounded-xl bg-muted/50 text-center flex flex-col items-center">
-          <MessageCircle className="w-8 h-8 text-primary" />
-          <h3 className="text-lg font-semibold mt-2">Свяжитесь с продавцом</h3>
-          <p className="text-sm text-muted-foreground mt-1">
-            Задайте вопросы и уточните детали.
-          </p>
-        </div>
-        <div className="p-4 rounded-xl bg-muted/50 text-center flex flex-col items-center">
-          <CreditCard className="w-8 h-8 text-primary" />
-          <h3 className="text-lg font-semibold mt-2">Совершите сделку</h3>
-          <p className="text-sm text-muted-foreground mt-1">
-            Договоритесь о покупке и получите товар.
-          </p>
-        </div>
-      </div>
+      <PopularItems>
+        {isLoading ? (
+          <p>Загрузка популярных товаров...</p>
+        ) : popularItems && popularItems.length > 0 ? (
+          popularItems.map((item) => <ItemCard key={item.id} item={item} />)
+        ) : (
+          <p>Популярные товары не найдены</p>
+        )}
+      </PopularItems>
+      <HowItWorks />
     </div>
   );
 }

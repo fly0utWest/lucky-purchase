@@ -14,7 +14,7 @@ export async function createItem(data: CreateItemDTO & { userId: string }) {
 
 export async function getItems({ limit, skip, sort }: GetItemsDTO) {
   return prisma.item.findMany({
-    take: limit,
+    take: Number(limit),
     skip,
     orderBy: { createdAt: sort },
   });
