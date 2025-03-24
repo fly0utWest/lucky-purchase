@@ -26,13 +26,17 @@ export const GetItemsSchema = z.object({
   limit: z
     .string()
     .optional()
-    .transform((val) => (val ? parseInt(val, 10) : 10))
-    .refine((val) => val > 0, { message: "Лимит должен быть положительным числом" }),
+    .default("10")
+    .transform((val) => parseInt(val, 10))
+    .refine((val) => val > 0, {
+      message: "Лимит должен быть положительным числом",
+    }),
 
   skip: z
     .string()
     .optional()
-    .transform((val) => (val ? parseInt(val, 10) : 0))
+    .default("0")
+    .transform((val) => parseInt(val, 10))
     .refine((val) => val >= 0, {
       message: "Пропуск должен быть положительным числом",
     }),

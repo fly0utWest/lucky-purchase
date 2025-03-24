@@ -12,10 +12,14 @@ export async function createItem(data: CreateItemDTO & { userId: string }) {
   });
 }
 
-export async function getItems({ limit, skip, sort }: GetItemsDTO) {
+export async function getItems({
+  limit = 10,
+  skip = 0,
+  sort = "desc",
+}: GetItemsDTO) {
   return prisma.item.findMany({
     take: Number(limit),
-    skip,
+    skip: Number(skip),
     orderBy: { createdAt: sort },
   });
 }
