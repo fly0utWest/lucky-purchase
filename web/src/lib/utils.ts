@@ -1,4 +1,4 @@
-import { clsx, type ClassValue } from "clsx";
+import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { env } from "@/env.mjs";
 import { PublicUser } from "@/shared/models";
@@ -7,7 +7,9 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const fetchPublicUser = async (id: string): Promise<PublicUser | null> => {
+export const fetchPublicUser = async (
+  id: string
+): Promise<PublicUser | null> => {
   try {
     const response = await fetch(`${env.NEXT_PUBLIC_API_BASE_URL}/user/${id}`, {
       method: "GET", // Usually, fetching public user data should be a GET request
@@ -29,3 +31,10 @@ export const fetchPublicUser = async (id: string): Promise<PublicUser | null> =>
   }
 };
 
+export function formatPrice(price: number): string {
+  return new Intl.NumberFormat("ru-RU", {
+    style: "currency",
+    currency: "RUB",
+    maximumFractionDigits: 0,
+  }).format(price);
+}
