@@ -5,7 +5,7 @@ import authRoutes from "./routes/auth.routes";
 import cors from "cors";
 import { errorHandler } from "./middleware/error.middleware";
 import { notFoundHandler } from "./middleware/notFound.middleware";
-import itemRouter from "./routes/item.routes"
+import itemRouter from "./routes/item.routes";
 
 const PORT = process.env.PORT || 3000;
 
@@ -18,7 +18,7 @@ app.get("/", (req, res) => {
 });
 app.use("/user", userRoutes);
 app.use("/auth", authRoutes);
-app.use('/item', itemRouter)
+app.use("/item", itemRouter);
 
 app.use(notFoundHandler);
 

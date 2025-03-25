@@ -8,6 +8,9 @@ import { Item } from "@/shared/models";
 import PopularItems from "./_sections/popular-items";
 import ItemCard from "@/components/item-card";
 import HowItWorks from "./_sections/how-it-works";
+import HeroSection from "./_sections/hero-section";
+import Categories from "./_sections/categories";
+import WhyUs from "./_sections/why-us";
 
 const fetchPopularItems = async (): Promise<Item[]> => {
   const response = await fetch(
@@ -15,12 +18,10 @@ const fetchPopularItems = async (): Promise<Item[]> => {
   );
 
   if (!response.ok) {
-    throw new Error("гг не будет");
+    throw new Error("Ошибка при загрузке популярных товаров");
   }
 
   const data = await response.json();
-  console.log(data);
-
   return data.items;
 };
 
@@ -32,29 +33,12 @@ export default function HomePage() {
   });
 
   return (
-    <div className="flex flex-1 flex-col gap-4 p-4">
-      {authenticatedUser ? (
-        <div className="rounded-xl bg-muted/50 p-6 text-center">
-          <h1 className="text-4xl font-bold">
-            Привет, {authenticatedUser.name}
-          </h1>
-        </div>
-      ) : (
-        <div className="rounded-xl bg-muted/50 p-6 text-center">
-          <h1 className="text-4xl font-bold">
-            Добро пожаловать на ТП <br />
-            <span className="text-primary">&quot;Удачная покупка&quot;</span>
-          </h1>
-          <p className="text-muted-foreground mt-2 text-lg">
-            Покупайте и продавайте товары легко и быстро.
-          </p>
-          <div className="mt-4">
-            <Button asChild>
-              <Link href="/auth">Присоединиться</Link>
-            </Button>
-          </div>
-        </div>
-      )}
+    <div className="flex flex-1 flex-col gap-8 p-4 md:gap-16 md:p-8">
+      <HeroSection />
+
+      <Categories />
+
+      <WhyUs />
 
       <PopularItems>
         {isLoading ? (
@@ -65,6 +49,7 @@ export default function HomePage() {
           <p>Популярные товары не найдены</p>
         )}
       </PopularItems>
+
       <HowItWorks />
     </div>
   );

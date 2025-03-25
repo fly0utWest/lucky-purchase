@@ -36,13 +36,14 @@ services:
 
   caddy:
     image: caddy:latest
+    container_name: marketplace-caddy
     ports:
       - "5555:5555"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
       - caddy_data:/data
       - caddy_config:/config
-      - ./static:/srv/static
+      - ./api/api/static:/srv/static:ro
 
 volumes:
   pgdata:
