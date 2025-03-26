@@ -19,6 +19,8 @@ services:
     environment:
       DATABASE_URL: "postgresql://admin:admin@postgres:5432/lucky_purchase"
       PORT: 7777
+    volumes:
+      - ./api/static:/app/static
     restart: always
 
   pgadmin:
@@ -43,7 +45,7 @@ services:
       - ./Caddyfile:/etc/caddy/Caddyfile
       - caddy_data:/data
       - caddy_config:/config
-      - ./api/api/static:/srv/static:ro
+      - ./api/static:/srv/static:ro
 
 volumes:
   pgdata:

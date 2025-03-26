@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { createItem, getItems } from "../services/item.service";
+import { createItem, getItems, getItemById } from "../services/item.service";
 import { AppError } from "../utils/errors";
 import asyncHandler from "../utils/asyncHandler";
 
@@ -32,5 +32,15 @@ export const getItemsHandler = asyncHandler(
 
     console.log(`[УСПЕХ]: было запрошено ${items.length} объявлений`);
     res.status(200).json({ items, count: items.length });
+  }
+);
+
+export const getItemByIdHandler = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const item = await getItemById(id);
+
+    console.log(`[УСПЕХ]: запрошен товар с id ${id}`);
+    res.status(200).json(item);
   }
 );

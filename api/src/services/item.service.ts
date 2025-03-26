@@ -23,3 +23,23 @@ export async function getItems({
     orderBy: { createdAt: sort },
   });
 }
+
+export async function getItemById(id: string) {
+  const item = await prisma.item.findUnique({
+    where: { id },
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+  });
+
+  if (!item) {
+    throw new Error("Товар не найден");
+  }
+
+  return item;
+}

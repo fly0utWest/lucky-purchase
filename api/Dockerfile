@@ -14,6 +14,9 @@ RUN npx prisma generate
 
 RUN npm run build
 
+# Создаем директорию для статических файлов
+RUN mkdir -p static/items
+
 EXPOSE 7777
 
 CMD ["sh", "-c", "npx prisma migrate deploy && node dist/index.js"]

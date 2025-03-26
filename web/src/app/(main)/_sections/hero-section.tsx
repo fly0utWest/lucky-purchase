@@ -43,7 +43,7 @@ export default function HeroSection() {
             </p>
             <div className="flex justify-center gap-4">
               <Button asChild size="lg">
-                <Link href="/items/new">Разместить товар</Link>
+                <Link href="/items/create">Разместить товар</Link>
               </Button>
               <Button asChild variant="outline" size="lg">
                 <Link href="/catalog">Перейти в каталог</Link>
@@ -61,7 +61,7 @@ export default function HeroSection() {
               Добро пожаловать на платформу
               <br />
               <span className="bg-gradient-to-r from-primary to-primary/50 bg-clip-text text-transparent">
-                "Удачная покупка"
+                &ldquo;Удачная покупка&rdquo;
               </span>
             </h1>
             <p className="mx-auto max-w-2xl text-xl text-muted-foreground">

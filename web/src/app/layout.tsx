@@ -7,6 +7,7 @@ import { Metadata } from "next";
 import Header from "@/components/header";
 import { AuthProvider } from "@/shared/providers/auth-provider";
 import ReactQueryProvider from "@/shared/providers/react-query-provider";
+import { Toaster } from "@/components/ui/toaster";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,6 +44,7 @@ export default function RootLayout({
             </SidebarProvider>
           </AuthProvider>
         </ReactQueryProvider>
+        <Toaster />
       </body>
     </html>
   );

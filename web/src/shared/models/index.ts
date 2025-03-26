@@ -46,6 +46,7 @@ export const ItemSchema = z.object({
     .positive("Цена должна быть положительным целым числом"),
   createdAt: z.string().datetime("Неверный формат даты"),
   userId: z.string().uuid("Неверный формат UUID"),
+  user: PublicUserSchema,
 });
 
 export type Item = z.infer<typeof ItemSchema>;
