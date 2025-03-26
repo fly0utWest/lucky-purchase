@@ -1,7 +1,6 @@
 import { useAuthStore } from "@/store/authStore";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { Users, ShoppingBag, BadgeCheck } from "lucide-react";
 
 const stats = [
@@ -29,12 +28,7 @@ export default function HeroSection() {
     <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-primary/10 via-primary/5 to-background p-8 text-center">
       <div className="relative z-10">
         {authenticatedUser ? (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="space-y-4"
-          >
+          <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <h1 className="text-4xl font-bold">
               Привет, {authenticatedUser.name}! 👋
             </h1>
@@ -49,14 +43,9 @@ export default function HeroSection() {
                 <Link href="/catalog">Перейти в каталог</Link>
               </Button>
             </div>
-          </motion.div>
+          </div>
         ) : (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="space-y-4"
-          >
+          <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <h1 className="text-4xl font-bold">
               Добро пожаловать на платформу
               <br />
@@ -76,18 +65,16 @@ export default function HeroSection() {
                 <Link href="/auth">Начать продавать</Link>
               </Button>
             </div>
-          </motion.div>
+          </div>
         )}
 
         <div className="mt-12">
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
             {stats.map((stat, index) => (
-              <motion.div
+              <div
                 key={stat.label}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="flex flex-col items-center gap-2"
+                className="flex flex-col items-center gap-2 animate-in fade-in slide-in-from-bottom-4 duration-500"
+                style={{ animationDelay: `${index * 100}ms` }}
               >
                 <div className="rounded-full bg-primary/10 p-3">
                   <stat.icon className="h-6 w-6 text-primary" />
@@ -96,7 +83,7 @@ export default function HeroSection() {
                 <div className="text-sm text-muted-foreground">
                   {stat.label}
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>

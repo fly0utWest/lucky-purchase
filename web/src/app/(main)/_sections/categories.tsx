@@ -10,7 +10,6 @@ import {
   BookOpen,
 } from "lucide-react";
 import { SectionHeader } from "@/components/ui/section-header";
-import { motion } from "framer-motion";
 
 const categories = [
   {
@@ -73,11 +72,10 @@ export default function Categories() {
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {categories.map((category, index) => (
-          <motion.div
+          <div
             key={category.name}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: index * 0.1 }}
+            className="animate-in fade-in slide-in-from-bottom-4 duration-300"
+            style={{ animationDelay: `${index * 100}ms` }}
           >
             <Link
               href={`/catalog?category=${category.name}`}
@@ -97,7 +95,7 @@ export default function Categories() {
                 </p>
               </div>
             </Link>
-          </motion.div>
+          </div>
         ))}
       </div>
     </section>

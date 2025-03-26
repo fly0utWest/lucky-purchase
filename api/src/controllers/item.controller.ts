@@ -1,7 +1,29 @@
 import { Request, Response } from "express";
-import { createItem, getItems, getItemById } from "../services/item.service";
+import {
+  createItem,
+  getItems,
+  getItemById,
+  upload,
+} from "../services/item.service";
 import { AppError } from "../utils/errors";
 import asyncHandler from "../utils/asyncHandler";
+
+export const uploadImageHandler = asyncHandler(
+  async (req: Request, res: Response) => {
+    if (!res.locals.userId) {
+      throw new AppError("Доступ запрещен", 401);
+    }
+
+    if (!req.file) {
+      throw new AppError("Файл не был загружен", 400);
+    }
+
+    console.log(
+      `[УСПЕХ]: Изображение загружено пользователем с id ${res.locals.userId}`
+    );
+    res.status(200).json({ filename: req.file.filename });
+  }
+);
 
 export const registerItemHandler = asyncHandler(
   async (req: Request, res: Response) => {

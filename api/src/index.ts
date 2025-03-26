@@ -6,11 +6,10 @@ import cors from "cors";
 import { errorHandler } from "./middleware/error.middleware";
 import { notFoundHandler } from "./middleware/notFound.middleware";
 import itemRouter from "./routes/item.routes";
-import uploadRouter from "./routes/upload.routes";
 import fs from "fs";
 import path from "path";
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 7777;
 
 const app = express();
 
@@ -23,21 +22,19 @@ if (!fs.existsSync(uploadDir)) {
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 
-// Раздаем статические файлы
-app.use("/items", express.static(path.join(process.cwd(), "static", "items")));
+// Обслуживание статических файлов
+app.use("/static", express.static(path.join(process.cwd(), "static")));
 
 app.get("/", (req, res) => {
   res.json({ message: 'Я API магазина "Удачная покупка", привет ;)!' });
 });
 app.use("/user", userRoutes);
-app.use("/auth", authRoutes);
 app.use("/item", itemRouter);
-app.use("/upload", uploadRouter);
+app.use("/auth", authRoutes);
 
 app.use(notFoundHandler);
-
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.log(`Сервер крутится на ${PORT} порту`);
+  console.log(`Server is running on port ${PORT}`);
 });

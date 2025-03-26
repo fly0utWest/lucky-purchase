@@ -5,10 +5,20 @@ import {
   getItemsHandler,
   registerItemHandler,
   getItemByIdHandler,
+  uploadImageHandler,
 } from "../controllers/item.controller";
 import { authenticateJWT } from "../middleware/auth.middleware";
+import { upload } from "../services/item.service";
 
 const router = Router();
+
+// Загрузка изображений
+router.post(
+  "/upload",
+  authenticateJWT as RequestHandler,
+  upload.single("image"),
+  uploadImageHandler as RequestHandler
+);
 
 router.post(
   "/create",

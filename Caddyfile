@@ -1,9 +1,0 @@
-:5555 {
-    root * /srv/static
-    file_server 
-    header Access-Control-Allow-Origin *
-    log {
-        output stdout
-        format json
-    }
-}
