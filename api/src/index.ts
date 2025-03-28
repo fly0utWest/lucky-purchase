@@ -13,7 +13,6 @@ const PORT = process.env.PORT || 7777;
 
 const app = express();
 
-// Создаем директорию для загрузки файлов, если она не существует
 const uploadDir = path.join(process.cwd(), "static", "items");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });

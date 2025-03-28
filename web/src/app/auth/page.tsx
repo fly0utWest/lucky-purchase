@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 
 export default function SignUpPage() {
   const router = useRouter();
-
   const { authenticatedUser } = useAuthStore();
 
   useEffect(() => {

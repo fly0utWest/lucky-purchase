@@ -26,7 +26,6 @@ const fetchPopularItems = async (): Promise<Item[]> => {
 };
 
 export default function HomePage() {
-  const { authenticatedUser } = useAuthStore();
   const { isLoading, data: popularItems } = useQuery<Item[]>({
     queryFn: fetchPopularItems,
     queryKey: ["popularItems"],

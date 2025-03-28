@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -11,6 +11,8 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/store/authStore";
 import { env } from "@/env.mjs";
+import { usePathname, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const RegistrationSchema = z
   .object({
@@ -37,9 +39,7 @@ type RegistrationFormData = z.infer<typeof RegistrationSchema>;
 type LoginFormData = z.infer<typeof LoginSchema>;
 
 function isNetworkError(error: unknown): boolean {
-  return (
-    error instanceof TypeError && error.message.includes("fetch")
-  );
+  return error instanceof TypeError && error.message.includes("fetch");
 }
 
 function SignInForm({
@@ -147,14 +147,31 @@ function SignUpForm({
   );
 }
 
+type AuthMode = "sign-up" | "sign-in";
+
 export function AuthForm() {
   const [tab, setTab] = useState<"sign-in" | "sign-up">("sign-up");
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const { setToken } = useAuthStore();
+  const searchParams = useSearchParams();
+  const modeParam = searchParams.get("mode");
+  const path = usePathname();
+  const router = useRouter();
+  
+  useEffect(() => {
+    if (modeParam === "sign-in" || modeParam === "sign-up") {
+      setTab(modeParam);
+    } else {
+      setTab("sign-up");
+    }
+  }, [modeParam]);
 
   const handleTabChange = (value: string) => {
     if (value === "sign-in" || value === "sign-up") {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("mode", value);
+      router.push(path + "?" + params);
       setTab(value);
       setSuccessMessage("");
       setErrorMessage("");
