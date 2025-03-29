@@ -43,7 +43,7 @@ const ItemCard: React.FC<ProductCardProps> = ({
               src={`${env.NEXT_PUBLIC_STATIC_URL}/items/${images[0]}`}
               alt={title}
               fill
-              className="object-cover transition-transform duration-300 group-hover:scale-105"
+              className="object-cover transition-transform duration-300"
             />
           </div>
           <button

@@ -6,6 +6,13 @@ import { Calendar, Heart, MessageCircle, Share2, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+  BreadcrumbItem,
+} from "@/components/ui/breadcrumb";
 
 async function getItem(id: string): Promise<Item> {
   const res = await fetch(`${env.NEXT_PUBLIC_API_BASE_URL}/item/${id}`);
@@ -34,13 +41,19 @@ export default async function ItemPage({ params }: { params: { id: string } }) {
     <main className="min-h-screen bg-gray-50/50 py-8">
       <div className="container mx-auto px-4">
         {/* Навигация */}
-        <div className="mb-6 text-sm text-muted-foreground">
-          <span>Главная</span>
-          <span className="mx-2">/</span>
-          <span>Товары</span>
-          <span className="mx-2">/</span>
-          <span className="text-foreground">{item.title}</span>
-        </div>
+        <Breadcrumb className="p-2">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/">Главная</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/catalog">Каталог</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>{item.title}</BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
 
         <div className="grid gap-8 lg:grid-cols-[2fr,1fr]">
           {/* Основная информация */}
