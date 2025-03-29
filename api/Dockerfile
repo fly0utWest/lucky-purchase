@@ -19,4 +19,4 @@ RUN mkdir -p static/items
 
 EXPOSE 7777
 
-CMD ["sh", "-c", "npx prisma migrate deploy && node dist/index.js"]
+CMD ["sh", "-c", "npx prisma migrate deploy && node dist/src/index.js"]
