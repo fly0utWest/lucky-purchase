@@ -22,7 +22,7 @@ async function getItem(id: string): Promise<Item> {
   return res.json();
 }
 
-export default async function ItemPage({ params }: { params: { id: string } }) {
+export default async function ItemPage({ params }: { params: Promise<{ id: string }> }) {
   let item: Item;
   const { id } = await params;
   try {

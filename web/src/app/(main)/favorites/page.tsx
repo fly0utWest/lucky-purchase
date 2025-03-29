@@ -3,10 +3,10 @@
 import React, { useState, useEffect } from "react";
 import ProductCard from "@/components/item-card"; // Подключаем карточку товара
 import { Button } from "@/components/ui/button";
-import { Product } from "@/shared/models";
+import { Item } from "@/shared/models";
 
 export default function FavoritesPage() {
-  const [favorites, setFavorites] = useState<Product[]>([]);
+  const [favorites, setFavorites] = useState<Item[]>([]);
 
   useEffect(() => {
     try {
@@ -17,8 +17,8 @@ export default function FavoritesPage() {
     }
   }, []);
 
-  const removeFavorite = (id: number) => {
-    const updatedFavorites = favorites.filter((product) => product.id !== id);
+  const removeFavorite = (id: string) => {
+    const updatedFavorites = favorites.filter((item) => item.id !== id);
     setFavorites(updatedFavorites);
     localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
   };
@@ -31,12 +31,12 @@ export default function FavoritesPage() {
         <p className="text-gray-500">Избранных товаров не найдено.</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {favorites.map((product) => (
-            <div key={product.id} className="relative">
-              <ProductCard product={product} />
+          {favorites.map((item) => (
+            <div key={item.id} className="relative">
+              <ProductCard item={item} />
               <Button
                 className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-2"
-                onClick={() => removeFavorite(product.id)}
+                onClick={() => removeFavorite(item.id)}
               >
                 ❌ Удалить
               </Button>

@@ -174,7 +174,7 @@ export function AppSidebar() {
           </SidebarMenuItem>
         ) : (
           <Button asChild>
-            <Link href={"/auth"}>Войти</Link>
+            <Link href={"/auth?mode=sign-in"}>Войти</Link>
           </Button>
         )}
       </SidebarFooter>

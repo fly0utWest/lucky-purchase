@@ -14,7 +14,6 @@ RUN npx prisma generate
 
 RUN npm run build
 
-# Создаем директорию для статических файлов
 RUN mkdir -p static/items
 
 EXPOSE 7777

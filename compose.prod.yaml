@@ -6,7 +6,7 @@ services:
       POSTGRES_PASSWORD: admin
       POSTGRES_DB: lucky_purchase
     ports:
-      - "5432:5432"
+      - "11111:11111"
     volumes:
       - pgdata:/var/lib/postgresql/data
   api:
@@ -17,7 +17,7 @@ services:
     depends_on:
       - postgres
     environment:
-      DATABASE_URL: "postgresql://admin:admin@postgres:5432/lucky_purchase"
+      DATABASE_URL: "postgresql://admin:admin@postgres:11111/lucky_purchase"
       PORT: 7777
     volumes:
       - ./api/static:/app/static
@@ -37,19 +37,7 @@ services:
       - ./api/static:/app/static
     restart: always
 
-  pgadmin:
-    image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: admin
-    ports:
-      - "5050:80"
-    depends_on:
-      - postgres
-    volumes:
-      - pgadmin-data:/var/lib/pgadmin
-    restart: always
-
 volumes:
   pgdata:
   pgadmin-data:
+
