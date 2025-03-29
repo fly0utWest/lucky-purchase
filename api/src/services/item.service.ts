@@ -5,7 +5,6 @@ import path from "path";
 import crypto from "crypto";
 import { Request } from "express";
 
-// Настройка хранилища
 const storage = multer.diskStorage({
   destination: (
     req: Request,
@@ -44,7 +43,6 @@ export const upload = multer({
   },
 });
 
-// Функция для загрузки изображения
 export async function uploadImage(file: Express.Multer.File) {
   return file.filename;
 }
@@ -80,6 +78,7 @@ export async function getItemById(id: string) {
         select: {
           id: true,
           name: true,
+          createdAt: true,
         },
       },
     },

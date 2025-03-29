@@ -35,14 +35,13 @@ export default function CreateItemPage() {
     try {
       const formData = new FormData(e.currentTarget);
 
-      // Загружаем изображения
       const uploadedImages: string[] = [];
       for (const image of images) {
         const imageFormData = new FormData();
         imageFormData.append("image", image);
 
         const uploadRes = await fetch(
-          `${env.NEXT_PUBLIC_API_BASE_URL}/upload`,
+          `${env.NEXT_PUBLIC_API_BASE_URL}/item/upload`,
           {
             method: "POST",
             headers: {
