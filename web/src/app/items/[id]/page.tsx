@@ -24,9 +24,9 @@ async function getItem(id: string): Promise<Item> {
 
 export default async function ItemPage({ params }: { params: { id: string } }) {
   let item: Item;
-
+  const { id } = await params;
   try {
-    item = await getItem(params.id);
+    item = await getItem(id);
   } catch (error) {
     notFound();
   }

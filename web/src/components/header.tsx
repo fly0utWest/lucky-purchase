@@ -8,6 +8,7 @@ import Logo from "./logo";
 import { Input } from "./ui/input";
 import { Search } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { ThemeToggler } from "./ThemeToggler";
 
 const getPageTitle = (pathname: string): string => {
   switch (pathname) {
@@ -43,10 +44,10 @@ const Header = () => {
         <div className="flex items-center">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="mr-2 h-4" />
-          <span className="font-semibold">{pageTitle}</span>
+          <span className="font-semibold hidden md:inline">{pageTitle}</span>
         </div>
 
-        <div className="flex-1 flex items-center justify-center max-w-xl mx-4">
+        <div className="flex-1 flex items-center justify-center max-w-xl gap-4">
           <div className="w-full relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -55,6 +56,7 @@ const Header = () => {
               className="w-full pl-10 bg-muted"
             />
           </div>
+          <ThemeToggler />
         </div>
 
         <div>

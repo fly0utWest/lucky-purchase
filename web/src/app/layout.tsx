@@ -8,6 +8,7 @@ import Header from "@/components/header";
 import { AuthProvider } from "@/shared/providers/auth-provider";
 import ReactQueryProvider from "@/shared/providers/react-query-provider";
 import { Toaster } from "@/components/ui/toaster";
+import { ThemeProvider } from "@/shared/providers/theme-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,23 +29,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ReactQueryProvider>
-          <AuthProvider>
-            <SidebarProvider>
-              <AppSidebar />
-              <SidebarInset>
-                <Header />
-                {children}
-                <Footer />
-              </SidebarInset>
-            </SidebarProvider>
-          </AuthProvider>
+          <ThemeProvider enableSystem attribute={"class"} defaultTheme="system">
+            <AuthProvider>
+              <SidebarProvider>
+                <AppSidebar />
+                <SidebarInset>
+                  <Header />
+                  {children}
+                  <Footer />
+                </SidebarInset>
+              </SidebarProvider>
+            </AuthProvider>
+            <Toaster />
+          </ThemeProvider>
         </ReactQueryProvider>
-        <Toaster />
       </body>
     </html>
   );
