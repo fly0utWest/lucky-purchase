@@ -1,55 +1,56 @@
 services:
   postgres:
-    image: postgres:17
+    image: postgres:${POSTGRES_VERSION:-17}
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
-      POSTGRES_DB: lucky_purchase
+      POSTGRES_USER: ${POSTGRES_USER:-admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-admin}
+      POSTGRES_DB: ${POSTGRES_DB:-lucky_purchase}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
   api:
     build: ./api
     container_name: lp-api
     ports:
-      - "7777:7777"
+      - "${API_PORT:-7777}:7777"
     depends_on:
       - postgres
     environment:
-      DATABASE_URL: "postgresql://admin:admin@postgres:5432/lucky_purchase"
-      PORT: 7777
+      DATABASE_URL: "${DATABASE_URL:-postgresql://admin:admin@postgres:5432/lucky_purchase}"
+      PORT: ${API_PORT:-7777}
     volumes:
       - ./api/static:/app/static
     restart: always
-
   web:
-    build: ./web
+    build: 
+      context: ./web
+      args:
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:10000}
+        NEXT_PUBLIC_STATIC_URL: ${NEXT_PUBLIC_STATIC_URL:-http://localhost:10000/static/}
     container_name: lp-web
     ports:
-      - "10000:10000"
+      - "${WEB_PORT:-10000}:10000"
     depends_on:
       - api
     environment:
-      NEXT_PUBLIC_API_BASE_URL: "http://localhost:10000"
-      NEXT_PUBLIC_STATIC_URL: "http://localhost:10000/static/"
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:10000}
+      NEXT_PUBLIC_STATIC_URL: ${NEXT_PUBLIC_STATIC_URL:-http://localhost:10000/static/}
     volumes:
       - ./api/static:/app/static
     restart: always
-
   pgadmin:
     image: dpage/pgadmin4
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@admin.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
     ports:
-      - "5050:80"
+      - "${PGADMIN_PORT:-5050}:80"
     depends_on:
       - postgres
     volumes:
       - pgadmin-data:/var/lib/pgadmin
     restart: always
-
 volumes:
   pgdata:
   pgadmin-data:
