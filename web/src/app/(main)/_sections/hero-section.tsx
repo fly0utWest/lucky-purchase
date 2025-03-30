@@ -21,6 +21,14 @@ const stats = [
   },
 ];
 
+function HeroButtons({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex flex-col md:flex-row justify-center gap-4">
+      {children}
+    </div>
+  );
+}
+
 export default function HeroSection() {
   const { authenticatedUser } = useAuthStore();
 
@@ -35,14 +43,14 @@ export default function HeroSection() {
             <p className="text-xl text-muted-foreground">
               Готовы к новым сделкам сегодня?
             </p>
-            <div className="flex justify-center gap-4">
+            <HeroButtons>
               <Button asChild size="lg">
                 <Link href="/items/create">Разместить товар</Link>
               </Button>
               <Button asChild variant="outline" size="lg">
                 <Link href="/catalog">Перейти в каталог</Link>
               </Button>
-            </div>
+            </HeroButtons>
           </div>
         ) : (
           <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -57,14 +65,14 @@ export default function HeroSection() {
               Ваше место для безопасных покупок и продаж. Присоединяйтесь к
               тысячам довольных пользователей!
             </p>
-            <div className="flex justify-center gap-4">
+            <HeroButtons>
               <Button asChild size="lg">
                 <Link href="/auth">Начать покупать</Link>
               </Button>
               <Button asChild variant="outline" size="lg">
                 <Link href="/auth">Начать продавать</Link>
               </Button>
-            </div>
+            </HeroButtons>
           </div>
         )}
 
