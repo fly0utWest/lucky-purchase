@@ -1,5 +1,6 @@
 services:
   postgres:
+    container_name: lp-postgres
     image: postgres:17
     environment:
       POSTGRES_USER: admin
@@ -9,6 +10,7 @@ services:
       - "11111:11111"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    command: -p 11111
   api:
     build: ./api
     container_name: lp-api
@@ -17,27 +19,31 @@ services:
     depends_on:
       - postgres
     environment:
-      DATABASE_URL: "postgresql://admin:admin@postgres:11111/lucky_purchase"
+      DATABASE_URL: "postgresql://admin:admin@lp-postgres:11111/lucky_purchase"
       PORT: 7777
     volumes:
       - ./api/static:/app/static
     restart: always
 
   web:
-    build: ./web
+    build:
+      context: ./web
+      args:
+        - NEXT_PUBLIC_API_BASE_URL=https://lp-api.fly0utwest.dev
+        - NEXT_PUBLIC_STATIC_URL=https://lp-api.fly0utwest.dev/static/
     container_name: lp-web
     ports:
       - "10000:10000"
     depends_on:
       - api
     environment:
-      NEXT_PUBLIC_API_BASE_URL: "http://localhost:10000"
-      NEXT_PUBLIC_STATIC_URL: "http://localhost:10000/static/"
+      NEXT_PUBLIC_API_BASE_URL: "https://lp-api.fly0utwest.dev"
+      NEXT_PUBLIC_STATIC_URL: "https://lp-api.fly0utwest.dev/static/"
     volumes:
       - ./api/static:/app/static
     restart: always
-
 volumes:
   pgdata:
   pgadmin-data:
+
 
