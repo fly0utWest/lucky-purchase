@@ -7,7 +7,7 @@ import Link from "next/link";
 export default function ProfilePage() {
   const { authenticatedUser, logout } = useAuthStore();
 
-  return <div>
+  return <div className="min-h-screen">
 
   </div>
 }
