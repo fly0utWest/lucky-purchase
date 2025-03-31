@@ -2,6 +2,7 @@ import express from "express";
 import "@dotenvx/dotenvx/config";
 import userRoutes from "./routes/user.routes";
 import authRoutes from "./routes/auth.routes";
+import favoriteRoutes from "./routes/favorite.routes";
 import cors from "cors";
 import { errorHandler } from "./middleware/error.middleware";
 import { notFoundHandler } from "./middleware/notFound.middleware";
@@ -21,7 +22,6 @@ if (!fs.existsSync(uploadDir)) {
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 
-// Обслуживание статических файлов
 app.use("/static", express.static(path.join(process.cwd(), "static")));
 
 app.get("/", (req, res) => {
@@ -30,6 +30,7 @@ app.get("/", (req, res) => {
 app.use("/user", userRoutes);
 app.use("/item", itemRouter);
 app.use("/auth", authRoutes);
+app.use("/favorite", favoriteRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

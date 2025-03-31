@@ -30,6 +30,7 @@ export async function getAuthenticatedUserById(userId: string) {
       login: true,
       avatar: true,
       createdAt: true,
+      favorites: true,
     },
   });
 }

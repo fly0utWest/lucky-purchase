@@ -10,10 +10,6 @@ import asyncHandler from "../utils/asyncHandler";
 
 export const uploadImageHandler = asyncHandler(
   async (req: Request, res: Response) => {
-    if (!res.locals.userId) {
-      throw new AppError("Доступ запрещен", 401);
-    }
-
     if (!req.file) {
       throw new AppError("Файл не был загружен", 400);
     }
@@ -27,9 +23,6 @@ export const uploadImageHandler = asyncHandler(
 
 export const registerItemHandler = asyncHandler(
   async (req: Request, res: Response) => {
-    if (!res.locals.userId) {
-      throw new AppError("Доступ запрещен", 401);
-    }
 
     const newItem = await createItem({
       ...res.locals.validatedData,
