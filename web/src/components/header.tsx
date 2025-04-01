@@ -8,7 +8,7 @@ import Logo from "./logo";
 import { Input } from "./ui/input";
 import { Search } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { ThemeToggler } from "./ThemeToggler";
+import { ThemeToggler } from "./theme-toggler";
 
 const getPageTitle = (pathname: string): string => {
   switch (pathname) {

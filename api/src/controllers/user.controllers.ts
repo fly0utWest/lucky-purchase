@@ -41,10 +41,6 @@ export const getUserByIdHandler = asyncHandler(
 
 export const getAuthedUserHandler = asyncHandler(
   async (req: Request, res: Response) => {
-    if (!res.locals.userId) {
-      throw new AppError("Доступ запрещен", 401);
-    }
-
     const user = await getAuthenticatedUserById(res.locals.userId);
     if (!user) {
       throw new AppError("Пользователь не найден", 404);

@@ -38,3 +38,15 @@ export function formatPrice(price: number): string {
     maximumFractionDigits: 0,
   }).format(price);
 }
+export async function fetchWrapper<T>(endpoint: string): Promise<T> {
+  const response = await fetch(
+    `${env.NEXT_PUBLIC_API_BASE_URL}/${endpoint}`
+  );
+
+  if (!response.ok) {
+    throw new Error(`Ошибка при загрузке данных с ${endpoint}`);
+  }
+
+  const data = await response.json();
+  return data.items;
+}

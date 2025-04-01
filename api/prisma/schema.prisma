@@ -14,8 +14,10 @@ model User {
   password  String
   avatar    String?
   createdAt DateTime @default(now())
-
-  items Item[]
+  
+  items     Item[]
+  
+  favorites Favorite[]
 }
 
 model Item {
@@ -25,7 +27,22 @@ model Item {
   images      String[]
   price       Int
   createdAt   DateTime @default(now())
+  
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  
+  favoritedBy Favorite[]
+}
 
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
+model Favorite {
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  item      Item     @relation(fields: [itemId], references: [id])
+  itemId    String
+  createdAt DateTime @default(now())
+
+  @@id([userId, itemId])
+  
+  @@index([userId])
+  @@index([itemId])
 }

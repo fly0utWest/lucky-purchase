@@ -7,13 +7,10 @@ import {
 } from "../services/item.service";
 import { AppError } from "../utils/errors";
 import asyncHandler from "../utils/asyncHandler";
+import { CreateItemDTO, GetItemsDTO } from "../validators/item.validator";
 
 export const uploadImageHandler = asyncHandler(
   async (req: Request, res: Response) => {
-    if (!res.locals.userId) {
-      throw new AppError("Доступ запрещен", 401);
-    }
-
     if (!req.file) {
       throw new AppError("Файл не был загружен", 400);
     }
@@ -27,12 +24,10 @@ export const uploadImageHandler = asyncHandler(
 
 export const registerItemHandler = asyncHandler(
   async (req: Request, res: Response) => {
-    if (!res.locals.userId) {
-      throw new AppError("Доступ запрещен", 401);
-    }
+    const {...validatedData}: CreateItemDTO = res.locals.validatedData;
 
     const newItem = await createItem({
-      ...res.locals.validatedData,
+      ...validatedData,
       userId: res.locals.userId,
     });
 
@@ -46,10 +41,10 @@ export const registerItemHandler = asyncHandler(
 export const getItemsHandler = asyncHandler(
   async (req: Request, res: Response) => {
     const {
-      limit = "10",
-      skip = "0",
+      limit = 10,
+      skip = 0,
       sort = "desc",
-    } = res.locals.validatedData;
+    }: GetItemsDTO = res.locals.validatedData;
     const items = await getItems({ limit, skip, sort });
 
     console.log(`[УСПЕХ]: было запрошено ${items.length} объявлений`);
