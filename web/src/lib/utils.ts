@@ -28,7 +28,11 @@ export function formatPrice(price: number): string {
   }).format(price);
 }
 export async function fetchWrapper<T>(endpoint: string): Promise<T> {
-  const response = await fetch(`${env.NEXT_PUBLIC_API_BASE_URL}/${endpoint}`);
+  const url = endpoint.startsWith("/")
+    ? `${env.NEXT_PUBLIC_API_BASE_URL}${endpoint}`
+    : `${env.NEXT_PUBLIC_API_BASE_URL}/${endpoint}`;
+
+  const response = await fetch(url);
 
   if (!response.ok) {
     throw new Error(`Ошибка при загрузке данных с ${endpoint}`);

@@ -30,7 +30,9 @@ export default function HomePage() {
       <WhyUs />
       <RecentItems>
         {isLoading ? (
-          <LoadingSpinner />
+          <div className="container mx-auto flex justify-center">
+            <LoadingSpinner size="lg" />
+          </div>
         ) : recentItems && recentItems.length > 0 ? (
           recentItems.map((item) => <ItemCard key={item.id} item={item} />)
         ) : (
