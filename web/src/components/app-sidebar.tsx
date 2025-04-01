@@ -160,6 +160,12 @@ export function AppSidebar() {
                       Аккаунт
                     </Link>
                   </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Settings className="h-4 w-4" />
+                    <Link className="w-full" href="/settings">
+                      Настройки
+                    </Link>
+                  </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
