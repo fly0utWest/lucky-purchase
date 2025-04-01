@@ -15,6 +15,7 @@ interface ItemSidebarProps {
 }
 
 export function ItemSidebar({ item }: ItemSidebarProps) {
+
   const { toggleFavorite, isFavorite } = useFavorite();
   const { authenticatedUser } = useAuthStore();
   const { toast } = useToast();
@@ -35,6 +36,7 @@ export function ItemSidebar({ item }: ItemSidebarProps) {
     } catch (error) {
       console.error("Error toggling favorite:", error);
     }
+
   };
 
   const handleContactSeller = () => {
@@ -47,7 +49,9 @@ export function ItemSidebar({ item }: ItemSidebarProps) {
       <Card>
         <div className="space-y-6 p-6">
           <div>
+
             <h1 className="text-2xl font-bold text-foreground">{item.title}</h1>
+
             <p className="mt-2 text-3xl font-bold text-primary">
               {formatPrice(item.price)}
             </p>
@@ -77,16 +81,13 @@ export function ItemSidebar({ item }: ItemSidebarProps) {
           </div>
         </div>
       </Card>
-
       <SellerCard user={item.user} />
     </div>
   );
 }
-
 interface SellerCardProps {
   user: Item["user"];
 }
-
 function SellerCard({ user }: SellerCardProps) {
   return (
     <Card>

@@ -33,7 +33,6 @@ export async function fetchWrapper<T>(endpoint: string, requestInit?: RequestIni
     : `${env.NEXT_PUBLIC_API_BASE_URL}/${endpoint}`;
 
   const response = await fetch(url, requestInit);
-
   if (!response.ok) {
     throw new Error(`Ошибка при загрузке данных с ${endpoint}`);
   }
