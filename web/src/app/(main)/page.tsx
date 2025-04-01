@@ -8,12 +8,20 @@ import Categories from "./_sections/categories";
 import WhyUs from "./_sections/why-us";
 import { fetchWrapper } from "@/lib/utils";
 import RecentItems from "./_sections/recent-items";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
+
+interface Items {
+  items: Item[];
+  count: number;
+}
 
 export default function HomePage() {
-  const { isLoading, data: popularItems } = useQuery<Item[]>({
+  const { data, isLoading } = useQuery<Items>({
     queryFn: () => fetchWrapper(`item/get?limit=3`),
     queryKey: ["popularItems"],
   });
+
+  const recentItems = data?.items || [];
 
   return (
     <>
@@ -22,9 +30,9 @@ export default function HomePage() {
       <WhyUs />
       <RecentItems>
         {isLoading ? (
-          <p>Загрузка популярных товаров...</p>
-        ) : popularItems && popularItems.length > 0 ? (
-          popularItems.map((item) => <ItemCard key={item.id} item={item} />)
+          <LoadingSpinner />
+        ) : recentItems && recentItems.length > 0 ? (
+          recentItems.map((item) => <ItemCard key={item.id} item={item} />)
         ) : (
           <p>Популярные товары не найдены</p>
         )}
