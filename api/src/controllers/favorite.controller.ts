@@ -24,14 +24,14 @@ export const toggleFavoriteHandler = asyncHandler(
   }
 );
 
-export const getFavoriteList = asyncHandler(
+export const getFavoritesListHandler = asyncHandler(
   async (req: Request, res, Response) => {
     const { userId } = res.locals;
 
     const userFavoritesList = await getUserFavorites(userId);
 
     console.log(
-      `[УСПЕХ]: Спсисок изюранных обхявлений пользователя ${userId} был запрошен.`
+      `[УСПЕХ]: Список избранных объявлений пользователя ${userId} был запрошен.`
     );
 
     res.status(200).json({ userFavoritesList });

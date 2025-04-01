@@ -13,20 +13,25 @@ import {
   BreadcrumbSeparator,
   BreadcrumbItem,
 } from "@/components/ui/breadcrumb";
+import ClipboardCopyButton from "@/components/clipboard-copy-button";
 
-async function getItem(id: string): Promise<Item> {
-  const res = await fetch(`${env.NEXT_PUBLIC_API_BASE_URL}/item/${id}`);
+async function getItem(slug: string): Promise<Item> {
+  const res = await fetch(`${env.NEXT_PUBLIC_API_BASE_URL}/item/${slug}`);
   if (!res.ok) {
     throw new Error("Failed to fetch item");
   }
   return res.json();
 }
 
-export default async function ItemPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function ItemPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   let item: Item;
-  const { id } = await params;
+  const { slug } = await params;
   try {
-    item = await getItem(id);
+    item = await getItem(slug);
   } catch (error) {
     notFound();
   }
@@ -140,10 +145,7 @@ export default async function ItemPage({ params }: { params: Promise<{ id: strin
                     <Button variant="outline" size="lg">
                       <Heart className="mr-2 h-5 w-5" />В избранное
                     </Button>
-                    <Button variant="outline" size="lg">
-                      <Share2 className="mr-2 h-5 w-5" />
-                      Поделиться
-                    </Button>
+                    <ClipboardCopyButton />
                   </div>
                 </div>
               </div>
