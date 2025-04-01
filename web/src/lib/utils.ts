@@ -1,35 +1,24 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { env } from "@/env.mjs";
-import { PublicUser } from "@/shared/models";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const fetchPublicUser = async (
-  id: string
-): Promise<PublicUser | null> => {
-  try {
-    const response = await fetch(`${env.NEXT_PUBLIC_API_BASE_URL}/user/${id}`, {
-      method: "GET", // Usually, fetching public user data should be a GET request
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+export function formatDate(
+  dateString: string | Date,
+  locale = "ru-RU"
+): string {
+  const date =
+    typeof dateString === "string" ? new Date(dateString) : dateString;
 
-    if (!response.ok) {
-      console.error(`Ошибка: ${response.status} ${response.statusText}`);
-      return null;
-    }
-
-    const userData = await response.json();
-    return userData;
-  } catch (error) {
-    console.error("Ошибка при запросе пользователя:", error);
-    return null;
-  }
-};
+  return date.toLocaleDateString(locale, {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
 
 export function formatPrice(price: number): string {
   return new Intl.NumberFormat("ru-RU", {
@@ -39,14 +28,12 @@ export function formatPrice(price: number): string {
   }).format(price);
 }
 export async function fetchWrapper<T>(endpoint: string): Promise<T> {
-  const response = await fetch(
-    `${env.NEXT_PUBLIC_API_BASE_URL}/${endpoint}`
-  );
+  const response = await fetch(`${env.NEXT_PUBLIC_API_BASE_URL}/${endpoint}`);
 
   if (!response.ok) {
     throw new Error(`Ошибка при загрузке данных с ${endpoint}`);
   }
 
   const data = await response.json();
-  return data.items;
+  return data;
 }

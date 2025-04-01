@@ -1,179 +1,67 @@
-import { notFound } from "next/navigation";
-import { env } from "@/env.mjs";
+"use client";
+
+import { useParams } from "next/navigation";
 import { Item } from "@/shared/models";
-import { formatPrice } from "@/lib/utils";
-import { Calendar, Heart, MessageCircle, Share2, User } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import {
-  Breadcrumb,
-  BreadcrumbList,
-  BreadcrumbLink,
-  BreadcrumbSeparator,
-  BreadcrumbItem,
-} from "@/components/ui/breadcrumb";
-import ClipboardCopyButton from "@/components/clipboard-copy-button";
+import { fetchWrapper } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import { ItemBreadcrumbs } from "./_sections/item-breadcrumbs";
+import { ItemGallery } from "./_sections/item-gallery";
+import { ItemDetails } from "./_sections/item-description";
+import { ItemSidebar } from "./_sections/item-sidebar";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { ErrorMessage } from "@/components/ui/error-message";
 
-async function getItem(slug: string): Promise<Item> {
-  const res = await fetch(`${env.NEXT_PUBLIC_API_BASE_URL}/item/${slug}`);
-  if (!res.ok) {
-    throw new Error("Failed to fetch item");
-  }
-  return res.json();
-}
+export default function ItemPage() {
+  const { slug } = useParams();
 
-export default async function ItemPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  let item: Item;
-  const { slug } = await params;
-  try {
-    item = await getItem(slug);
-  } catch (error) {
-    notFound();
-  }
-
-  const formattedDate = new Date(item.createdAt).toLocaleDateString("ru-RU", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
+  const {
+    data: item,
+    isLoading,
+    isError,
+    error,
+  } = useQuery<Item>({
+    queryKey: ["item", slug],
+    queryFn: () => fetchWrapper(`item/${slug}`),
+    retry: 1,
   });
 
-  return (
-    <main className="min-h-screen bg-gray-50/50 py-8">
-      <div className="container mx-auto px-4">
-        {/* Навигация */}
-        <Breadcrumb className="p-2">
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/">Главная</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/catalog">Каталог</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>{item.title}</BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-
-        <div className="grid gap-8 lg:grid-cols-[2fr,1fr]">
-          {/* Основная информация */}
-          <div className="space-y-8">
-            {/* Галерея */}
-            <Card className="overflow-hidden">
-              <div className="grid gap-4 p-4 sm:grid-cols-[2fr,1fr]">
-                {/* Основное изображение */}
-                <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100">
-                  {item.images && item.images.length > 0 && (
-                    <img
-                      src={`${env.NEXT_PUBLIC_STATIC_URL}/items/${item.images[0]}`}
-                      alt={item.title}
-                      className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
-                    />
-                  )}
-                </div>
-
-                {/* Дополнительные изображения */}
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-1">
-                  {item.images?.slice(1, 3).map((image, index) => (
-                    <div
-                      key={index}
-                      className="relative aspect-square overflow-hidden rounded-lg bg-gray-100"
-                    >
-                      <img
-                        src={`${env.NEXT_PUBLIC_STATIC_URL}/items/${image}`}
-                        alt={`${item.title} ${index + 2}`}
-                        className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </Card>
-
-            {/* Описание */}
-            <Card>
-              <div className="space-y-6 p-6">
-                <div>
-                  <h2 className="text-xl font-semibold">Описание</h2>
-                  <p className="mt-4 whitespace-pre-wrap text-gray-600">
-                    {item.description}
-                  </p>
-                </div>
-
-                <Separator />
-
-                <div>
-                  <h2 className="text-xl font-semibold">Характеристики</h2>
-                  <dl className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <div>
-                      <dt className="text-sm text-gray-500">ID товара</dt>
-                      <dd className="text-gray-900">{item.id}</dd>
-                    </div>
-                    <div>
-                      <dt className="text-sm text-gray-500">Дата публикации</dt>
-                      <dd className="text-gray-900">{formattedDate}</dd>
-                    </div>
-                  </dl>
-                </div>
-              </div>
-            </Card>
-          </div>
-
-          {/* Боковая панель */}
-          <div className="space-y-6">
-            {/* Информация о цене и действия */}
-            <Card>
-              <div className="space-y-6 p-6">
-                <div>
-                  <h1 className="text-2xl font-bold">{item.title}</h1>
-                  <p className="mt-2 text-3xl font-bold text-primary">
-                    {formatPrice(item.price)}
-                  </p>
-                </div>
-
-                <div className="flex flex-col gap-3">
-                  <Button size="lg" className="w-full">
-                    <MessageCircle className="mr-2 h-5 w-5" />
-                    Написать продавцу
-                  </Button>
-                  <div className="grid grid-cols-2 gap-3">
-                    <Button variant="outline" size="lg">
-                      <Heart className="mr-2 h-5 w-5" />В избранное
-                    </Button>
-                    <ClipboardCopyButton />
-                  </div>
-                </div>
-              </div>
-            </Card>
-
-            {/* Информация о продавце */}
-            <Card>
-              <div className="space-y-4 p-6">
-                <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                    <User className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold">{item.user.name}</h3>
-                    <p className="text-sm text-gray-500">Продавец</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-gray-500">
-                  <Calendar className="h-4 w-4" />
-                  <span>
-                    На площадке с {new Date(item.user.createdAt).getFullYear()}
-                  </span>
-                </div>
-              </div>
-            </Card>
-          </div>
-        </div>
+  if (isLoading) {
+    return (
+      <div className="container mx-auto py-20 flex justify-center">
+        <LoadingSpinner size="lg" />
       </div>
-    </main>
+    );
+  }
+
+  if (isError || !item) {
+    return (
+      <div className="container mx-auto py-10">
+        <ErrorMessage
+          title="Ошибка загрузки товара"
+          message={
+            error instanceof Error
+              ? error.message
+              : "Не удалось загрузить информацию о товаре"
+          }
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className="container mx-auto pb-16">
+      <ItemBreadcrumbs item={item} />
+
+      <div className="grid gap-8 lg:grid-cols-[2fr,1fr]">
+        {/* Main Content */}
+        <div className="space-y-8">
+          <ItemGallery images={item.images} title={item.title} />
+          <ItemDetails item={item} />
+        </div>
+
+        {/* Sidebar */}
+        <ItemSidebar item={item} />
+      </div>
+    </div>
   );
 }
