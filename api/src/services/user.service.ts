@@ -22,7 +22,7 @@ export async function getUserById(userId: string) {
 }
 
 export async function getAuthenticatedUserById(userId: string) {
-  return prisma.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { id: userId },
     select: {
       id: true,
@@ -30,7 +30,18 @@ export async function getAuthenticatedUserById(userId: string) {
       login: true,
       avatar: true,
       createdAt: true,
-      favorites: true,
+      favorites: {
+        select: {
+          itemId: true,
+        },
+      },
     },
   });
+
+  if (!user) return null;
+
+  return {
+    ...user,
+    favorites: user.favorites.map((fav) => fav.itemId),
+  };
 }

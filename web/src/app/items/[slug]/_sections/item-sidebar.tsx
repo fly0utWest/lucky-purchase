@@ -4,23 +4,39 @@ import ClipboardCopyButton from "@/components/clipboard-copy-button";
 import { Item } from "@/shared/models";
 import { formatPrice, formatDate } from "@/lib/utils";
 import { Heart, MessageCircle, Calendar, User } from "lucide-react";
-import { useState } from "react";
-import { useToast } from "@/hooks/use-toast";
+import { useFavorite } from "@/hooks/use-favorite";
+import { useAuthStore } from "@/store/authStore";
+import { useToast } from "@/shared/providers/toast-provider";
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 interface ItemSidebarProps {
   item: Item;
 }
 
 export function ItemSidebar({ item }: ItemSidebarProps) {
-  const [isFavorite, setIsFavorite] = useState(false);
+
+  const { toggleFavorite, isFavorite } = useFavorite();
+  const { authenticatedUser } = useAuthStore();
   const { toast } = useToast();
 
-  const handleFavoriteClick = () => {
-    setIsFavorite(!isFavorite);
-    toast({
-      title: isFavorite ? "Удалено из избранного" : "Добавлено в избранное",
-    });
+  const handleFavoriteClick = async () => {
+    if (!authenticatedUser) {
+      toast({
+        variant: "destructive",
+        title: "Требуется авторизация",
+        description:
+          "Пожалуйста, войдите в систему, чтобы добавить товар в избранное",
+      });
+      return;
+    }
+
+    try {
+      await toggleFavorite(item.id);
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+    }
+
   };
 
   const handleContactSeller = () => {
@@ -33,7 +49,9 @@ export function ItemSidebar({ item }: ItemSidebarProps) {
       <Card>
         <div className="space-y-6 p-6">
           <div>
-            <h1 className="text-2xl font-bold">{item.title}</h1>
+
+            <h1 className="text-2xl font-bold text-foreground">{item.title}</h1>
+
             <p className="mt-2 text-3xl font-bold text-primary">
               {formatPrice(item.price)}
             </p>
@@ -46,30 +64,30 @@ export function ItemSidebar({ item }: ItemSidebarProps) {
             </Button>
             <div className="grid grid-cols-2 gap-3">
               <Button
-                variant={isFavorite ? "default" : "outline"}
+                variant={isFavorite(item.id) ? "default" : "outline"}
                 size="lg"
                 onClick={handleFavoriteClick}
               >
                 <Heart
-                  className={`mr-2 h-5 w-5 ${isFavorite ? "fill-current" : ""}`}
+                  className={cn(
+                    "mr-2 h-5 w-5",
+                    isFavorite(item.id) && "fill-current"
+                  )}
                 />
-                {isFavorite ? "В избранном" : "В избранное"}
+                {isFavorite(item.id) ? "В избранном" : "В избранное"}
               </Button>
               <ClipboardCopyButton />
             </div>
           </div>
         </div>
       </Card>
-
       <SellerCard user={item.user} />
     </div>
   );
 }
-
 interface SellerCardProps {
   user: Item["user"];
 }
-
 function SellerCard({ user }: SellerCardProps) {
   return (
     <Card>

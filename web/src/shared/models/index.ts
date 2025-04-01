@@ -25,6 +25,7 @@ export const AuthenticatedUserSchema = z.object({
       message: "Неверный формат строки аватара",
     }),
   createdAt: z.string().datetime("Неверный формат даты"),
+  favorites: z.array(z.string().uuid("Неверный формат UUID")),
 });
 
 export type AuthenticatedUser = z.infer<typeof AuthenticatedUserSchema>;

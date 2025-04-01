@@ -5,6 +5,7 @@ import { ToggleFavoriteSchema } from "../validators/favorite.validator";
 import {
   getFavoritesListHandler,
   toggleFavoriteHandler,
+  checkFavoriteStatusHandler,
 } from "../controllers/favorite.controller";
 
 const router = Router();
@@ -20,6 +21,12 @@ router.get(
   "/get",
   authenticateJWT as RequestHandler,
   getFavoritesListHandler as RequestHandler
+);
+
+router.get(
+  "/is-favorite",
+  authenticateJWT as RequestHandler,
+  checkFavoriteStatusHandler as RequestHandler
 );
 
 export default router;

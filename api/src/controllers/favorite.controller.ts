@@ -1,9 +1,12 @@
 import asyncHandler from "../utils/asyncHandler";
 import { Response, Request } from "express";
-import { addToFavorites } from "../services/favorite.service";
-import { removeFromFavorites } from "../services/favorite.service";
+import {
+  addToFavorites,
+  removeFromFavorites,
+  getUserFavorites,
+  isItemFavorited,
+} from "../services/favorite.service";
 import { ToggleFavoriteDTO } from "../validators/favorite.validator";
-import { getUserFavorites } from "../services/favorite.service";
 
 export const toggleFavoriteHandler = asyncHandler(
   async (req: Request, res: Response) => {
@@ -35,5 +38,16 @@ export const getFavoritesListHandler = asyncHandler(
     );
 
     res.status(200).json({ userFavoritesList });
+  }
+);
+
+export const checkFavoriteStatusHandler = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { userId } = res.locals;
+    const { itemId } = req.query;
+
+    const isFavorited = await isItemFavorited(userId, itemId as string);
+
+    res.status(200).json(isFavorited);
   }
 );

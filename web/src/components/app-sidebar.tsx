@@ -65,11 +65,6 @@ const items = [
     url: "/favorites",
     icon: Heart,
   },
-  {
-    title: "Настройки",
-    url: "/settings",
-    icon: Settings,
-  },
 ];
 
 export function AppSidebar() {
@@ -158,6 +153,12 @@ export function AppSidebar() {
                       href={`/profile/${authenticatedUser.id}`}
                     >
                       Аккаунт
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Settings className="h-4 w-4" />
+                    <Link className="w-full" href="/settings">
+                      Настройки
                     </Link>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
