@@ -30,7 +30,7 @@ export function validate(
       return next(new ZodError(result.error.errors));
     }
 
-    res.locals.validatedData = data;
+    res.locals.validatedData = result.data;
     next();
   };
 }

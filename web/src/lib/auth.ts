@@ -16,10 +16,15 @@ export const fetchUserWithJWT = async (
   }
 
   const data = await response.json();
+  console.log("Данные с сервера:", data);
+
   const user = AuthenticatedUserSchema.safeParse(data);
 
   if (!user.success) {
-    console.error("Ошибка валидации:", user.error.format());
+    console.error(
+      "Ошибка валидации:",
+      JSON.stringify(user.error.format(), null, 2)
+    );
     throw new Error("Ошибка во время парсинга данных.");
   }
 

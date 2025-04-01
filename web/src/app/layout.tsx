@@ -7,8 +7,8 @@ import { Metadata } from "next";
 import Header from "@/components/header";
 import { AuthProvider } from "@/shared/providers/auth-provider";
 import ReactQueryProvider from "@/shared/providers/react-query-provider";
-import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/shared/providers/theme-provider";
+import { ToastProvider } from "@/shared/providers/toast-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,6 +19,7 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
 export const metadata: Metadata = {
   title: 'Торговая площадка "Удачная покупка"',
   metadataBase: new URL("https://lp-web.fly0utwest.dev/"),
@@ -36,19 +37,20 @@ export default function RootLayout({
       >
         <ReactQueryProvider>
           <ThemeProvider enableSystem attribute={"class"} defaultTheme="system">
-            <AuthProvider>
-              <SidebarProvider>
-                <AppSidebar />
-                <SidebarInset>
-                  <Header />
-                  <main className="flex flex-1 flex-col gap-8 p-4 md:gap-16 md:p-8 min-h-svh">
-                    {children}
-                  </main>
-                  <Footer />
-                </SidebarInset>
-              </SidebarProvider>
-            </AuthProvider>
-            <Toaster />
+            <ToastProvider>
+              <AuthProvider>
+                <SidebarProvider>
+                  <AppSidebar />
+                  <SidebarInset>
+                    <Header />
+                    <main className="flex flex-1 flex-col gap-8 p-4 md:gap-16 md:p-8 min-h-svh">
+                      {children}
+                    </main>
+                    <Footer />
+                  </SidebarInset>
+                </SidebarProvider>
+              </AuthProvider>
+            </ToastProvider>
           </ThemeProvider>
         </ReactQueryProvider>
       </body>

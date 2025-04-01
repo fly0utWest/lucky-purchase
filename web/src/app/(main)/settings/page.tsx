@@ -10,7 +10,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { User2, Bell, Shield, Palette, Mail } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/shared/providers/toast-provider";
 
 export default function SettingsPage() {
   const { authenticatedUser, logout } = useAuthStore();
@@ -56,8 +56,10 @@ export default function SettingsPage() {
     <div className="container mx-auto min-h-screen space-y-8 p-4 py-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Настройки</h1>
-          <p className="text-gray-600">Управление аккаунтом и настройками</p>
+          <h1 className="text-2xl font-bold text-foreground">Настройки</h1>
+          <p className="text-muted-foreground">
+            Управление аккаунтом и настройками
+          </p>
         </div>
       </div>
 
@@ -88,8 +90,8 @@ export default function SettingsPage() {
           <Card>
             <form onSubmit={handleSaveProfile} className="space-y-6 p-6">
               <div className="flex items-center gap-4">
-                <Avatar className="h-20 w-20 ">
-                  <AvatarFallback className=" uppercase bg-primary/10 text-primary">
+                <Avatar className="h-20 w-20">
+                  <AvatarFallback className="uppercase bg-primary/10 text-primary">
                     {authenticatedUser.name[0]}
                   </AvatarFallback>
                 </Avatar>
@@ -98,7 +100,9 @@ export default function SettingsPage() {
 
               <div className="grid gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="name">Имя</Label>
+                  <Label htmlFor="name" className="text-foreground">
+                    Имя
+                  </Label>
                   <Input
                     id="name"
                     defaultValue={authenticatedUser.name}
@@ -107,7 +111,9 @@ export default function SettingsPage() {
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email" className="text-foreground">
+                    Email
+                  </Label>
                   <Input
                     id="email"
                     type="email"
@@ -117,7 +123,9 @@ export default function SettingsPage() {
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="phone">Телефон</Label>
+                  <Label htmlFor="phone" className="text-foreground">
+                    Телефон
+                  </Label>
                   <Input
                     id="phone"
                     type="tel"
@@ -138,13 +146,17 @@ export default function SettingsPage() {
         <TabsContent value="notifications">
           <Card>
             <div className="p-6">
-              <h3 className="text-lg font-medium">Настройки уведомлений</h3>
+              <h3 className="text-lg font-medium text-foreground">
+                Настройки уведомлений
+              </h3>
               <div className="mt-4 space-y-4">
                 <div className="flex items-center gap-4">
-                  <Mail className="h-5 w-5 text-gray-500" />
+                  <Mail className="h-5 w-5 text-muted-foreground" />
                   <div className="flex-1">
-                    <p className="font-medium">Email уведомления</p>
-                    <p className="text-sm text-gray-600">
+                    <p className="font-medium text-foreground">
+                      Email уведомления
+                    </p>
+                    <p className="text-sm text-muted-foreground">
                       Получать уведомления на почту о новых сообщениях и
                       обновлениях
                     </p>
@@ -159,10 +171,14 @@ export default function SettingsPage() {
         <TabsContent value="security">
           <Card>
             <div className="p-6">
-              <h3 className="text-lg font-medium">Безопасность аккаунта</h3>
+              <h3 className="text-lg font-medium text-foreground">
+                Безопасность аккаунта
+              </h3>
               <div className="mt-4 space-y-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="current-password">Текущий пароль</Label>
+                  <Label htmlFor="current-password" className="text-foreground">
+                    Текущий пароль
+                  </Label>
                   <Input
                     id="current-password"
                     type="password"
@@ -170,7 +186,9 @@ export default function SettingsPage() {
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="new-password">Новый пароль</Label>
+                  <Label htmlFor="new-password" className="text-foreground">
+                    Новый пароль
+                  </Label>
                   <Input
                     id="new-password"
                     type="password"
@@ -188,9 +206,11 @@ export default function SettingsPage() {
         <TabsContent value="appearance">
           <Card>
             <div className="p-6">
-              <h3 className="text-lg font-medium">Настройки интерфейса</h3>
+              <h3 className="text-lg font-medium text-foreground">
+                Настройки интерфейса
+              </h3>
               <div className="mt-4">
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-muted-foreground">
                   Настройки внешнего вида будут добавлены в следующих
                   обновлениях
                 </p>

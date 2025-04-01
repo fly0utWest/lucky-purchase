@@ -4,8 +4,9 @@ import ClipboardCopyButton from "@/components/clipboard-copy-button";
 import { Item } from "@/shared/models";
 import { formatPrice, formatDate } from "@/lib/utils";
 import { Heart, MessageCircle, Calendar, User } from "lucide-react";
-import { useState } from "react";
-import { useToast } from "@/hooks/use-toast";
+import { useFavorite } from "@/hooks/use-favorite";
+import { useAuthStore } from "@/store/authStore";
+import { useToast } from "@/shared/providers/toast-provider";
 import Image from "next/image";
 
 interface ItemSidebarProps {
@@ -13,13 +14,24 @@ interface ItemSidebarProps {
 }
 
 export function ItemSidebar({ item }: ItemSidebarProps) {
-  const [isFavorite, setIsFavorite] = useState(false);
+  const { toggleFavorite, isFavorite } = useFavorite();
+  const { authenticatedUser } = useAuthStore();
   const { toast } = useToast();
 
   const handleFavoriteClick = () => {
-    setIsFavorite(!isFavorite);
-    toast({
-      title: isFavorite ? "Удалено из избранного" : "Добавлено в избранное",
+    if (!authenticatedUser) {
+      toast({
+        variant: "destructive",
+        title: "Требуется авторизация",
+        description:
+          "Пожалуйста, войдите в систему, чтобы добавить товар в избранное",
+      });
+      return;
+    }
+
+    toggleFavorite.mutate({
+      itemId: item.id,
+      action: isFavorite ? "remove" : "add",
     });
   };
 
@@ -33,7 +45,7 @@ export function ItemSidebar({ item }: ItemSidebarProps) {
       <Card>
         <div className="space-y-6 p-6">
           <div>
-            <h1 className="text-2xl font-bold">{item.title}</h1>
+            <h1 className="text-2xl font-bold text-foreground">{item.title}</h1>
             <p className="mt-2 text-3xl font-bold text-primary">
               {formatPrice(item.price)}
             </p>

@@ -65,11 +65,6 @@ const items = [
     url: "/favorites",
     icon: Heart,
   },
-  {
-    title: "Настройки",
-    url: "/settings",
-    icon: Settings,
-  },
 ];
 
 export function AppSidebar() {

@@ -8,6 +8,9 @@ import { formatPrice } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useFavorite } from "@/hooks/use-favorite";
+import { useAuthStore } from "@/store/authStore";
+import { useToast } from "@/shared/providers/toast-provider";
 
 interface ProductCardProps {
   item: Item;
@@ -22,6 +25,30 @@ const ItemCard: React.FC<ProductCardProps> = ({
     day: "numeric",
     month: "long",
   });
+  const { toggleFavorite, isFavorite } = useFavorite();
+  const { authenticatedUser } = useAuthStore();
+  const { toast } = useToast();
+
+  const handleFavoriteClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!authenticatedUser) {
+      toast({
+        variant: "destructive",
+        title: "Требуется авторизация",
+        description:
+          "Пожалуйста, войдите в систему, чтобы добавить товар в избранное",
+      });
+      return;
+    }
+
+    try {
+      await toggleFavorite(id);
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+    }
+  };
 
   return (
     <Card className="group overflow-hidden rounded-lg transition-all duration-200 hover:shadow-lg">
@@ -47,10 +74,17 @@ const ItemCard: React.FC<ProductCardProps> = ({
             />
           </div>
           <button
-            className="absolute right-2 top-2 rounded-full bg-white/80 p-1.5 backdrop-blur-sm transition-all hover:bg-white"
-            onClick={() => console.log("Добавить в избранное", id)}
+            className={cn(
+              "absolute right-2 top-2 rounded-full p-1.5 backdrop-blur-sm transition-all",
+              isFavorite(id)
+                ? "bg-primary/20 text-primary hover:bg-primary/30"
+                : "bg-white/80 text-muted-foreground hover:bg-white"
+            )}
+            onClick={handleFavoriteClick}
           >
-            <Heart className="h-4 w-4 text-gray-600" />
+            <Heart
+              className={cn("h-4 w-4", isFavorite(id) && "fill-current")}
+            />
           </button>
         </div>
 

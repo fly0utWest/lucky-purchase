@@ -73,8 +73,10 @@ export default function ProfilePage() {
             </AvatarFallback>
           </Avatar>
           <div>
-            <h1 className="text-2xl font-bold">{authenticatedUser.name}</h1>
-            <p className="text-gray-600">
+            <h1 className="text-2xl font-bold text-foreground">
+              {authenticatedUser.name}
+            </h1>
+            <p className="text-muted-foreground">
               На площадке с{" "}
               {new Date(authenticatedUser.createdAt).getFullYear()}
             </p>
@@ -94,7 +96,7 @@ export default function ProfilePage() {
 
       {/* Вкладки */}
       <Tabs defaultValue="favorites" className="space-y-4">
-        <TabsList>
+        <TabsList className="bg-background">
           <TabsTrigger value="favorites" className="flex items-center gap-2">
             <Heart className="h-4 w-4" />
             Избранное
@@ -108,13 +110,13 @@ export default function ProfilePage() {
         <TabsContent value="favorites">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {isFavoritesLoading ? (
-              <div>Загрузка...</div>
+              <div className="text-muted-foreground">Загрузка...</div>
             ) : favoriteItems?.length ? (
               favoriteItems.map((item) => (
                 <ItemCard key={item.id} item={item} />
               ))
             ) : (
-              <div>Нет избранных товаров</div>
+              <div className="text-muted-foreground">Нет избранных товаров</div>
             )}
           </div>
         </TabsContent>
@@ -122,11 +124,13 @@ export default function ProfilePage() {
         <TabsContent value="viewed">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {isViewedLoading ? (
-              <div>Загрузка...</div>
+              <div className="text-muted-foreground">Загрузка...</div>
             ) : viewedItems?.length ? (
               viewedItems.map((item) => <ItemCard key={item.id} item={item} />)
             ) : (
-              <div>Нет просмотренных товаров</div>
+              <div className="text-muted-foreground">
+                Нет просмотренных товаров
+              </div>
             )}
           </div>
         </TabsContent>
