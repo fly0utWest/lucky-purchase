@@ -8,6 +8,7 @@ import { useFavorite } from "@/hooks/use-favorite";
 import { useAuthStore } from "@/store/authStore";
 import { useToast } from "@/shared/providers/toast-provider";
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 interface ItemSidebarProps {
   item: Item;
@@ -18,7 +19,7 @@ export function ItemSidebar({ item }: ItemSidebarProps) {
   const { authenticatedUser } = useAuthStore();
   const { toast } = useToast();
 
-  const handleFavoriteClick = () => {
+  const handleFavoriteClick = async () => {
     if (!authenticatedUser) {
       toast({
         variant: "destructive",
@@ -29,10 +30,11 @@ export function ItemSidebar({ item }: ItemSidebarProps) {
       return;
     }
 
-    toggleFavorite.mutate({
-      itemId: item.id,
-      action: isFavorite ? "remove" : "add",
-    });
+    try {
+      await toggleFavorite(item.id);
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+    }
   };
 
   const handleContactSeller = () => {
@@ -58,14 +60,17 @@ export function ItemSidebar({ item }: ItemSidebarProps) {
             </Button>
             <div className="grid grid-cols-2 gap-3">
               <Button
-                variant={isFavorite ? "default" : "outline"}
+                variant={isFavorite(item.id) ? "default" : "outline"}
                 size="lg"
                 onClick={handleFavoriteClick}
               >
                 <Heart
-                  className={`mr-2 h-5 w-5 ${isFavorite ? "fill-current" : ""}`}
+                  className={cn(
+                    "mr-2 h-5 w-5",
+                    isFavorite(item.id) && "fill-current"
+                  )}
                 />
-                {isFavorite ? "В избранном" : "В избранное"}
+                {isFavorite(item.id) ? "В избранном" : "В избранное"}
               </Button>
               <ClipboardCopyButton />
             </div>
