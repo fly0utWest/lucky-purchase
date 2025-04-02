@@ -79,7 +79,6 @@ export function useFavorite() {
     }, 300),
     [authenticatedUser, mutate, toast]
   );
-
   return {
     toggleFavorite,
     isFavorite,
