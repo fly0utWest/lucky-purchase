@@ -28,19 +28,39 @@ model Item {
   createdAt   DateTime @default(now())
   
   userId      String
-  user        User     @relation(fields: [userId], references: [id])
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   favoritedBy Favorite[]
+  categories  ItemCategory[]
 }
 
 model Favorite {
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
-  item      Item     @relation(fields: [itemId], references: [id])
+  item      Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
   itemId    String
   createdAt DateTime @default(now())
-
-  @@id([userId, itemId])
   
+  @@id([userId, itemId])
   @@index([userId])
   @@index([itemId])
+}
+
+model Category {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String
+  createdAt   DateTime @default(now())
+  
+  items       ItemCategory[]
+}
+
+model ItemCategory {
+  item       Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  itemId     String
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId String
+  
+  @@id([itemId, categoryId])
+  @@index([itemId])
+  @@index([categoryId])
 }

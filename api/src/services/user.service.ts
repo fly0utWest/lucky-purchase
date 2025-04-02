@@ -46,3 +46,6 @@ export async function getAuthenticatedUserById(userId: string) {
   };
 }
 
+export async function updateUserById(userId: string) {
+  
+}
