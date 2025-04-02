@@ -84,9 +84,5 @@ export async function getItemById(id: string) {
     },
   });
 
-  if (!item) {
-    throw new Error("Товар не найден");
-  }
-
   return item;
 }

@@ -21,7 +21,7 @@ export const toggleFavoriteHandler = asyncHandler(
     }
 
     console.log(
-      `[УСПЕХ]: Пользователь с id ${userId} ${action === "add" ? "добавил" : "удалил"} товар с id ${itemId} ${action === "add" ? "в" : "из"} избранное${action === "add" ? "" : "го"}`
+      `[УСПЕХ] Пользователь с id ${userId} ${action === "add" ? "добавил" : "удалил"} товар с id ${itemId} ${action === "add" ? "в" : "из"} избранное${action === "add" ? "" : "го"}`
     );
     res.status(action === "add" ? 201 : 200).json({ ...resItem, action });
   }
@@ -34,7 +34,7 @@ export const getFavoritesListHandler = asyncHandler(
     const userFavoritesList = await getUserFavorites(userId);
 
     console.log(
-      `[УСПЕХ]: Список избранных объявлений пользователя ${userId} был запрошен.`
+      `[УСПЕХ] Список избранных объявлений пользователя ${userId} был запрошен.`
     );
 
     res.status(200).json({ userFavoritesList });

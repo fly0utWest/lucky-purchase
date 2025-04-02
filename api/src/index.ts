@@ -36,5 +36,5 @@ app.use(notFoundHandler);
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.log(`[ИНФО]: Сервер крутится на ${PORT} порту`);
+  console.log(`[ИНФО] Сервер крутится на ${PORT} порту`);
 });

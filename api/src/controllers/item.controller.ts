@@ -16,7 +16,7 @@ export const uploadImageHandler = asyncHandler(
     }
 
     console.log(
-      `[УСПЕХ]: Изображение загружено пользователем с id ${res.locals.userId}`
+      `[УСПЕХ] Изображение загружено пользователем с id ${res.locals.userId}`
     );
     res.status(200).json({ filename: req.file.filename });
   }
@@ -24,7 +24,7 @@ export const uploadImageHandler = asyncHandler(
 
 export const registerItemHandler = asyncHandler(
   async (req: Request, res: Response) => {
-    const {...validatedData}: CreateItemDTO = res.locals.validatedData;
+    const { ...validatedData }: CreateItemDTO = res.locals.validatedData;
 
     const newItem = await createItem({
       ...validatedData,
@@ -32,7 +32,7 @@ export const registerItemHandler = asyncHandler(
     });
 
     console.log(
-      `[УСПЕХ]: Объявление добавлено пользователем с id ${res.locals.userId}`
+      `[УСПЕХ] Объявление добавлено пользователем с id ${res.locals.userId}`
     );
     res.status(201).json({ ...newItem });
   }
@@ -47,7 +47,7 @@ export const getItemsHandler = asyncHandler(
     }: GetItemsDTO = res.locals.validatedData;
     const items = await getItems({ limit, skip, sort });
 
-    console.log(`[УСПЕХ]: было запрошено ${items.length} объявлений`);
+    console.log(`[УСПЕХ] было запрошено ${items.length} объявлений`);
     res.status(200).json({ items, count: items.length });
   }
 );
@@ -57,7 +57,7 @@ export const getItemByIdHandler = asyncHandler(
     const { id } = req.params;
     const item = await getItemById(id);
 
-    console.log(`[УСПЕХ]: запрошен товар с id ${id}`);
+    console.log(`[УСПЕХ] запрошен товар с id ${id}`);
     res.status(200).json(item);
   }
 );

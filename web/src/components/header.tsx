@@ -18,8 +18,6 @@ const getPageTitle = (pathname: string): string => {
       return "Каталог";
     case "/favorites":
       return "Избранное";
-    case "/cart":
-      return "Корзина";
     case "/profile":
       return "Личный кабинет";
     case "/settings":

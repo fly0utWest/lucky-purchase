@@ -69,21 +69,6 @@ export default function SettingsPage() {
             <User2 className="h-4 w-4" />
             Профиль
           </TabsTrigger>
-          <TabsTrigger
-            value="notifications"
-            className="flex items-center gap-2"
-          >
-            <Bell className="h-4 w-4" />
-            Уведомления
-          </TabsTrigger>
-          <TabsTrigger value="security" className="flex items-center gap-2">
-            <Shield className="h-4 w-4" />
-            Безопасность
-          </TabsTrigger>
-          <TabsTrigger value="appearance" className="flex items-center gap-2">
-            <Palette className="h-4 w-4" />
-            Внешний вид
-          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="profile">
@@ -140,82 +125,6 @@ export default function SettingsPage() {
                 </Button>
               </div>
             </form>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="notifications">
-          <Card>
-            <div className="p-6">
-              <h3 className="text-lg font-medium text-foreground">
-                Настройки уведомлений
-              </h3>
-              <div className="mt-4 space-y-4">
-                <div className="flex items-center gap-4">
-                  <Mail className="h-5 w-5 text-muted-foreground" />
-                  <div className="flex-1">
-                    <p className="font-medium text-foreground">
-                      Email уведомления
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      Получать уведомления на почту о новых сообщениях и
-                      обновлениях
-                    </p>
-                  </div>
-                  <Button variant="outline">Настроить</Button>
-                </div>
-              </div>
-            </div>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="security">
-          <Card>
-            <div className="p-6">
-              <h3 className="text-lg font-medium text-foreground">
-                Безопасность аккаунта
-              </h3>
-              <div className="mt-4 space-y-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="current-password" className="text-foreground">
-                    Текущий пароль
-                  </Label>
-                  <Input
-                    id="current-password"
-                    type="password"
-                    placeholder="••••••••"
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="new-password" className="text-foreground">
-                    Новый пароль
-                  </Label>
-                  <Input
-                    id="new-password"
-                    type="password"
-                    placeholder="••••••••"
-                  />
-                </div>
-                <div className="flex justify-end">
-                  <Button>Изменить пароль</Button>
-                </div>
-              </div>
-            </div>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="appearance">
-          <Card>
-            <div className="p-6">
-              <h3 className="text-lg font-medium text-foreground">
-                Настройки интерфейса
-              </h3>
-              <div className="mt-4">
-                <p className="text-sm text-muted-foreground">
-                  Настройки внешнего вида будут добавлены в следующих
-                  обновлениях
-                </p>
-              </div>
-            </div>
           </Card>
         </TabsContent>
       </Tabs>
