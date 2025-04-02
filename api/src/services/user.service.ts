@@ -45,3 +45,7 @@ export async function getAuthenticatedUserById(userId: string) {
     favorites: user.favorites.map((fav) => fav.itemId),
   };
 }
+
+export async function updateUserById(userId: string) {
+  
+}

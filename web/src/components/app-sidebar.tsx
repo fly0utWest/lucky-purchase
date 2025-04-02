@@ -56,11 +56,6 @@ const items = [
     icon: Search,
   },
   {
-    title: "Корзина",
-    url: "/cart",
-    icon: ShoppingBasketIcon,
-  },
-  {
     title: "Избранное",
     url: "/favorites",
     icon: Heart,

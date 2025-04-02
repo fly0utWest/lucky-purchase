@@ -1,194 +1,56 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
-
-// Массивы с возможными значениями
-const adjectives = [
-  "Магический",
-  "Древний",
-  "Таинственный",
-  "Священный",
-  "Проклятый",
-  "Легендарный",
-  "Мистический",
-  "Божественный",
-  "Драконий",
-  "Эльфийский",
-  "Гномий",
-  "Демонический",
-  "Ангельский",
-  "Королевский",
-  "Шаманский",
-];
-
-const items = [
-  "Меч",
-  "Посох",
-  "Кольцо",
-  "Амулет",
-  "Броня",
-  "Шлем",
-  "Щит",
-  "Перчатки",
-  "Ботинки",
-  "Плащ",
-  "Свиток",
-  "Зелье",
-  "Кристалл",
-  "Книга",
-  "Жезл",
-];
-
-const materials = [
-  "из адамантия",
-  "из мифрила",
-  "из обсидиана",
-  "из рубина",
-  "из сапфира",
-  "из драконьей кости",
-  "из лунного камня",
-  "из звездного металла",
-  "из эльфийского серебра",
-  "из темной стали",
-];
-
-const effects = [
-  "силы",
-  "ловкости",
-  "мудрости",
-  "защиты",
-  "скорости",
-  "регенерации",
-  "невидимости",
-  "телепортации",
-  "огня",
-  "льда",
-];
-
-const images = [
-  "photo_1_2025-03-25_06-57-33.jpg",
-  "photo_2_2025-03-25_06-57-33.jpg",
-  "photo_3_2025-03-25_06-57-33.jpg",
-  "photo_4_2025-03-25_06-57-33.jpg",
-  "photo_5_2025-03-25_06-57-33.jpg",
-  "photo_6_2025-03-25_06-57-33.jpg",
-  "photo_7_2025-03-25_06-57-33.jpg",
-  "photo_8_2025-03-25_06-57-33.jpg",
-  "photo_9_2025-03-25_06-57-33.jpg",
-  "photo_10_2025-03-25_06-57-33.jpg",
-  "photo_11_2025-03-25_06-57-33.jpg",
-  "photo_12_2025-03-25_06-57-33.jpg",
-];
-
-// Функции для генерации случайных данных
-function getRandomElement(arr: string[]): string {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
-
-function generateItemTitle(): string {
-  return `${getRandomElement(adjectives)} ${getRandomElement(items)} ${getRandomElement(materials)}`;
-}
-
-function generateItemDescription(): string {
-  return `Артефакт ${getRandomElement(effects)}, дарующий своему владельцу невероятную мощь. ${getRandomElement(adjectives).toLowerCase()} предмет, созданный ${getRandomElement(["древними магами", "эльфийскими мастерами", "гномьими кузнецами", "драконьими лордами", "небесными архитекторами"])}`;
-}
-
-function generateRandomPrice(): number {
-  return Math.floor(Math.random() * (10000 - 100 + 1)) + 100;
-}
-
-function generateRandomName(): string {
-  const firstNames = [
-    "Александр",
-    "Михаил",
-    "Дмитрий",
-    "Артем",
-    "Максим",
-    "Даниил",
-    "Иван",
-    "Андрей",
-    "Кирилл",
-    "Никита",
-  ];
-  const lastNames = [
-    "Иванов",
-    "Смирнов",
-    "Кузнецов",
-    "Попов",
-    "Васильев",
-    "Петров",
-    "Соколов",
-    "Михайлов",
-    "Новиков",
-    "Федоров",
-  ];
-  return `${getRandomElement(firstNames)} ${getRandomElement(lastNames)}`;
-}
-
-function generateRandomLogin(index: number): string {
-  const prefixes = [
-    "user",
-    "gamer",
-    "hero",
-    "wizard",
-    "warrior",
-    "master",
-    "player",
-    "knight",
-    "mage",
-    "hunter",
-  ];
-  return `${getRandomElement(prefixes)}${index}`;
-}
+// prisma/seed.ts
+import { prisma } from "../src/db/config";
 
 async function main() {
-  console.log("Начинаем заполнение базы данных...");
+  const categories = [
+    {
+      name: "Электроника",
+      description: "Телефоны, планшеты и гаджеты",
+    },
+    {
+      name: "Транспорт",
+      description: "Автомобили и запчасти",
+    },
+    {
+      name: "Для дома",
+      description: "Мебель и интерьер",
+    },
+    {
+      name: "Одежда",
+      description: "Мужская и женская одежда",
+    },
+    {
+      name: "Компьютеры",
+      description: "Ноутбуки и комплектующие",
+    },
+    {
+      name: "Детские товары",
+      description: "Игрушки и детская одежда",
+    },
+    {
+      name: "Спорт",
+      description: "Спортивные товары",
+    },
+    {
+      name: "Хобби",
+      description: "Книги, музыка и развлечения",
+    },
+  ];
 
-  // Создаем 100 пользователей
-  const users = [];
-  for (let i = 0; i < 100; i++) {
-    const user = await prisma.user.create({
-      data: {
-        login: generateRandomLogin(i),
-        name: generateRandomName(),
-        password: "123456", // В реальном приложении пароль должен быть захэширован
-      },
+  for (const category of categories) {
+    await prisma.category.upsert({
+      where: { name: category.name },
+      update: {},
+      create: category,
     });
-    users.push(user);
-    if (i % 10 === 0) console.log(`Создано ${i + 1} пользователей`);
   }
 
-  // Создаем 100 товаров
-  for (let i = 0; i < 100; i++) {
-    const randomUser = users[Math.floor(Math.random() * users.length)];
-    // Выбираем случайное количество изображений (от 1 до 3) для каждого товара
-    const numImages = Math.floor(Math.random() * 3) + 1;
-    const selectedImages: string[] = [];
-    for (let j = 0; j < numImages; j++) {
-      const randomImage = images[Math.floor(Math.random() * images.length)];
-      if (!selectedImages.includes(randomImage)) {
-        selectedImages.push(randomImage);
-      }
-    }
-
-    await prisma.item.create({
-      data: {
-        title: generateItemTitle(),
-        description: generateItemDescription(),
-        price: generateRandomPrice(),
-        images: selectedImages,
-        userId: randomUser.id,
-      },
-    });
-    if (i % 10 === 0) console.log(`Создано ${i + 1} товаров`);
-  }
-
-  console.log("База данных успешно заполнена!");
+  console.log("Categories seeded successfully");
 }
 
 main()
   .catch((e) => {
-    console.error("Ошибка при заполнении базы данных:", e);
+    console.error(e);
     process.exit(1);
   })
   .finally(async () => {

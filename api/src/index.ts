@@ -9,6 +9,7 @@ import { notFoundHandler } from "./middleware/notFound.middleware";
 import itemRouter from "./routes/item.routes";
 import fs from "fs";
 import path from "path";
+import searchRoutes from "./routes/search.routes";
 
 const PORT = process.env.PORT || 7777;
 
@@ -27,14 +28,18 @@ app.use("/static", express.static(path.join(process.cwd(), "static")));
 app.get("/", (req, res) => {
   res.json({ message: 'Я API магазина "Удачная покупка", привет ;)!' });
 });
+app.get("/favicon.ico", (req, res) => {
+  res.status(204).end();
+});
 app.use("/user", userRoutes);
 app.use("/item", itemRouter);
 app.use("/auth", authRoutes);
 app.use("/favorite", favoriteRoutes);
+app.use("/search", searchRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.log(`[ИНФО]: Сервер крутится на ${PORT} порту`);
+  console.log(`[ИНФО] Сервер крутится на ${PORT} порту`);
 });

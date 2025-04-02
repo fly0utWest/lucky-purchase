@@ -30,6 +30,21 @@ export const AuthenticatedUserSchema = z.object({
 
 export type AuthenticatedUser = z.infer<typeof AuthenticatedUserSchema>;
 
+const CategorySchema = z.object({
+  id: z.string().uuid(),
+  name: z.string().min(1),
+  description: z.string(),
+  createdAt: z.string().datetime(),
+});
+
+const CategoryResponseSchema = z.object({
+  categories: z.array(CategorySchema),
+  count: z.number().int().nonnegative(),
+});
+
+export type Category = z.infer<typeof CategorySchema>;
+export type CategoryResponse = z.infer<typeof CategoryResponseSchema>;
+
 export const ItemSchema = z.object({
   id: z.string().uuid("Неверный формат UUID"),
   title: z.string().min(1, "Название обязательно"),
@@ -48,6 +63,20 @@ export const ItemSchema = z.object({
   createdAt: z.string().datetime("Неверный формат даты"),
   userId: z.string().uuid("Неверный формат UUID"),
   user: PublicUserSchema,
+  category: CategorySchema,
 });
 
 export type Item = z.infer<typeof ItemSchema>;
+
+export const itemFormSchema = z.object({
+  title: z.string().min(3, "Название должно быть не менее 3 символов"),
+  description: z.string().min(10, "Описание должно быть не менее 10 символов"),
+  price: z.coerce.number().positive("Цена должна быть положительным числом"),
+  categoryId: z
+    .string()
+    .uuid("Выберите категорию")
+    .optional()
+    .or(z.literal("")),
+});
+
+export type ItemFormValues = z.infer<typeof itemFormSchema>;

@@ -48,11 +48,12 @@ export async function uploadImage(file: Express.Multer.File) {
 }
 
 export async function createItem(data: CreateItemDTO & { userId: string }) {
-  const { userId, ...itemData } = data;
+  const { userId, categoryId, ...itemData } = data;
 
   return prisma.item.create({
     data: {
       ...itemData,
+      category: { connect: { id: categoryId } },
       user: { connect: { id: userId } },
     },
   });
@@ -81,12 +82,11 @@ export async function getItemById(id: string) {
           createdAt: true,
         },
       },
+      category: {
+        select: { id: true, name: true },
+      },
     },
   });
-
-  if (!item) {
-    throw new Error("Товар не найден");
-  }
 
   return item;
 }

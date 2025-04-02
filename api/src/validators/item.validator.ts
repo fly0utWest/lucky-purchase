@@ -2,11 +2,12 @@ import { Item } from "@prisma/client";
 import { z } from "zod";
 
 export const CreateItemSchema: z.ZodType<
-  Pick<Item, "title" | "description" | "images" | "price">
+  Pick<Item, "title" | "description" | "images" | "price" | "categoryId">
 > = z.object({
   title: z.string(),
   description: z.string(),
   price: z.number(),
+  categoryId: z.string().uuid("Формат id неправилен"),
   images: z
     .array(z.string())
     .nonempty({ message: "Массив с фото не должен быть пуст" })
