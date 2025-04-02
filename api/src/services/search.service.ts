@@ -1,5 +1,47 @@
 import { prisma } from "../db/config";
 
 export async function getCategories() {
-return prisma.category.findMany();
+  return prisma.category.findMany();
+}
+
+export async function searchItem(query: string) {
+  query.trim();
+  const includedCategoryFields = { select: { id: true, name: true } };
+
+  if (query === "") {
+    return prisma.item.findMany({
+      take: 10,
+      orderBy: { createdAt: "desc" },
+      include: { category: includedCategoryFields },
+    });
+  }
+
+  return prisma.item.findMany({
+    where: {
+      OR: [
+        {
+          title: {
+            contains: query,
+            mode: "insensitive",
+          },
+        },
+        {
+          description: {
+            contains: query,
+            mode: "insensitive",
+          },
+        },
+        {
+          category: {
+            name: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+        },
+      ],
+    },
+    include: { category: includedCategoryFields },
+    orderBy: { createdAt: "desc" },
+  });
 }
