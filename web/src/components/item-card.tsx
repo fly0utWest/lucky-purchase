@@ -9,8 +9,6 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useFavorite } from "@/hooks/use-favorite";
-import { useAuthStore } from "@/store/authStore";
-import { useToast } from "@/shared/providers/toast-provider";
 
 interface ProductCardProps {
   item: Item;
@@ -26,28 +24,11 @@ const ItemCard: React.FC<ProductCardProps> = ({
     month: "long",
   });
   const { toggleFavorite, isFavorite } = useFavorite();
-  const { authenticatedUser } = useAuthStore();
-  const { toast } = useToast();
 
-  const handleFavoriteClick = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (!authenticatedUser) {
-      toast({
-        variant: "destructive",
-        title: "Требуется авторизация",
-        description:
-          "Пожалуйста, войдите в систему, чтобы добавить товар в избранное",
-      });
-      return;
-    }
-
-    try {
-      await toggleFavorite(id);
-    } catch (error) {
-      console.error("Error toggling favorite:", error);
-    }
+  const handleFavoriteClick = (event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    toggleFavorite(id);
   };
 
   return (
