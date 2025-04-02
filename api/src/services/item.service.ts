@@ -82,6 +82,9 @@ export async function getItemById(id: string) {
           createdAt: true,
         },
       },
+      category: {
+        select: { id: true, name: true },
+      },
     },
   });
 

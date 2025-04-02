@@ -19,7 +19,9 @@ export function ItemDetails({ item }: ItemDetailsProps) {
               {item.description}
             </p>
           ) : (
-            <p className="mt-4 text-muted-foreground italic">Описание отсутствует</p>
+            <p className="mt-4 text-muted-foreground italic">
+              Описание отсутствует
+            </p>
           )}
         </div>
 
@@ -34,8 +36,16 @@ export function ItemDetails({ item }: ItemDetailsProps) {
               <dd className="text-muted-foreground">{item.id}</dd>
             </div>
             <div>
-              <dt className="text-sm text-primary-foreground">Дата публикации</dt>
-              <dd className="text-muted-foreground">{formatDate(item.createdAt)}</dd>
+              <dt className="text-sm text-primary-foreground">
+                Дата публикации
+              </dt>
+              <dd className="text-muted-foreground">
+                {formatDate(item.createdAt)}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-sm text-primary-foreground">Категория</dt>
+              <dd className="text-muted-foreground">{item.category.name}</dd>
             </div>
 
             {/* Add more specifications as needed */}
