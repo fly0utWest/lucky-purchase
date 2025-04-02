@@ -2,6 +2,8 @@ import { useMutation } from "@tanstack/react-query";
 import { useToast } from "@/shared/providers/toast-provider";
 import { useAuthStore } from "@/store/authStore";
 import { fetchWrapper } from "@/lib/utils";
+import { useCallback } from "react";
+import { debounce } from "@/lib/utils";
 
 interface ToggleFavoriteResponse {
   userId: string;
@@ -20,12 +22,11 @@ export function useFavorite() {
     isFavorite,
   } = useAuthStore();
 
-  const { mutate: toggleFavorite } = useMutation({
+  const { mutate } = useMutation({
     mutationFn: async (itemId: string) => {
       if (!authenticatedUser || !token) {
         throw new Error("User not authenticated");
       }
-
       const action = isFavorite(itemId) ? "remove" : "add";
       return fetchWrapper<ToggleFavoriteResponse>(
         `/favorite/toggle?itemId=${itemId}&action=${action}`,
@@ -43,7 +44,6 @@ export function useFavorite() {
       } else {
         removeFromFavorites(itemId);
       }
-
       toast({
         title: "Успешно",
         description:
@@ -63,6 +63,22 @@ export function useFavorite() {
     },
   });
 
+  const toggleFavorite = useCallback(
+    debounce((itemId: string) => {
+      if (!authenticatedUser) {
+        toast({
+          variant: "destructive",
+          title: "Требуется авторизация",
+          description:
+            "Пожалуйста, войдите в систему, чтобы добавить товар в избранное",
+        });
+        return;
+      }
+
+      mutate(itemId);
+    }, 300),
+    [authenticatedUser, mutate, toast]
+  );
   return {
     toggleFavorite,
     isFavorite,

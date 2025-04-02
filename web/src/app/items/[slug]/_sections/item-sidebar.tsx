@@ -15,28 +15,13 @@ interface ItemSidebarProps {
 }
 
 export function ItemSidebar({ item }: ItemSidebarProps) {
-
   const { toggleFavorite, isFavorite } = useFavorite();
   const { authenticatedUser } = useAuthStore();
   const { toast } = useToast();
 
-  const handleFavoriteClick = async () => {
-    if (!authenticatedUser) {
-      toast({
-        variant: "destructive",
-        title: "Требуется авторизация",
-        description:
-          "Пожалуйста, войдите в систему, чтобы добавить товар в избранное",
-      });
-      return;
-    }
-
-    try {
-      await toggleFavorite(item.id);
-    } catch (error) {
-      console.error("Error toggling favorite:", error);
-    }
-
+  const handleFavoriteClick = (event: React.MouseEvent) => {
+    event.preventDefault();
+    toggleFavorite(item.id);
   };
 
   const handleContactSeller = () => {
@@ -49,7 +34,6 @@ export function ItemSidebar({ item }: ItemSidebarProps) {
       <Card>
         <div className="space-y-6 p-6">
           <div>
-
             <h1 className="text-2xl font-bold text-foreground">{item.title}</h1>
 
             <p className="mt-2 text-3xl font-bold text-primary">
@@ -108,10 +92,10 @@ function SellerCard({ user }: SellerCardProps) {
           </div>
           <div>
             <h3 className="font-semibold">{user.name}</h3>
-            <p className="text-sm text-gray-500">Продавец</p>
+            <p className="text-sm text-muted-foreground">Продавец</p>
           </div>
         </div>
-        <div className="flex items-center gap-2 text-sm text-gray-500">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Calendar className="h-4 w-4" />
           <span>На площадке с {new Date(user.createdAt).getFullYear()}</span>
         </div>

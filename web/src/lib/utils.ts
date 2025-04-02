@@ -27,7 +27,10 @@ export function formatPrice(price: number): string {
     maximumFractionDigits: 0,
   }).format(price);
 }
-export async function fetchWrapper<T>(endpoint: string, requestInit?: RequestInit): Promise<T> {
+export async function fetchWrapper<T>(
+  endpoint: string,
+  requestInit?: RequestInit
+): Promise<T> {
   const url = endpoint.startsWith("/")
     ? `${env.NEXT_PUBLIC_API_BASE_URL}${endpoint}`
     : `${env.NEXT_PUBLIC_API_BASE_URL}/${endpoint}`;
@@ -39,4 +42,24 @@ export async function fetchWrapper<T>(endpoint: string, requestInit?: RequestIni
 
   const data = await response.json();
   return data;
+}
+
+export function debounce<F extends (...args: any[]) => any>(
+  fn: F,
+  delay: number
+) {
+  let timeout: ReturnType<typeof setTimeout> | null = null;
+
+  return function (...args: Parameters<F>) {
+    const later = () => {
+      timeout = null;
+      fn(...args);
+    };
+
+    if (timeout !== null) {
+      clearTimeout(timeout);
+    }
+
+    setTimeout(later, delay);
+  };
 }
