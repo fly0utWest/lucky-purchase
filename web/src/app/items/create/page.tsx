@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { env } from "@/env.mjs";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -10,83 +9,120 @@ import { Textarea } from "@/components/ui/textarea";
 import { ImagePlus, Loader2 } from "lucide-react";
 import { useToast } from "@/shared/providers/toast-provider";
 import { useAuthStore } from "@/store/authStore";
+import { fetchWrapper } from "@/lib/utils";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
+
+// Define schema using Zod
+const itemFormSchema = z.object({
+  title: z.string().min(3, "Название должно быть не менее 3 символов"),
+  description: z.string().min(10, "Описание должно быть не менее 10 символов"),
+  price: z.coerce.number().positive("Цена должна быть положительным числом"),
+  categoryId: z.string().uuid("Формат id неправилен"),
+});
+
+type ItemFormValues = z.infer<typeof itemFormSchema>;
 
 export default function CreateItemPage() {
   const router = useRouter();
   const { toast } = useToast();
   const { token } = useAuthStore();
-  const [isLoading, setIsLoading] = useState(false);
   const [images, setImages] = useState<File[]>([]);
 
-  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setIsLoading(true);
+  // Setup React Hook Form with Zod validation
+  const form = useForm<ItemFormValues>({
+    resolver: zodResolver(itemFormSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+      price: 0,
+    },
+  });
 
+  // Image upload mutation
+  const uploadImageMutation = useMutation({
+    mutationFn: async (file: File) => {
+      const imageFormData = new FormData();
+      imageFormData.append("image", file);
+
+      const data = await fetchWrapper<{ filename: string }>("/item/upload", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: imageFormData,
+      });
+
+      return data.filename;
+    },
+  });
+
+  // Create item mutation
+  const createItemMutation = useMutation({
+    mutationFn: async (data: ItemFormValues & { images: string[] }) => {
+      return fetchWrapper("/item/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(data),
+      });
+    },
+    onSuccess: (data) => {
+      router.push(`/items/${data.id}`);
+      toast({
+        title: "Успех!",
+        description: "Товар успешно создан",
+      });
+    },
+    onError: () => {
+      toast({
+        variant: "destructive",
+        title: "Ошибка!",
+        description: "Не удалось создать товар",
+      });
+    },
+  });
+
+  const isSubmitting =
+    uploadImageMutation.isPending || createItemMutation.isPending;
+
+  async function onSubmit(values: ItemFormValues) {
     if (!token) {
       toast({
         variant: "destructive",
         title: "Ошибка!",
         description: "Необходима авторизация",
       });
-      setIsLoading(false);
+      return;
+    }
+
+    if (images.length === 0) {
+      toast({
+        variant: "destructive",
+        title: "Ошибка!",
+        description: "Добавьте хотя бы одно изображение",
+      });
       return;
     }
 
     try {
-      const formData = new FormData(e.currentTarget);
+      // Upload all images first
+      const uploadPromises = images.map((image) =>
+        uploadImageMutation.mutateAsync(image)
+      );
+      const uploadedImages = await Promise.all(uploadPromises);
 
-      const uploadedImages: string[] = [];
-      for (const image of images) {
-        const imageFormData = new FormData();
-        imageFormData.append("image", image);
-
-        const uploadRes = await fetch(
-          `${env.NEXT_PUBLIC_API_BASE_URL}/item/upload`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-            body: imageFormData,
-          }
-        );
-
-        if (!uploadRes.ok) throw new Error("Ошибка загрузки изображения");
-        const { filename } = await uploadRes.json();
-        uploadedImages.push(filename);
-      }
-
-      // Создаем товар
-      const res = await fetch(`${env.NEXT_PUBLIC_API_BASE_URL}/item/create`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          title: formData.get("title"),
-          description: formData.get("description"),
-          price: Number(formData.get("price")),
-          images: uploadedImages,
-        }),
-      });
-
-      if (!res.ok) throw new Error("Ошибка создания товара");
-
-      const item = await res.json();
-      router.push(`/items/${item.id}`);
-      toast({
-        title: "Успех!",
-        description: "Товар успешно создан",
+      // Then create the item with the image filenames
+      await createItemMutation.mutateAsync({
+        ...values,
+        images: uploadedImages,
       });
     } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Ошибка!",
-        description: "Не удалось создать товар",
-      });
-    } finally {
-      setIsLoading(false);
+      // Error handling is done in the mutation callbacks
     }
   }
 
@@ -98,7 +134,7 @@ export default function CreateItemPage() {
   return (
     <main className="container mx-auto px-4 py-8">
       <Card className="mx-auto max-w-2xl">
-        <form onSubmit={onSubmit} className="space-y-6 p-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 p-6">
           <div className="space-y-2">
             <h1 className="text-2xl font-bold">Создание объявления</h1>
             <p className="text-sm text-muted-foreground">
@@ -107,42 +143,64 @@ export default function CreateItemPage() {
           </div>
 
           <div className="space-y-4">
-            <div>
-              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+            <div className="space-y-2">
+              <label
+                htmlFor="title"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
                 Название
               </label>
               <Input
-                name="title"
+                id="title"
                 placeholder="Введите название товара"
-                required
-                className="mt-2"
+                {...form.register("title")}
               />
+              {form.formState.errors.title && (
+                <p className="text-sm text-destructive">
+                  {form.formState.errors.title.message}
+                </p>
+              )}
             </div>
 
-            <div>
-              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+            <div className="space-y-2">
+              <label
+                htmlFor="description"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
                 Описание
               </label>
               <Textarea
-                name="description"
+                id="description"
                 placeholder="Опишите ваш товар"
-                required
-                className="mt-2 min-h-[150px]"
+                className="min-h-[150px]"
+                {...form.register("description")}
               />
+              {form.formState.errors.description && (
+                <p className="text-sm text-destructive">
+                  {form.formState.errors.description.message}
+                </p>
+              )}
             </div>
 
-            <div>
-              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+            <div className="space-y-2">
+              <label
+                htmlFor="price"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
                 Цена
               </label>
               <Input
-                name="price"
+                id="price"
                 type="number"
                 min="0"
                 placeholder="Укажите цену"
-                required
-                className="mt-2"
+                {...form.register("price", { valueAsNumber: true })}
               />
+              {form.formState.errors.price && (
+                <p className="text-sm text-destructive">
+                  {form.formState.errors.price.message}
+                </p>
+              )}
             </div>
 
             <div>
@@ -183,14 +241,20 @@ export default function CreateItemPage() {
                   </label>
                 )}
               </div>
+              {images.length === 0 && (
+                <p className="mt-2 text-sm text-destructive">
+                  Добавьте хотя бы одно изображение
+                </p>
+              )}
             </div>
           </div>
 
           <Button
-            disabled={isLoading || images.length === 0}
+            type="submit"
+            disabled={isSubmitting || images.length === 0}
             className="w-full"
           >
-            {isLoading ? (
+            {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Создание...
