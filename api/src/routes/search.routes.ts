@@ -13,5 +13,5 @@ router.get(
   "/",
   validate(SearchSchema, "query") as RequestHandler,
   searchItemHandler as RequestHandler
-);
+
 export default router;
