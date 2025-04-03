@@ -1,5 +1,6 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import {
@@ -8,6 +9,8 @@ import {
   DropdownMenuGroup,
 } from "@radix-ui/react-dropdown-menu";
 
+import { useSidebar } from "@/components/ui/sidebar";
+
 import {
   Search,
   Home,
@@ -15,12 +18,10 @@ import {
   Heart,
   Settings,
   User2,
-  ChevronUp,
-  Sparkles,
+  ChevronsUpDown,
   LogOut,
   BadgeCheck,
   CreditCard,
-  ChevronsUpDown,
   Bell,
 } from "lucide-react";
 
@@ -32,19 +33,21 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarFooter,
 } from "@/components/ui/sidebar";
 
-import { DropdownMenu } from "./ui/dropdown-menu";
-import { DropdownMenuContent } from "./ui/dropdown-menu";
-import { DropdownMenuItem } from "./ui/dropdown-menu";
-import { DropdownMenuTrigger } from "./ui/dropdown-menu";
-import { SidebarFooter } from "@/components/ui/sidebar";
-import { useAuthStore } from "@/store/authStore";
-import Link from "next/link";
-import { useState } from "react";
-import { Button } from "./ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
-const items = [
+import { Button } from "./ui/button";
+import { useAuthStore } from "@/store/authStore";
+
+// Navigation items
+const navItems = [
   {
     title: "Домой",
     url: "/",
@@ -62,9 +65,28 @@ const items = [
   },
 ];
 
+// Account menu items
+const accountItems = [
+  {
+    title: "Аккаунт",
+    url: "/profile/",
+    icon: BadgeCheck,
+  },
+  {
+    title: "Настройки",
+    url: "/settings",
+    icon: Settings,
+  },
+];
+
 export function AppSidebar() {
   const { logout, authenticatedUser } = useAuthStore();
   const [mounted, setMounted] = useState(false);
+  const { setOpenMobile } = useSidebar();
+
+  const handleMobileClose = () => {
+    setOpenMobile(false);
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -80,11 +102,11 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
+              {navItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton onClick={handleMobileClose} asChild>
                     <Link href={item.url}>
-                      <item.icon />
+                      <item.icon className="size-5" />
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
@@ -141,35 +163,41 @@ export function AppSidebar() {
                 <DropdownMenuSeparator />
 
                 <DropdownMenuGroup>
-                  <DropdownMenuItem>
-                    <BadgeCheck />
-                    <Link
-                      className="w-full"
-                      href={`/profile/${authenticatedUser.id}`}
+                  {accountItems.map((item) => (
+                    <DropdownMenuItem
+                      key={item.title}
+                      onClick={handleMobileClose}
                     >
-                      Аккаунт
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Settings className="h-4 w-4" />
-                    <Link className="w-full" href="/settings">
-                      Настройки
-                    </Link>
-                  </DropdownMenuItem>
+                      <item.icon className="size-5" />
+                      <Link
+                        className="w-full"
+                        href={
+                          item.url === "/profile/"
+                            ? `/profile/${authenticatedUser.id}`
+                            : item.url
+                        }
+                      >
+                        {item.title}
+                      </Link>
+                    </DropdownMenuItem>
+                  ))}
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
-                  onClick={logout}
+                  onClick={() => {
+                    handleMobileClose();
+                    logout();
+                  }}
                   className="text-destructive cursor-pointer hover:text-destructive"
                 >
-                  <LogOut />
+                  <LogOut className="size-5" />
                   Выйти из аккаунта
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>
         ) : (
-          <Button asChild>
+          <Button asChild onClick={handleMobileClose}>
             <Link href={"/auth?mode=sign-in"}>Войти</Link>
           </Button>
         )}
