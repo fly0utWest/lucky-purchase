@@ -59,11 +59,7 @@ export async function createItem(data: CreateItemDTO & { userId: string }) {
   });
 }
 
-export async function getItems({
-  limit = 10,
-  skip = 0,
-  sort = "desc",
-}: GetItemsDTO) {
+export async function getItems({ limit, skip, sort }: GetItemsDTO) {
   return prisma.item.findMany({
     take: Number(limit),
     skip: Number(skip),
