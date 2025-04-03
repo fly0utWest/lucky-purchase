@@ -2,7 +2,7 @@ import React from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Heart, ArrowRight } from "lucide-react";
 import Image from "next/image";
-import { Item } from "@/shared/models";
+import { Item, SearchItem } from "@/shared/models";
 import { env } from "@/env.mjs";
 import { formatPrice } from "@/lib/utils";
 import { cn } from "@/lib/utils";
@@ -11,7 +11,7 @@ import Link from "next/link";
 import { useFavorite } from "@/hooks/use-favorite";
 
 interface ProductCardProps {
-  item: Item;
+  item: Item | SearchItem;
   variant?: "default" | "compact";
 }
 

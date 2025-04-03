@@ -6,7 +6,7 @@ export async function getCategories() {
 
 export async function searchItem(query: string) {
   query.trim();
-  const includedCategoryFields = { select: { id: true, name: true } };
+  const includedCategoryFields = { select: { name: true } };
 
   if (query === "") {
     return prisma.item.findMany({
