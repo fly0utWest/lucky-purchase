@@ -9,7 +9,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import ItemCard from "./item-card";
-import { cn } from "@/lib/utils";
 import { useRouter, usePathname } from "next/navigation";
 import { SearchItem } from "@/shared/models";
 
@@ -26,13 +25,10 @@ export function HeaderSearchWidget() {
       minChars: 1,
     });
 
-  // Close search when route changes
   useEffect(() => {
-    // This will run when pathname changes
     setOpen(false);
   }, [pathname]);
 
-  // Focus input when search opens
   useEffect(() => {
     if (open && inputRef.current) {
       setTimeout(() => {

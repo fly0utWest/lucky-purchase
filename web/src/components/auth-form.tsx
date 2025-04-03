@@ -13,6 +13,7 @@ import { useAuthStore } from "@/store/authStore";
 import { env } from "@/env.mjs";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
+import Logo from "./logo";
 
 const RegistrationSchema = z
   .object({
@@ -158,7 +159,7 @@ export function AuthForm() {
   const modeParam = searchParams.get("mode");
   const path = usePathname();
   const router = useRouter();
-  
+
   useEffect(() => {
     if (modeParam === "sign-in" || modeParam === "sign-up") {
       setTab(modeParam);
@@ -245,8 +246,8 @@ export function AuthForm() {
 
   return (
     <Card className="w-full max-w-md mx-auto">
-      <CardHeader>
-        <CardTitle className="text-center text-2xl">Авторизация</CardTitle>
+      <CardHeader className="flex justify-center flex-col items-center gap-3">
+        <Logo />
       </CardHeader>
       <CardContent>
         {successMessage && (
