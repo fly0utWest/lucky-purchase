@@ -25,6 +25,13 @@ export function HeaderSearchWidget() {
       minChars: 1,
     });
 
+  // Close search when route changes
+  useEffect(() => {
+    // This will run when pathname changes
+    setOpen(false);
+  }, [pathname]);
+
+  // Focus input when search opens
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
