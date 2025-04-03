@@ -17,6 +17,7 @@ export function HeaderSearchWidget() {
   const [open, setOpen] = useState(false);
   const inputRef = useRef<null | HTMLInputElement>(null);
   const isMobile = useIsMobile();
+
   const router = useRouter();
   const pathname = usePathname();
   const { query, results, isLoading, handleInputChange, clearSearch } =
