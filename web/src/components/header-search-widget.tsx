@@ -9,7 +9,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import ItemCard from "./item-card";
-import { cn } from "@/lib/utils";
 import { useRouter, usePathname } from "next/navigation";
 import { SearchItem } from "@/shared/models";
 
@@ -33,6 +32,10 @@ export function HeaderSearchWidget() {
   }, [pathname]);
 
   // Focus input when search opens
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
   useEffect(() => {
     if (open && inputRef.current) {
       setTimeout(() => {
