@@ -9,6 +9,7 @@ import { Input } from "./ui/input";
 import { Search } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { ThemeToggler } from "./theme-toggler";
+import { HeaderSearchWidget } from "./header-search-widget";
 
 const getPageTitle = (pathname: string): string => {
   switch (pathname) {
@@ -46,14 +47,7 @@ const Header = () => {
         </div>
 
         <div className="flex-1 flex items-center justify-center max-w-xl gap-4">
-          <div className="w-full relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Поиск товаров..."
-              className="w-full pl-10 bg-muted"
-            />
-          </div>
+          <HeaderSearchWidget />
           <ThemeToggler />
         </div>
 

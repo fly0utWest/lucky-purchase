@@ -14,15 +14,12 @@ import { useSidebar } from "@/components/ui/sidebar";
 import {
   Search,
   Home,
-  ShoppingBasketIcon,
   Heart,
   Settings,
   User2,
   ChevronsUpDown,
   LogOut,
   BadgeCheck,
-  CreditCard,
-  Bell,
 } from "lucide-react";
 
 import {

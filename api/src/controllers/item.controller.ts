@@ -40,11 +40,7 @@ export const registerItemHandler = asyncHandler(
 
 export const getItemsHandler = asyncHandler(
   async (req: Request, res: Response) => {
-    const {
-      limit = 10,
-      skip = 0,
-      sort = "desc",
-    }: GetItemsDTO = res.locals.validatedData;
+    const { limit, skip, sort }: GetItemsDTO = res.locals.validatedData;
     const items = await getItems({ limit, skip, sort });
 
     console.log(`[УСПЕХ] было запрошено ${items.length} объявлений`);

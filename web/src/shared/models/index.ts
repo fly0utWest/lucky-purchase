@@ -80,3 +80,40 @@ export const itemFormSchema = z.object({
 });
 
 export type ItemFormValues = z.infer<typeof itemFormSchema>;
+
+export const SearchCategorySchema = z.object({
+  name: z.string().min(1, "Название категории обязательно"),
+});
+
+export const SearchItemSchema = z.object({
+  id: z.string().uuid("Неверный формат UUID"),
+  title: z.string().min(1, "Название обязательно"),
+  description: z.string().min(1, "Описание обязательно"),
+  images: z
+    .array(
+      z.string().refine((val) => /^[A-Za-z0-9_-]+\.[A-Za-z0-9]+$/.test(val), {
+        message: "Неверный формат имени файла изображения",
+      })
+    )
+    .nonempty("Необходимо добавить хотя бы одно изображение"),
+  price: z
+    .number()
+    .int()
+    .positive("Цена должна быть положительным целым числом"),
+  createdAt: z.string().datetime("Неверный формат даты"),
+  userId: z.string().uuid("Неверный формат UUID"),
+  categoryId: z.string().uuid("Неверный формат UUID"),
+  category: SearchCategorySchema,
+});
+
+export const SearchResponseSchema = z.object({
+  foundItems: z.array(SearchItemSchema),
+  count: z
+    .number()
+    .int()
+    .nonnegative("Количество должно быть неотрицательным числом"),
+});
+
+export type SearchCategory = z.infer<typeof SearchCategorySchema>;
+export type SearchItem = z.infer<typeof SearchItemSchema>;
+export type SearchResponse = z.infer<typeof SearchResponseSchema>;
