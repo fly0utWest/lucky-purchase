@@ -46,6 +46,28 @@ const CategoryResponseSchema = z.object({
 export type Category = z.infer<typeof CategorySchema>;
 export type CategoryResponse = z.infer<typeof CategoryResponseSchema>;
 
+export const ItemCreationResponseSchema = z.object({
+  id: z.string().uuid("Неверный формат UUID"),
+  title: z.string().min(1, "Название обязательно"),
+  description: z.string().min(1, "Описание обязательно"),
+  images: z
+    .array(
+      z.string().refine((val) => /^[A-Za-z0-9_-]+\.[A-Za-z0-9]+$/.test(val), {
+        message: "Неверный формат имени файла изображения",
+      })
+    )
+    .nonempty("Необходимо добавить хотя бы одно изображение"),
+  price: z
+    .number()
+    .int()
+    .positive("Цена должна быть положительным целым числом"),
+  createdAt: z.string().datetime("Неверный формат даты"),
+  userId: z.string().uuid("Неверный формат UUID"),
+  categoryId: z.string().uuid("Неверный формат UUID"),
+});
+
+export type ItemCreationResponse = z.infer<typeof ItemCreationResponseSchema>;
+
 export const ItemSchema = z.object({
   id: z.string().uuid("Неверный формат UUID"),
   title: z.string().min(1, "Название обязательно"),
@@ -63,8 +85,7 @@ export const ItemSchema = z.object({
     .positive("Цена должна быть положительным целым числом"),
   createdAt: z.string().datetime("Неверный формат даты"),
   userId: z.string().uuid("Неверный формат UUID"),
-  user: PublicUserSchema,
-  category: CategorySchema,
+  categoryId: z.string().uuid("Неверный формат UUID"),
 });
 
 export type Item = z.infer<typeof ItemSchema>;

@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
@@ -16,13 +15,14 @@ import { useForm, Controller } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import CategoriesDropdown from "@/components/categories-dropdown";
 import Image from "next/image";
-import { Item } from "@/shared/models";
+import { useItems } from "@/hooks/use-items";
 
 export default function CreateItemPage() {
   const router = useRouter();
   const { toast } = useToast();
   const { token } = useAuthStore();
   const [images, setImages] = useState<File[]>([]);
+  const { createItem, isCreating } = useItems(); // Use the hook
 
   const form = useForm<ItemFormValues>({
     resolver: zodResolver(itemFormSchema),
@@ -50,7 +50,6 @@ export default function CreateItemPage() {
     mutationFn: async (file: File) => {
       const imageFormData = new FormData();
       imageFormData.append("image", file);
-
       const data = await fetchWrapper<{ filename: string }>("/item/upload", {
         method: "POST",
         headers: {
@@ -58,42 +57,11 @@ export default function CreateItemPage() {
         },
         body: imageFormData,
       });
-
       return data.filename;
     },
   });
 
-  const createItemMutation = useMutation({
-    mutationFn: async (data: ItemFormValues & { images: string[] }) => {
-      return fetchWrapper("/item/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(data),
-      });
-    },
-    onSuccess: (data) => {
-      router.push(`/items/${(data as Item).id}`);
-      toast({
-        title: "Успех!",
-        description: "Товар успешно создан",
-      });
-    },
-    onError: (error) => {
-      const errorMessage =
-        error instanceof Error ? error.message : "Не удалось создать товар";
-      toast({
-        variant: "destructive",
-        title: "Ошибка!",
-        description: errorMessage,
-      });
-    },
-  });
-
-  const isSubmitting =
-    uploadImageMutation.isPending || createItemMutation.isPending;
+  const isSubmitting = uploadImageMutation.isPending || isCreating;
 
   async function onSubmit(values: ItemFormValues) {
     if (!token) {
@@ -126,14 +94,16 @@ export default function CreateItemPage() {
 
       const uploadedImages = await Promise.all(uploadPromises);
 
-      await createItemMutation.mutateAsync({
+      // Use the createItem function from your hook
+      const createdItem = await createItem({
         ...values,
         images: uploadedImages,
       });
+
+      router.push(`/items/${createdItem.id}`);
     } catch (error) {
       console.error("Error submitting form:", error);
-
-      if (!createItemMutation.isError && !uploadImageMutation.isError) {
+      if (!uploadImageMutation.isError) {
         toast({
           variant: "destructive",
           title: "Ошибка!",
@@ -149,7 +119,6 @@ export default function CreateItemPage() {
       const validFiles = files.filter((file) => {
         const isValidType = file.type.startsWith("image/");
         const isValidSize = file.size <= 5 * 1024 * 1024;
-
         if (!isValidType || !isValidSize) {
           toast({
             variant: "destructive",
@@ -162,7 +131,6 @@ export default function CreateItemPage() {
         }
         return true;
       });
-
       setImages((prev) => {
         const newImages = [...prev, ...validFiles];
         return newImages.slice(0, 3);
@@ -170,16 +138,17 @@ export default function CreateItemPage() {
     }
   }
 
+  // Rest of your component remains the same
   return (
     <Card className="container mx-auto">
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 p-6">
+        {/* Form content remains the same */}
         <div className="space-y-2">
           <h1 className="text-2xl font-bold">Создание объявления</h1>
           <p className="text-sm text-muted-foreground">
             Заполните форму для создания нового объявления
           </p>
         </div>
-
         <div className="space-y-4">
           <div className="space-y-2">
             <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
@@ -202,7 +171,6 @@ export default function CreateItemPage() {
               </p>
             )}
           </div>
-
           <div className="space-y-2">
             <label
               htmlFor="title"
@@ -222,7 +190,6 @@ export default function CreateItemPage() {
               </p>
             )}
           </div>
-
           <div className="space-y-2">
             <label
               htmlFor="description"
@@ -243,7 +210,6 @@ export default function CreateItemPage() {
               </p>
             )}
           </div>
-
           <div className="space-y-2">
             <label
               htmlFor="price"
@@ -265,7 +231,6 @@ export default function CreateItemPage() {
               </p>
             )}
           </div>
-
           <div>
             <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
               Изображения (макс. 3)
@@ -319,7 +284,6 @@ export default function CreateItemPage() {
             )}
           </div>
         </div>
-
         <Button
           type="submit"
           disabled={

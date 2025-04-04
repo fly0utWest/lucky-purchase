@@ -62,9 +62,9 @@ export const getItemByIdHandler = asyncHandler(
 export const removeItemByIdHandler = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    const item = await removeItemById(id);
+    await removeItemById(id);
 
     console.log(`[УСПЕХ] удалено объявление с id ${id}`);
-    return res.status(200).json(item);
+    return res.status(204).end();
   }
 );

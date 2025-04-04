@@ -4,6 +4,8 @@ import multer from "multer";
 import path from "path";
 import crypto from "crypto";
 import { Request } from "express";
+import { unlink } from "fs/promises";
+import { AppError } from "../utils/errors";
 
 const storage = multer.diskStorage({
   destination: (
@@ -88,11 +90,21 @@ export async function getItemById(id: string) {
 }
 
 export async function removeItemById(id: string) {
-  const item = await prisma.item.delete({
+  const deletedItem = await prisma.item.delete({
     where: {
       id,
     },
   });
 
-  return item;
+  const pics = deletedItem.images;
+
+  const deletePromises = pics.map((pic) =>
+    unlink(`${process.cwd()}/static/items/${pic}`).catch((err) => {
+      throw new AppError(`Не удалось удалить файл ${pic}: ${err.message}`, 500);
+    })
+  );
+
+  await Promise.all(deletePromises);
+
+  return null;
 }

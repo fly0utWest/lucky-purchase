@@ -35,7 +35,7 @@ router.get(
 
 router.get("/:id", getItemByIdHandler as RequestHandler);
 
-router.post(
+router.delete(
   "/delete/:id",
   authenticateJWT as RequestHandler,
   removeItemByIdHandler as RequestHandler
