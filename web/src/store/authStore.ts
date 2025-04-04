@@ -11,6 +11,9 @@ interface AuthState {
   addToFavorites: (itemId: string) => void;
   removeFromFavorites: (itemId: string) => void;
   isFavorite: (itemId: string) => boolean;
+  addToItems: (itemId: string) => void;
+  removeFromItems: (itemId: string) => void;
+  hasItem: (itemId: string) => boolean;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -58,6 +61,39 @@ export const useAuthStore = create<AuthState>()(
         const state = get();
         return state.authenticatedUser?.favorites?.includes(itemId) ?? false;
       },
+
+      addToItems: (itemId) =>
+        set((state) => ({
+          authenticatedUser: state.authenticatedUser
+            ? {
+                ...state.authenticatedUser,
+                items: [...(state.authenticatedUser.items || []), itemId],
+              }
+            : null,
+        })),
+      removeFromItems: (itemId) =>
+        set((state) => {
+          if (!state.authenticatedUser) return { authenticatedUser: null };
+
+          const updatedUser = {
+            ...state.authenticatedUser,
+            items:
+              state.authenticatedUser.items?.filter((id) => id !== itemId) ||
+              [],
+          };
+
+          if (updatedUser.favorites?.includes(itemId)) {
+            updatedUser.favorites = updatedUser.favorites.filter(
+              (id) => id !== itemId
+            );
+          }
+
+          return { authenticatedUser: updatedUser };
+        }),
+      hasItem: (itemId) => {
+        const state = get();
+        return state.authenticatedUser?.items?.includes(itemId) ?? false;
+      },
     }),
     {
       name: "auth-storage",
@@ -73,7 +109,10 @@ export const useAuthStore = create<AuthState>()(
               return item;
             },
             setItem: (name, value) => {
-              console.log("[AuthStore] Присваиваем в localstorage:", { name, value });
+              console.log("[AuthStore] Присваиваем в localstorage:", {
+                name,
+                value,
+              });
               localStorage.setItem(name, value);
             },
             removeItem: (name) => {
