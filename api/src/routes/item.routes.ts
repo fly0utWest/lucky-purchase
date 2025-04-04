@@ -6,6 +6,7 @@ import {
   registerItemHandler,
   getItemByIdHandler,
   uploadImageHandler,
+  removeItemByIdHandler,
 } from "../controllers/item.controller";
 import { authenticateJWT } from "../middleware/auth.middleware";
 import { upload } from "../services/item.service";
@@ -33,5 +34,11 @@ router.get(
 );
 
 router.get("/:id", getItemByIdHandler as RequestHandler);
+
+router.post(
+  "/delete/:id",
+  authenticateJWT as RequestHandler,
+  removeItemByIdHandler as RequestHandler
+);
 
 export default router;

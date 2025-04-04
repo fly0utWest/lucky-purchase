@@ -86,3 +86,13 @@ export async function getItemById(id: string) {
 
   return item;
 }
+
+export async function removeItemById(id: string) {
+  const item = await prisma.item.delete({
+    where: {
+      id,
+    },
+  });
+
+  return item;
+}

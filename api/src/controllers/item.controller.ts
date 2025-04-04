@@ -8,6 +8,7 @@ import {
 import { AppError } from "../utils/errors";
 import asyncHandler from "../utils/asyncHandler";
 import { CreateItemDTO, GetItemsDTO } from "../validators/item.validator";
+import { removeItemById } from "../services/item.service";
 
 export const uploadImageHandler = asyncHandler(
   async (req: Request, res: Response) => {
@@ -54,6 +55,16 @@ export const getItemByIdHandler = asyncHandler(
     const item = await getItemById(id);
 
     console.log(`[УСПЕХ] запрошен товар с id ${id}`);
+    return res.status(200).json(item);
+  }
+);
+
+export const removeItemByIdHandler = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const item = await removeItemById(id);
+
+    console.log(`[УСПЕХ] удалено объявление с id ${id}`);
     return res.status(200).json(item);
   }
 );
