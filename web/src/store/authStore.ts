@@ -13,23 +13,21 @@ interface AuthState {
   isFavorite: (itemId: string) => boolean;
 }
 
-type PersistedState = Pick<AuthState, "token" | "authenticatedUser">;
-
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
       token: null,
       authenticatedUser: null,
       setToken: (token) => {
-        console.log("[AuthStore] Setting token:", token);
+        console.log("[AuthStore] Присваеваем токенг:", token);
         set({ token });
       },
       setAuthenticatedUser: (user) => {
-        console.log("[AuthStore] Setting user:", user);
+        console.log("[AuthStore] Присваиваем пользователя:", user);
         set({ authenticatedUser: user });
       },
       logout: () => {
-        console.log("[AuthStore] Logging out");
+        console.log("[AuthStore] Выход из системы");
         set({ token: null, authenticatedUser: null });
       },
       addToFavorites: (itemId) =>
@@ -68,18 +66,18 @@ export const useAuthStore = create<AuthState>()(
           return {
             getItem: (name) => {
               const item = localStorage.getItem(name);
-              console.log("[AuthStore] Getting from storage:", {
+              console.log("[AuthStore] Достаем из localstorage: ", {
                 name,
                 value: item,
               });
               return item;
             },
             setItem: (name, value) => {
-              console.log("[AuthStore] Setting to storage:", { name, value });
+              console.log("[AuthStore] Присваиваем в localstorage:", { name, value });
               localStorage.setItem(name, value);
             },
             removeItem: (name) => {
-              console.log("[AuthStore] Removing from storage:", name);
+              console.log("[AuthStore] Удаляем из localstorage:", name);
               localStorage.removeItem(name);
             },
           };
@@ -96,7 +94,7 @@ export const useAuthStore = create<AuthState>()(
           token: state.token,
           authenticatedUser: state.authenticatedUser,
         };
-        console.log("[AuthStore] Persisting state:", persisted);
+        console.log("[AuthStore] Сохраненное состояние:", persisted);
         return persisted;
       },
     }
