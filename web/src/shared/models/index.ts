@@ -26,6 +26,7 @@ export const AuthenticatedUserSchema = z.object({
     }),
   createdAt: z.string().datetime("Неверный формат даты"),
   favorites: z.array(z.string().uuid("Неверный формат UUID")),
+  items: z.array(z.string().uuid("Неверный формат UUID")),
 });
 
 export type AuthenticatedUser = z.infer<typeof AuthenticatedUserSchema>;

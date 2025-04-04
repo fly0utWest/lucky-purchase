@@ -1,6 +1,7 @@
 import { prisma } from "../db/config";
 import bcrypt from "bcrypt";
 import { RegisterUserDTO } from "../validators/user.validator";
+import { GetItemsSchema } from "../validators/item.validator";
 
 export async function createUser({ login, password, name }: RegisterUserDTO) {
   const encryptedPassword = await bcrypt.hash(password, 10);
@@ -35,6 +36,7 @@ export async function getAuthenticatedUserById(userId: string) {
           itemId: true,
         },
       },
+      items: { select: { id: true } },
     },
   });
 
@@ -43,9 +45,8 @@ export async function getAuthenticatedUserById(userId: string) {
   return {
     ...user,
     favorites: user.favorites.map((fav) => fav.itemId),
+    items: user.items.map((item) => item.id),
   };
 }
 
-export async function updateUserById(userId: string) {
-  
-}
+export async function updateUserById(userId: string) {}

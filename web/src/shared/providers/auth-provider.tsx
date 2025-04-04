@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/store/authStore";
 import { useQuery } from "@tanstack/react-query";
-import { AuthenticatedUser } from "@/shared/models";
+import { AuthenticatedUserSchema, AuthenticatedUser } from "@/shared/models";
 import { fetchWrapper } from "@/lib/utils";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -48,12 +48,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     queryFn: async () => {
       console.log("[AuthProvider] Получаем пользователя с токеном: ", token);
       if (!token) return null;
-      return fetchWrapper(`/user/me`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      return fetchWrapper(
+        `/user/me`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+        AuthenticatedUserSchema
+      );
     },
     enabled: !!token && isInitialized,
     retry: 1,
