@@ -9,6 +9,7 @@ export function HeaderSearchWidget() {
   const [open, setOpen] = useState(false);
   const inputRef = useRef<null | HTMLInputElement>(null);
   const pathname = usePathname();
+
   const { query, results, isLoading, handleInputChange, clearSearch } =
     useSearch("", {
       debounceMs: 300,
