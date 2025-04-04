@@ -39,16 +39,20 @@ export async function fetchWrapper<T>(
     : `${env.NEXT_PUBLIC_API_BASE_URL}/${endpoint}`;
 
   const response = await fetch(url, requestInit);
-  let data = await response.json();
 
   if (!response.ok) {
     throw new Error(`Ошибка при загрузке данных с ${endpoint}`);
   }
 
+  let data = await response.json();
   if (typeof validationSchema !== "undefined") {
     const validatedData = validationSchema.safeParse(data);
 
     if (!validatedData.success) {
+      console.error(
+        "Ошибка валидации:",
+        JSON.stringify(validatedData.error.format(), null, 2)
+      );
       throw new Error("Данные не прошли валидацию");
     }
 
