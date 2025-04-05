@@ -87,6 +87,7 @@ export const ItemSchema = z.object({
   userId: z.string().uuid("Неверный формат UUID"),
   categoryId: z.string().uuid("Неверный формат UUID"),
   user: PublicUserSchema,
+  category: CategorySchema,
 });
 
 export type Item = z.infer<typeof ItemSchema>;
