@@ -11,8 +11,3 @@ export const RegisterUserSchema: z.ZodType<
 
 export type RegisterUserDTO = z.infer<typeof RegisterUserSchema>;
 
-
-export const UserByIdSchema: z.ZodType<Pick<User, "id">> = z.object({
-  id: z.string().uuid("Неправильный формат id"),
-});
-export type UserByIdDTO = z.infer<typeof UserByIdSchema>;

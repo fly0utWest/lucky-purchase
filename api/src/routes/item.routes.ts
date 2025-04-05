@@ -10,6 +10,7 @@ import {
 import { authenticateJWT } from "../middleware/auth.middleware";
 import { upload } from "../services/item.service";
 import { addFilesToBody } from "../middleware/upload.middleware";
+import { UUIDSchema } from "../services/shared.validator";
 
 const router = Router();
 
@@ -28,11 +29,16 @@ router.get(
   getItemsHandler as RequestHandler
 );
 
-router.get("/:id", getItemByIdHandler as RequestHandler);
+router.get(
+  "/:id",
+  validate(UUIDSchema, "params") as RequestHandler,
+  getItemByIdHandler as RequestHandler
+);
 
 router.delete(
   "/delete/:id",
   authenticateJWT as RequestHandler,
+  validate(UUIDSchema, "params") as RequestHandler,
   removeItemByIdHandler as RequestHandler
 );
 
