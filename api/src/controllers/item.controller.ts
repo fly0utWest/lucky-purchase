@@ -44,7 +44,7 @@ export const getItemsHandler = asyncHandler(
     const { limit, skip, sort }: GetItemsDTO = res.locals.validatedData;
     const items = await getItems({ limit, skip, sort });
 
-    console.log(`[УСПЕХ] было запрошено ${items.length} объявлений`);
+    console.log(`[УСПЕХ] Было запрошено ${items.length} объявлений`);
     return res.status(200).json({ items, count: items.length });
   }
 );
@@ -54,7 +54,7 @@ export const getItemByIdHandler = asyncHandler(
     const { id } = req.params;
     const item = await getItemById(id);
 
-    console.log(`[УСПЕХ] запрошен товар с id ${id}`);
+    console.log(`[УСПЕХ] Запрошен товар с id ${id}`);
     return res.status(200).json(item);
   }
 );
