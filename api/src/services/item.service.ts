@@ -45,23 +45,7 @@ export const upload = multer({
   },
 });
 
-export async function uploadImage(file: Express.Multer.File) {
-  return file.filename;
-}
-
-export async function createItem(data: CreateItemDTO & { userId: string }) {
-  const { userId, categoryId, ...itemData } = data;
-
-  return prisma.item.create({
-    data: {
-      ...itemData,
-      category: { connect: { id: categoryId } },
-      user: { connect: { id: userId } },
-    },
-  });
-}
-
-export async function createItemWithImages(
+export async function createItem(
   data: CreateItemDTO & { userId: string },
   files: Express.Multer.File[]
 ) {
