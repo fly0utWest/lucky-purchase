@@ -18,9 +18,6 @@ export function validate(
       case "query":
         data = req.query;
         break;
-      case "userId":
-        data = { id: res.locals.userId };
-        break;
       default:
         return res.status(400).json({ error: "Недопустимый тип валидации" });
     }

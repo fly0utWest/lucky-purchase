@@ -7,7 +7,6 @@ import {
 import { AppError } from "../utils/errors";
 import { getAuthenticatedUserById } from "../services/user.service";
 import asyncHandler from "../utils/asyncHandler";
-import { UserByIdDTO } from "../validators/user.validator";
 
 export const registerUserHandler = asyncHandler(
   async (req: Request, res: Response) => {
