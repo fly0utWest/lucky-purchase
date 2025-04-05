@@ -26,6 +26,7 @@ export const AuthenticatedUserSchema = z.object({
     }),
   createdAt: z.string().datetime("Неверный формат даты"),
   favorites: z.array(z.string().uuid("Неверный формат UUID")),
+  items: z.array(z.string().uuid("Неверный формат UUID")),
 });
 
 export type AuthenticatedUser = z.infer<typeof AuthenticatedUserSchema>;
@@ -45,6 +46,28 @@ const CategoryResponseSchema = z.object({
 export type Category = z.infer<typeof CategorySchema>;
 export type CategoryResponse = z.infer<typeof CategoryResponseSchema>;
 
+export const ItemCreationResponseSchema = z.object({
+  id: z.string().uuid("Неверный формат UUID"),
+  title: z.string().min(1, "Название обязательно"),
+  description: z.string().min(1, "Описание обязательно"),
+  images: z
+    .array(
+      z.string().refine((val) => /^[A-Za-z0-9_-]+\.[A-Za-z0-9]+$/.test(val), {
+        message: "Неверный формат имени файла изображения",
+      })
+    )
+    .nonempty("Необходимо добавить хотя бы одно изображение"),
+  price: z
+    .number()
+    .int()
+    .positive("Цена должна быть положительным целым числом"),
+  createdAt: z.string().datetime("Неверный формат даты"),
+  userId: z.string().uuid("Неверный формат UUID"),
+  categoryId: z.string().uuid("Неверный формат UUID"),
+});
+
+export type ItemCreationResponse = z.infer<typeof ItemCreationResponseSchema>;
+
 export const ItemSchema = z.object({
   id: z.string().uuid("Неверный формат UUID"),
   title: z.string().min(1, "Название обязательно"),
@@ -62,8 +85,9 @@ export const ItemSchema = z.object({
     .positive("Цена должна быть положительным целым числом"),
   createdAt: z.string().datetime("Неверный формат даты"),
   userId: z.string().uuid("Неверный формат UUID"),
+  categoryId: z.string().uuid("Неверный формат UUID"),
   user: PublicUserSchema,
-  category: CategorySchema,
+  category: CategorySchema
 });
 
 export type Item = z.infer<typeof ItemSchema>;
@@ -71,7 +95,10 @@ export type Item = z.infer<typeof ItemSchema>;
 export const itemFormSchema = z.object({
   title: z.string().min(3, "Название должно быть не менее 3 символов"),
   description: z.string().min(10, "Описание должно быть не менее 10 символов"),
-  price: z.coerce.number().positive("Цена должна быть положительным числом"),
+  price: z.coerce
+    .number()
+    .positive("Цена должна быть положительным числом")
+    .max(999999999, "Цена не может быть больше 999 999 999"),
   categoryId: z
     .string()
     .uuid("Выберите категорию")

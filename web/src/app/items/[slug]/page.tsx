@@ -27,9 +27,7 @@ export default function ItemPage() {
 
   if (isLoading) {
     return (
-
       <div className="container mx-auto py-20 flex justify-center items-center h-full">
-
         <LoadingSpinner size="lg" />
       </div>
     );

@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
@@ -9,20 +8,19 @@ import { Textarea } from "@/components/ui/textarea";
 import { ImagePlus, Loader2 } from "lucide-react";
 import { useToast } from "@/shared/providers/toast-provider";
 import { useAuthStore } from "@/store/authStore";
-import { fetchWrapper } from "@/lib/utils";
 import { itemFormSchema, ItemFormValues } from "@/shared/models";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
-import { useMutation } from "@tanstack/react-query";
 import CategoriesDropdown from "@/components/categories-dropdown";
 import Image from "next/image";
-import { Item } from "@/shared/models";
+import { useItems } from "@/hooks/use-items";
 
 export default function CreateItemPage() {
   const router = useRouter();
   const { toast } = useToast();
   const { token } = useAuthStore();
   const [images, setImages] = useState<File[]>([]);
+  const { createItem, isCreating } = useItems();
 
   const form = useForm<ItemFormValues>({
     resolver: zodResolver(itemFormSchema),
@@ -46,102 +44,7 @@ export default function CreateItemPage() {
     }
   }, [token, toast, router]);
 
-  const uploadImageMutation = useMutation({
-    mutationFn: async (file: File) => {
-      const imageFormData = new FormData();
-      imageFormData.append("image", file);
-
-      const data = await fetchWrapper<{ filename: string }>("/item/upload", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: imageFormData,
-      });
-
-      return data.filename;
-    },
-  });
-
-  const createItemMutation = useMutation({
-    mutationFn: async (data: ItemFormValues & { images: string[] }) => {
-      return fetchWrapper("/item/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(data),
-      });
-    },
-    onSuccess: (data) => {
-      router.push(`/items/${(data as Item).id}`);
-      toast({
-        title: "Успех!",
-        description: "Товар успешно создан",
-      });
-    },
-    onError: (error) => {
-      const errorMessage =
-        error instanceof Error ? error.message : "Не удалось создать товар";
-      toast({
-        variant: "destructive",
-        title: "Ошибка!",
-        description: errorMessage,
-      });
-    },
-  });
-
-  const isSubmitting =
-    uploadImageMutation.isPending || createItemMutation.isPending;
-
-  async function onSubmit(values: ItemFormValues) {
-    if (!token) {
-      toast({
-        variant: "destructive",
-        title: "Ошибка!",
-        description: "Необходима авторизация",
-      });
-      return;
-    }
-
-    if (images.length === 0) {
-      toast({
-        variant: "destructive",
-        title: "Ошибка!",
-        description: "Добавьте хотя бы одно изображение",
-      });
-      return;
-    }
-
-    try {
-      const uploadPromises = images.map((image) =>
-        uploadImageMutation.mutateAsync(image)
-      );
-
-      toast({
-        title: "Загрузка...",
-        description: "Загружаем изображения",
-      });
-
-      const uploadedImages = await Promise.all(uploadPromises);
-
-      await createItemMutation.mutateAsync({
-        ...values,
-        images: uploadedImages,
-      });
-    } catch (error) {
-      console.error("Error submitting form:", error);
-
-      if (!createItemMutation.isError && !uploadImageMutation.isError) {
-        toast({
-          variant: "destructive",
-          title: "Ошибка!",
-          description: "Произошла неизвестная ошибка при создании товара",
-        });
-      }
-    }
-  }
+  const isSubmitting = isCreating;
 
   function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files || []);
@@ -149,7 +52,6 @@ export default function CreateItemPage() {
       const validFiles = files.filter((file) => {
         const isValidType = file.type.startsWith("image/");
         const isValidSize = file.size <= 5 * 1024 * 1024;
-
         if (!isValidType || !isValidSize) {
           toast({
             variant: "destructive",
@@ -162,13 +64,53 @@ export default function CreateItemPage() {
         }
         return true;
       });
-
       setImages((prev) => {
         const newImages = [...prev, ...validFiles];
         return newImages.slice(0, 3);
       });
     }
   }
+
+  const onSubmit = async (values: ItemFormValues) => {
+    if (images.length === 0) {
+      toast({
+        variant: "destructive",
+        title: "Ошибка!",
+        description: "Добавьте хотя бы одно изображение",
+      });
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+
+      // Добавляем изображения первыми
+      images.forEach((image) => {
+        formData.append("images", image);
+      });
+
+      // Добавляем данные формы
+      Object.entries(values).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          formData.append(key, String(value));
+        }
+      });
+
+      const result = await createItem(formData);
+
+      if (result) {
+
+        router.push(`/items/${result.id}`);
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast({
+        variant: "destructive",
+        title: "Ошибка!",
+        description: "Не удалось создать объявление",
+      });
+    }
+  };
 
   return (
     <Card className="container mx-auto">
@@ -179,7 +121,6 @@ export default function CreateItemPage() {
             Заполните форму для создания нового объявления
           </p>
         </div>
-
         <div className="space-y-4">
           <div className="space-y-2">
             <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
@@ -202,7 +143,6 @@ export default function CreateItemPage() {
               </p>
             )}
           </div>
-
           <div className="space-y-2">
             <label
               htmlFor="title"
@@ -222,7 +162,6 @@ export default function CreateItemPage() {
               </p>
             )}
           </div>
-
           <div className="space-y-2">
             <label
               htmlFor="description"
@@ -243,7 +182,6 @@ export default function CreateItemPage() {
               </p>
             )}
           </div>
-
           <div className="space-y-2">
             <label
               htmlFor="price"
@@ -265,7 +203,6 @@ export default function CreateItemPage() {
               </p>
             )}
           </div>
-
           <div>
             <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
               Изображения (макс. 3)
@@ -281,60 +218,35 @@ export default function CreateItemPage() {
                     height={196}
                     src={URL.createObjectURL(image)}
                     alt={`Preview ${index + 1}`}
-                    className="h-full w-full object-cover"
+                    className="object-cover w-full h-full"
                   />
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setImages(images.filter((_, i) => i !== index))
-                    }
-                    className="absolute right-2 top-2 rounded-full bg-white/80 p-1 text-gray-700 hover:bg-white"
-                    disabled={isSubmitting}
-                  >
-                    ✕
-                  </button>
                 </div>
               ))}
               {images.length < 3 && (
-                <label
-                  className={`flex aspect-square cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-gray-200 hover:border-gray-300 ${
-                    isSubmitting ? "opacity-50 cursor-not-allowed" : ""
-                  }`}
-                >
+                <label className="flex aspect-square cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100">
+                  <div className="flex flex-col items-center justify-center">
+                    <ImagePlus className="h-8 w-8 text-gray-400" />
+                    <span className="mt-2 text-sm text-gray-600">
+                      Добавить фото
+                    </span>
+                  </div>
                   <input
                     type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    disabled={isSubmitting}
                     className="hidden"
+                    accept="image/*"
+                    multiple
+                    onChange={handleImageChange}
                   />
-                  <ImagePlus className="h-8 w-8 text-gray-400" />
                 </label>
               )}
             </div>
-            {images.length === 0 && (
-              <p className="mt-2 text-sm text-destructive">
-                Добавьте хотя бы одно изображение
-              </p>
-            )}
           </div>
         </div>
-
-        <Button
-          type="submit"
-          disabled={
-            isSubmitting || images.length === 0 || !form.formState.isValid
-          }
-          className="w-full"
-        >
+        <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Создание...
-            </>
-          ) : (
-            "Создать объявление"
-          )}
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : null}
+          Создать объявление
         </Button>
       </form>
     </Card>

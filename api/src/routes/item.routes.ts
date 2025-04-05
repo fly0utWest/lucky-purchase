@@ -3,27 +3,23 @@ import { validate } from "../middleware/validate.middleware";
 import { CreateItemSchema, GetItemsSchema } from "../validators/item.validator";
 import {
   getItemsHandler,
-  registerItemHandler,
+  createItemWithImagesHandler,
   getItemByIdHandler,
-  uploadImageHandler,
+  removeItemByIdHandler,
 } from "../controllers/item.controller";
 import { authenticateJWT } from "../middleware/auth.middleware";
 import { upload } from "../services/item.service";
+import { addFilesToBody } from "../middleware/upload.middleware";
 
 const router = Router();
 
 router.post(
-  "/upload",
-  authenticateJWT as RequestHandler,
-  upload.single("image"),
-  uploadImageHandler as RequestHandler
-);
-
-router.post(
   "/create",
   authenticateJWT as RequestHandler,
+  upload.array("images", 3),
+  addFilesToBody as RequestHandler,
   validate(CreateItemSchema) as RequestHandler,
-  registerItemHandler as RequestHandler
+  createItemWithImagesHandler as RequestHandler
 );
 
 router.get(
@@ -33,5 +29,11 @@ router.get(
 );
 
 router.get("/:id", getItemByIdHandler as RequestHandler);
+
+router.delete(
+  "/delete/:id",
+  authenticateJWT as RequestHandler,
+  removeItemByIdHandler as RequestHandler
+);
 
 export default router;

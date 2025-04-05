@@ -4,6 +4,8 @@ import multer from "multer";
 import path from "path";
 import crypto from "crypto";
 import { Request } from "express";
+import { unlink } from "fs/promises";
+import { AppError } from "../utils/errors";
 
 const storage = multer.diskStorage({
   destination: (
@@ -59,6 +61,23 @@ export async function createItem(data: CreateItemDTO & { userId: string }) {
   });
 }
 
+export async function createItemWithImages(
+  data: CreateItemDTO & { userId: string },
+  files: Express.Multer.File[]
+) {
+  const { userId, categoryId, ...itemData } = data;
+  const imageFilenames = files.map((file) => file.filename);
+
+  return prisma.item.create({
+    data: {
+      ...itemData,
+      images: imageFilenames,
+      category: { connect: { id: categoryId } },
+      user: { connect: { id: userId } },
+    },
+  });
+}
+
 export async function getItems({ limit, skip, sort }: GetItemsDTO) {
   return prisma.item.findMany({
     take: Number(limit),
@@ -85,4 +104,24 @@ export async function getItemById(id: string) {
   });
 
   return item;
+}
+
+export async function removeItemById(id: string) {
+  const deletedItem = await prisma.item.delete({
+    where: {
+      id,
+    },
+  });
+
+  const pics = deletedItem.images;
+
+  const deletePromises = pics.map((pic) =>
+    unlink(`${process.cwd()}/static/items/${pic}`).catch((err) => {
+      throw new AppError(`Не удалось удалить файл ${pic}: ${err.message}`, 500);
+    })
+  );
+
+  await Promise.all(deletePromises);
+
+  return null;
 }

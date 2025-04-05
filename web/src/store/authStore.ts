@@ -11,9 +11,10 @@ interface AuthState {
   addToFavorites: (itemId: string) => void;
   removeFromFavorites: (itemId: string) => void;
   isFavorite: (itemId: string) => boolean;
+  addToItems: (itemId: string) => void;
+  removeFromItems: (itemId: string) => void;
+  hasItem: (itemId: string) => boolean;
 }
-
-type PersistedState = Pick<AuthState, "token" | "authenticatedUser">;
 
 export const useAuthStore = create<AuthState>()(
   persist(
@@ -21,15 +22,15 @@ export const useAuthStore = create<AuthState>()(
       token: null,
       authenticatedUser: null,
       setToken: (token) => {
-        console.log("[AuthStore] Setting token:", token);
+        console.log("[AuthStore] Присваеваем токенг:", token);
         set({ token });
       },
       setAuthenticatedUser: (user) => {
-        console.log("[AuthStore] Setting user:", user);
+        console.log("[AuthStore] Присваиваем пользователя:", user);
         set({ authenticatedUser: user });
       },
       logout: () => {
-        console.log("[AuthStore] Logging out");
+        console.log("[AuthStore] Выход из системы");
         set({ token: null, authenticatedUser: null });
       },
       addToFavorites: (itemId) =>
@@ -60,6 +61,39 @@ export const useAuthStore = create<AuthState>()(
         const state = get();
         return state.authenticatedUser?.favorites?.includes(itemId) ?? false;
       },
+
+      addToItems: (itemId) =>
+        set((state) => ({
+          authenticatedUser: state.authenticatedUser
+            ? {
+                ...state.authenticatedUser,
+                items: [...(state.authenticatedUser.items || []), itemId],
+              }
+            : null,
+        })),
+      removeFromItems: (itemId) =>
+        set((state) => {
+          if (!state.authenticatedUser) return { authenticatedUser: null };
+
+          const updatedUser = {
+            ...state.authenticatedUser,
+            items:
+              state.authenticatedUser.items?.filter((id) => id !== itemId) ||
+              [],
+          };
+
+          if (updatedUser.favorites?.includes(itemId)) {
+            updatedUser.favorites = updatedUser.favorites.filter(
+              (id) => id !== itemId
+            );
+          }
+
+          return { authenticatedUser: updatedUser };
+        }),
+      hasItem: (itemId) => {
+        const state = get();
+        return state.authenticatedUser?.items?.includes(itemId) ?? false;
+      },
     }),
     {
       name: "auth-storage",
@@ -68,18 +102,21 @@ export const useAuthStore = create<AuthState>()(
           return {
             getItem: (name) => {
               const item = localStorage.getItem(name);
-              console.log("[AuthStore] Getting from storage:", {
+              console.log("[AuthStore] Достаем из localstorage: ", {
                 name,
                 value: item,
               });
               return item;
             },
             setItem: (name, value) => {
-              console.log("[AuthStore] Setting to storage:", { name, value });
+              console.log("[AuthStore] Присваиваем в localstorage:", {
+                name,
+                value,
+              });
               localStorage.setItem(name, value);
             },
             removeItem: (name) => {
-              console.log("[AuthStore] Removing from storage:", name);
+              console.log("[AuthStore] Удаляем из localstorage:", name);
               localStorage.removeItem(name);
             },
           };
@@ -96,7 +133,7 @@ export const useAuthStore = create<AuthState>()(
           token: state.token,
           authenticatedUser: state.authenticatedUser,
         };
-        console.log("[AuthStore] Persisting state:", persisted);
+        console.log("[AuthStore] Сохраненное состояние:", persisted);
         return persisted;
       },
     }

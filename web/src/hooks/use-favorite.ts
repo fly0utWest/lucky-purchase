@@ -25,7 +25,7 @@ export function useFavorite() {
   const { mutate } = useMutation({
     mutationFn: async (itemId: string) => {
       if (!authenticatedUser || !token) {
-        throw new Error("User not authenticated");
+        throw new Error("Пользователь не авторизован");
       }
       const action = isFavorite(itemId) ? "remove" : "add";
       return fetchWrapper<ToggleFavoriteResponse>(
