@@ -61,6 +61,23 @@ export async function createItem(data: CreateItemDTO & { userId: string }) {
   });
 }
 
+export async function createItemWithImages(
+  data: CreateItemDTO & { userId: string },
+  files: Express.Multer.File[]
+) {
+  const { userId, categoryId, ...itemData } = data;
+  const imageFilenames = files.map((file) => file.filename);
+
+  return prisma.item.create({
+    data: {
+      ...itemData,
+      images: imageFilenames,
+      category: { connect: { id: categoryId } },
+      user: { connect: { id: userId } },
+    },
+  });
+}
+
 export async function getItems({ limit, skip, sort }: GetItemsDTO) {
   return prisma.item.findMany({
     take: Number(limit),

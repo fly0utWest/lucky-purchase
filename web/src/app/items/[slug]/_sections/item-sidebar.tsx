@@ -3,12 +3,25 @@ import { Card } from "@/components/ui/card";
 import ClipboardCopyButton from "@/components/clipboard-copy-button";
 import { Item } from "@/shared/models";
 import { formatPrice, formatDate } from "@/lib/utils";
-import { Heart, MessageCircle, Calendar, User } from "lucide-react";
+import { Heart, MessageCircle, Calendar, User, Trash } from "lucide-react";
 import { useFavorite } from "@/hooks/use-favorite";
 import { useAuthStore } from "@/store/authStore";
 import { useToast } from "@/shared/providers/toast-provider";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { useItems } from "@/hooks/use-items";
+import { useRouter } from "next/navigation";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface ItemSidebarProps {
   item: Item;
@@ -18,6 +31,10 @@ export function ItemSidebar({ item }: ItemSidebarProps) {
   const { toggleFavorite, isFavorite } = useFavorite();
   const { authenticatedUser } = useAuthStore();
   const { toast } = useToast();
+  const { deleteItem } = useItems();
+  const router = useRouter();
+
+  const isOwner = authenticatedUser?.id === item.user.id;
 
   const handleFavoriteClick = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -26,6 +43,20 @@ export function ItemSidebar({ item }: ItemSidebarProps) {
 
   const handleContactSeller = () => {
     console.log("Contact seller", item.user.id);
+  };
+
+  const handleDeleteItem = async () => {
+    try {
+      await deleteItem(item.id);
+      router.push("/catalog");
+    } catch (error) {
+      console.error("Error deleting item:", error);
+      toast({
+        variant: "destructive",
+        title: "Ошибка!",
+        description: "Не удалось удалить объявление",
+      });
+    }
   };
 
   return (
@@ -62,6 +93,31 @@ export function ItemSidebar({ item }: ItemSidebarProps) {
               </Button>
               <ClipboardCopyButton />
             </div>
+            {isOwner && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive" size="lg" className="w-full">
+                    <Trash className="mr-2 h-5 w-5" />
+                    Удалить объявление
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Вы уверены?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Это действие нельзя отменить. Это навсегда удалит ваше
+                      объявление.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Отмена</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDeleteItem}>
+                      Удалить
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
           </div>
         </div>
       </Card>

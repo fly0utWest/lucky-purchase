@@ -10,30 +10,31 @@ import {
   ItemSchema,
 } from "@/shared/models";
 
-// Updated interface to handle File objects for images
-interface CreateItemData extends Omit<ItemFormValues, "images"> {
-  images: File[];
-}
-
 export function useItems() {
   const { toast } = useToast();
   const { authenticatedUser, token, addToItems, removeFromItems, hasItem } =
     useAuthStore();
 
   // Delete item mutation remains the same
-  const { mutate: deleteItem, isPending: isDeleting } = useMutation({
+  const {
+    mutate: deleteItemMutation,
+    mutateAsync: deleteItemAsync,
+    isPending: isDeleting,
+  } = useMutation({
     mutationFn: async (itemId: string) => {
       if (!authenticatedUser || !token) {
         throw new Error("Пользователь не авторизован");
       }
-      return fetchWrapper(`/item/delete/${itemId}`, {
+      const response = await fetchWrapper(`/item/delete/${itemId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+      // Возвращаем itemId для onSuccess
+      return itemId;
     },
-    onSuccess: (_, itemId) => {
+    onSuccess: (itemId) => {
       removeFromItems(itemId);
       toast({
         title: "Успешно",
@@ -51,55 +52,30 @@ export function useItems() {
     },
   });
 
-  // Using destructuring to get both mutate and mutateAsync
+  const deleteItem = async (itemId: string) => {
+    if (!authenticatedUser || !token) {
+      throw new Error("Пользователь не авторизован");
+    }
+    return deleteItemAsync(itemId);
+  };
+
   const {
     mutate: createItemMutation,
     mutateAsync: createItemAsync,
     isPending: isCreating,
-  } = useMutation({
-    mutationFn: async (itemData: CreateItemData) => {
+  } = useMutation<ItemCreationResponse, Error, FormData>({
+    mutationFn: async (formData: FormData) => {
       if (!authenticatedUser || !token) {
         throw new Error("Пользователь не авторизован");
       }
 
-      // Create FormData object to handle both files and text fields
-      const formData = new FormData();
-
-      // Add all text fields to FormData
-      Object.entries(itemData).forEach(([key, value]) => {
-        if (key !== "images") {
-          // Handle arrays and objects by stringify them
-          if (
-            typeof value === "object" &&
-            value !== null &&
-            !(value instanceof File)
-          ) {
-            formData.append(key, JSON.stringify(value));
-          } else if (value !== undefined && value !== null) {
-            formData.append(key, String(value));
-          }
-        }
-      });
-
-      // Add images to FormData
-      if (itemData.images && itemData.images.length > 0) {
-        itemData.images.forEach((image) => {
-          formData.append("images", image);
-        });
-      }
-
-      return fetchWrapper<ItemCreationResponse>(
-        `/item/create`,
-        {
-          method: "POST",
-          headers: {
-            // Don't set Content-Type header - browser will set it with correct boundary
-            Authorization: `Bearer ${token}`,
-          },
-          body: formData,
+      return fetchWrapper<ItemCreationResponse>("/item/create", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-        ItemSchema
-      );
+        body: formData,
+      });
     },
     onSuccess: (data) => {
       addToItems(data.id);
@@ -111,7 +87,7 @@ export function useItems() {
     },
     onError: (error) => {
       toast({
-        title: "Ошибка при создании товара",
+        title: "Ошибка",
         description:
           error instanceof Error ? error.message : "Произошла ошибка",
         variant: "destructive",
@@ -119,14 +95,13 @@ export function useItems() {
     },
   });
 
-  // Wrapper function that exposes the mutation
   const createItem = async (
-    itemData: CreateItemData
+    formData: FormData
   ): Promise<ItemCreationResponse> => {
     if (!authenticatedUser || !token) {
       throw new Error("Пользователь не авторизован");
     }
-    return createItemAsync(itemData);
+    return createItemAsync(formData);
   };
 
   // Delete item handler with debounce remains the same
@@ -156,7 +131,7 @@ export function useItems() {
   // Return functions and state flags
   return {
     createItem,
-    deleteItem: handleDeleteItem,
+    deleteItem,
     isCreating,
     isDeleting,
     isUserItem: hasItem,

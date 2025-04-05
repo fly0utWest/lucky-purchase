@@ -44,6 +44,10 @@ export async function fetchWrapper<T>(
     throw new Error(`Ошибка при загрузке данных с ${endpoint}`);
   }
 
+  if (response.status === 204) {
+    return undefined as T;
+  }
+
   let data = await response.json();
   if (typeof validationSchema !== "undefined") {
     const validatedData = validationSchema.safeParse(data);

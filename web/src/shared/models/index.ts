@@ -86,6 +86,7 @@ export const ItemSchema = z.object({
   createdAt: z.string().datetime("Неверный формат даты"),
   userId: z.string().uuid("Неверный формат UUID"),
   categoryId: z.string().uuid("Неверный формат UUID"),
+  user: PublicUserSchema,
 });
 
 export type Item = z.infer<typeof ItemSchema>;
@@ -93,7 +94,10 @@ export type Item = z.infer<typeof ItemSchema>;
 export const itemFormSchema = z.object({
   title: z.string().min(3, "Название должно быть не менее 3 символов"),
   description: z.string().min(10, "Описание должно быть не менее 10 символов"),
-  price: z.coerce.number().positive("Цена должна быть положительным числом"),
+  price: z.coerce
+    .number()
+    .positive("Цена должна быть положительным числом")
+    .max(999999999, "Цена не может быть больше 999 999 999"),
   categoryId: z
     .string()
     .uuid("Выберите категорию")

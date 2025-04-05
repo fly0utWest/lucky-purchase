@@ -71,7 +71,7 @@ export default function CreateItemPage() {
     }
   }
 
-  const onSubmit = async (data: ItemFormValues) => {
+  const onSubmit = async (values: ItemFormValues) => {
     if (images.length === 0) {
       toast({
         variant: "destructive",
@@ -82,19 +82,33 @@ export default function CreateItemPage() {
     }
 
     try {
-      const itemData = {
-        ...data,
-        images: images,
-      };
+      const formData = new FormData();
 
-      const result = await createItem(itemData);
+      // Добавляем изображения первыми
+      images.forEach((image) => {
+        formData.append("images", image);
+      });
 
-      if (result && result.id) {
+      // Добавляем данные формы
+      Object.entries(values).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          formData.append(key, String(value));
+        }
+      });
+
+      const result = await createItem(formData);
+
+      if (result) {
+
         router.push(`/items/${result.id}`);
       }
     } catch (error) {
-      // Error handling is already managed in the useItems hook
-      console.error("Error creating item:", error);
+      console.error("Error submitting form:", error);
+      toast({
+        variant: "destructive",
+        title: "Ошибка!",
+        description: "Не удалось создать объявление",
+      });
     }
   };
 
@@ -204,59 +218,35 @@ export default function CreateItemPage() {
                     height={196}
                     src={URL.createObjectURL(image)}
                     alt={`Preview ${index + 1}`}
-                    className="h-full w-full object-cover"
+                    className="object-cover w-full h-full"
                   />
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setImages(images.filter((_, i) => i !== index))
-                    }
-                    className="absolute right-2 top-2 rounded-full bg-white/80 p-1 text-gray-700 hover:bg-white"
-                    disabled={isSubmitting}
-                  >
-                    ✕
-                  </button>
                 </div>
               ))}
               {images.length < 3 && (
-                <label
-                  className={`flex aspect-square cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-gray-200 hover:border-gray-300 ${
-                    isSubmitting ? "opacity-50 cursor-not-allowed" : ""
-                  }`}
-                >
+                <label className="flex aspect-square cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100">
+                  <div className="flex flex-col items-center justify-center">
+                    <ImagePlus className="h-8 w-8 text-gray-400" />
+                    <span className="mt-2 text-sm text-gray-600">
+                      Добавить фото
+                    </span>
+                  </div>
                   <input
                     type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    disabled={isSubmitting}
                     className="hidden"
+                    accept="image/*"
+                    multiple
+                    onChange={handleImageChange}
                   />
-                  <ImagePlus className="h-8 w-8 text-gray-400" />
                 </label>
               )}
             </div>
-            {images.length === 0 && (
-              <p className="mt-2 text-sm text-destructive">
-                Добавьте хотя бы одно изображение
-              </p>
-            )}
           </div>
         </div>
-        <Button
-          type="submit"
-          disabled={
-            isSubmitting || images.length === 0 || !form.formState.isValid
-          }
-          className="w-full"
-        >
+        <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Создание...
-            </>
-          ) : (
-            "Создать объявление"
-          )}
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : null}
+          Создать объявление
         </Button>
       </form>
     </Card>
