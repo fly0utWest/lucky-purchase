@@ -45,12 +45,9 @@ export const upload = multer({
   },
 });
 
-export async function createItem(
-  data: CreateItemDTO & { userId: string },
-  files: Express.Multer.File[]
-) {
+export async function createItem(data: CreateItemDTO & { userId: string }) {
   const { userId, categoryId, ...itemData } = data;
-  const imageFilenames = files.map((file) => file.filename);
+  const imageFilenames = data.images.map((file) => file.filename);
 
   return prisma.item.create({
     data: {

@@ -1,30 +1,17 @@
 import { Request, Response } from "express";
 import { createItem, getItems, getItemById } from "../services/item.service";
-import { AppError } from "../utils/errors";
 import asyncHandler from "../utils/asyncHandler";
 import { CreateItemDTO, GetItemsDTO } from "../validators/item.validator";
 import { removeItemById } from "../services/item.service";
 
 export const createItemHandler = asyncHandler(
   async (req: Request, res: Response) => {
-    const { title, description, price, categoryId } = req.body;
-    const files = req.files as Express.Multer.File[];
+    const { ...validatedData }: CreateItemDTO = res.locals.validatedData;
 
-    const validatedData = {
-      title,
-      description,
-      price: Number(price),
-      categoryId,
-      images: files,
-    };
-
-    const newItem = await createItem(
-      {
-        ...validatedData,
-        userId: res.locals.userId,
-      },
-      files
-    );
+    const newItem = await createItem({
+      ...validatedData,
+      userId: res.locals.userId,
+    });
 
     console.log(
       `[УСПЕХ] Объявление добавлено пользователем с id ${res.locals.userId}`
