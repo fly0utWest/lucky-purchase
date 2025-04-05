@@ -11,7 +11,6 @@ export function ItemDetails({ item }: ItemDetailsProps) {
   return (
     <Card>
       <div className="space-y-6 p-6">
-        {/* Description Section */}
         <div>
           <h2 className="text-xl text-primary font-semibold">Описание</h2>
           {item.description ? (
@@ -24,10 +23,7 @@ export function ItemDetails({ item }: ItemDetailsProps) {
             </p>
           )}
         </div>
-
         <Separator />
-
-        {/* Specifications Section */}
         <div>
           <h2 className="text-xl text-primary font-semibold">Характеристики</h2>
           <dl className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -47,8 +43,6 @@ export function ItemDetails({ item }: ItemDetailsProps) {
               <dt className="text-sm text-primary-foreground">Категория</dt>
               <dd className="text-muted-foreground">{item.category.name}</dd>
             </div>
-
-            {/* Add more specifications as needed */}
           </dl>
         </div>
       </div>

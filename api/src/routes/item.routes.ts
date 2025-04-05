@@ -3,9 +3,9 @@ import { validate } from "../middleware/validate.middleware";
 import { CreateItemSchema, GetItemsSchema } from "../validators/item.validator";
 import {
   getItemsHandler,
-  createItemWithImagesHandler,
   getItemByIdHandler,
   removeItemByIdHandler,
+  createItemHandler,
 } from "../controllers/item.controller";
 import { authenticateJWT } from "../middleware/auth.middleware";
 import { upload } from "../services/item.service";
@@ -19,7 +19,7 @@ router.post(
   upload.array("images", 3),
   addFilesToBody as RequestHandler,
   validate(CreateItemSchema) as RequestHandler,
-  createItemWithImagesHandler as RequestHandler
+  createItemHandler as RequestHandler
 );
 
 router.get(

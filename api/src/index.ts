@@ -15,9 +15,24 @@ const PORT = process.env.PORT || 7777;
 
 const app = express();
 
-const uploadDir = path.join(process.cwd(), "static", "items");
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
+const userAvatarsDir = path.join(process.cwd(), "static", "users", "avatars");
+if (!fs.existsSync(userAvatarsDir)) {
+  fs.mkdirSync(userAvatarsDir, { recursive: true });
+}
+
+const userBackgroundsDir = path.join(
+  process.cwd(),
+  "static",
+  "users",
+  "backgrounds"
+);
+if (!fs.existsSync(userBackgroundsDir)) {
+  fs.mkdirSync(userBackgroundsDir, { recursive: true });
+}
+
+const itemsImgdDir = path.join(process.cwd(), "static", "items");
+if (!fs.existsSync(itemsImgdDir)) {
+  fs.mkdirSync(itemsImgdDir, { recursive: true });
 }
 
 app.use(cors({ origin: "*" }));
