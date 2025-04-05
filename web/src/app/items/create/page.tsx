@@ -8,11 +8,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { ImagePlus, Loader2 } from "lucide-react";
 import { useToast } from "@/shared/providers/toast-provider";
 import { useAuthStore } from "@/store/authStore";
-import { fetchWrapper } from "@/lib/utils";
 import { itemFormSchema, ItemFormValues } from "@/shared/models";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
-import { useMutation } from "@tanstack/react-query";
 import CategoriesDropdown from "@/components/categories-dropdown";
 import Image from "next/image";
 import { useItems } from "@/hooks/use-items";
@@ -22,7 +20,7 @@ export default function CreateItemPage() {
   const { toast } = useToast();
   const { token } = useAuthStore();
   const [images, setImages] = useState<File[]>([]);
-  const { createItem, isCreating } = useItems(); // Use the hook
+  const { createItem, isCreating } = useItems();
 
   const form = useForm<ItemFormValues>({
     resolver: zodResolver(itemFormSchema),
@@ -46,72 +44,7 @@ export default function CreateItemPage() {
     }
   }, [token, toast, router]);
 
-  const uploadImageMutation = useMutation({
-    mutationFn: async (file: File) => {
-      const imageFormData = new FormData();
-      imageFormData.append("image", file);
-      const data = await fetchWrapper<{ filename: string }>("/item/upload", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: imageFormData,
-      });
-      return data.filename;
-    },
-  });
-
-  const isSubmitting = uploadImageMutation.isPending || isCreating;
-
-  async function onSubmit(values: ItemFormValues) {
-    if (!token) {
-      toast({
-        variant: "destructive",
-        title: "Ошибка!",
-        description: "Необходима авторизация",
-      });
-      return;
-    }
-
-    if (images.length === 0) {
-      toast({
-        variant: "destructive",
-        title: "Ошибка!",
-        description: "Добавьте хотя бы одно изображение",
-      });
-      return;
-    }
-
-    try {
-      const uploadPromises = images.map((image) =>
-        uploadImageMutation.mutateAsync(image)
-      );
-
-      toast({
-        title: "Загрузка...",
-        description: "Загружаем изображения",
-      });
-
-      const uploadedImages = await Promise.all(uploadPromises);
-
-      // Use the createItem function from your hook
-      const createdItem = await createItem({
-        ...values,
-        images: uploadedImages,
-      });
-
-      router.push(`/items/${createdItem.id}`);
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      if (!uploadImageMutation.isError) {
-        toast({
-          variant: "destructive",
-          title: "Ошибка!",
-          description: "Произошла неизвестная ошибка при создании товара",
-        });
-      }
-    }
-  }
+  const isSubmitting = isCreating;
 
   function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files || []);
@@ -138,11 +71,36 @@ export default function CreateItemPage() {
     }
   }
 
-  // Rest of your component remains the same
+  const onSubmit = async (data: ItemFormValues) => {
+    if (images.length === 0) {
+      toast({
+        variant: "destructive",
+        title: "Ошибка!",
+        description: "Добавьте хотя бы одно изображение",
+      });
+      return;
+    }
+
+    try {
+      const itemData = {
+        ...data,
+        images: images,
+      };
+
+      const result = await createItem(itemData);
+
+      if (result && result.id) {
+        router.push(`/items/${result.id}`);
+      }
+    } catch (error) {
+      // Error handling is already managed in the useItems hook
+      console.error("Error creating item:", error);
+    }
+  };
+
   return (
     <Card className="container mx-auto">
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 p-6">
-        {/* Form content remains the same */}
         <div className="space-y-2">
           <h1 className="text-2xl font-bold">Создание объявления</h1>
           <p className="text-sm text-muted-foreground">
