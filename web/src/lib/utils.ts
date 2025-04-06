@@ -1,7 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { env } from "@/env.mjs";
-import z from "zod";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -64,24 +63,4 @@ export async function fetchWrapper<T>(
   }
 
   return data;
-}
-
-export function debounce<F extends (...args: any[]) => any>(
-  fn: F,
-  delay: number
-) {
-  let timeout: ReturnType<typeof setTimeout> | null = null;
-
-  return function (...args: Parameters<F>) {
-    const later = () => {
-      timeout = null;
-      fn(...args);
-    };
-
-    if (timeout !== null) {
-      clearTimeout(timeout);
-    }
-
-    timeout = setTimeout(later, delay);
-  };
 }

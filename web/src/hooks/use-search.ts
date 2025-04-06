@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchWrapper } from "@/lib/utils";
-import { debounce } from "@/lib/utils";
+import { debounce } from "lodash";
 import { ItemsResponse, ItemsResponseSchema } from "@/shared/models";
 
 interface UseSearchOptions {
