@@ -36,7 +36,6 @@ export function ItemSidebar({ item }: ItemSidebarProps) {
   const router = useRouter();
 
   const isOwner = authenticatedUser?.id === item.user!.id;
-
   const handleFavoriteClick = (event: React.MouseEvent) => {
     event.preventDefault();
     toggleFavorite(item.id);
@@ -52,6 +51,20 @@ export function ItemSidebar({ item }: ItemSidebarProps) {
       router.push("/catalog");
     } catch (error) {
       console.error("Не удалось удалить объявление", error);
+    }
+  };
+
+  const handleDeleteItem = async () => {
+    try {
+      await deleteItem(item.id);
+      router.push("/catalog");
+    } catch (error) {
+      console.error("Error deleting item:", error);
+      toast({
+        variant: "destructive",
+        title: "Ошибка!",
+        description: "Не удалось удалить объявление",
+      });
     }
   };
 

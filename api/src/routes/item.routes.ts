@@ -42,4 +42,10 @@ router.delete(
   removeItemByIdHandler as RequestHandler
 );
 
+router.delete(
+  "/delete/:id",
+  authenticateJWT as RequestHandler,
+  removeItemByIdHandler as RequestHandler
+);
+
 export default router;

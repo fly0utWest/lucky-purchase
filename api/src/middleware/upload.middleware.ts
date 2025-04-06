@@ -12,6 +12,6 @@ export const addFilesToBody = (
   if (req.file) {
     req.body.images = [req.file];
   }
-
+  
   next();
 };
