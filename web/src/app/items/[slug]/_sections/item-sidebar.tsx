@@ -50,18 +50,12 @@ export function ItemSidebar({ item }: ItemSidebarProps) {
       await deleteItem(item.id);
       router.push("/catalog");
     } catch (error) {
-      console.error("Error deleting item:", error);
-      toast({
-        variant: "destructive",
-        title: "Ошибка!",
-        description: "Не удалось удалить объявление",
-      });
+      console.error("Не удалось удалить объявление", error);
     }
   };
 
   return (
     <div className="space-y-6">
-      {/* Price and Actions Card */}
       <Card>
         <div className="space-y-6 p-6">
           <div>
