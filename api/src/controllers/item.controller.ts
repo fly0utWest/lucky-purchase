@@ -22,8 +22,8 @@ export const createItemHandler = asyncHandler(
 );
 export const getItemsHandler = asyncHandler(
   async (req: Request, res: Response) => {
-    const { limit, skip, sort }: GetItemsDTO = res.locals.validatedData;
-    const items = await getItems({ limit, skip, sort });
+    const { limit, skip, sort, userId }: GetItemsDTO = res.locals.validatedData;
+    const items = await getItems({ limit, skip, sort, userId });
 
     console.log(`[УСПЕХ] Было запрошено ${items.length} объявлений`);
     return res.status(200).json({ items, count: items.length });

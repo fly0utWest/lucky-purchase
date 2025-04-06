@@ -59,8 +59,9 @@ export async function createItem(data: CreateItemDTO & { userId: string }) {
   });
 }
 
-export async function getItems({ limit, skip, sort }: GetItemsDTO) {
+export async function getItems({ limit, skip, sort, userId }: GetItemsDTO) {
   return prisma.item.findMany({
+    where: userId ? { userId } : {},
     take: Number(limit),
     skip: Number(skip),
     orderBy: { createdAt: sort },
