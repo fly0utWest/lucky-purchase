@@ -54,20 +54,6 @@ export function ItemSidebar({ item }: ItemSidebarProps) {
     }
   };
 
-  const handleDeleteItem = async () => {
-    try {
-      await deleteItem(item.id);
-      router.push("/catalog");
-    } catch (error) {
-      console.error("Error deleting item:", error);
-      toast({
-        variant: "destructive",
-        title: "Ошибка!",
-        description: "Не удалось удалить объявление",
-      });
-    }
-  };
-
   return (
     <div className="space-y-6">
       <Card>
