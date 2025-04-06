@@ -7,9 +7,10 @@ import { ErrorMessage } from "@/components/ui/error-message";
 import ItemCard from "@/components/item-card";
 import { useAuthStore } from "@/store/authStore";
 import { ItemsResponse, ItemsResponseSchema } from "@/shared/models";
+import { useFavorite } from "@/hooks/use-favorite";
 
 export function FavoriteItems() {
-  const { token } = useAuthStore();
+  const { token, authenticatedUser } = useAuthStore();
 
   const {
     data: response,
@@ -17,7 +18,7 @@ export function FavoriteItems() {
     isError,
     error,
   } = useQuery<ItemsResponse>({
-    queryKey: ["favoriteItems"],
+    queryKey: ["favoriteItems", authenticatedUser?.favorites],
     queryFn: () =>
       fetchWrapper(
         "favorite/get",

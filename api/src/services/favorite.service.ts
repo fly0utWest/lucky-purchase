@@ -21,7 +21,7 @@ export async function removeFromFavorites(userId: string, itemId: string) {
 }
 
 export async function getUserFavorites(userId: string) {
-  return prisma.favorite.findMany({
+  const favorites = await prisma.favorite.findMany({
     where: {
       userId,
     },
@@ -29,6 +29,8 @@ export async function getUserFavorites(userId: string) {
       item: true,
     },
   });
+
+  return favorites.map((favorite) => favorite.item);
 }
 
 export async function isItemFavorited(userId: string, itemId: string) {
