@@ -2,8 +2,8 @@ import { useMutation } from "@tanstack/react-query";
 import { useToast } from "@/shared/providers/toast-provider";
 import { useAuthStore } from "@/store/authStore";
 import { fetchWrapper } from "@/lib/utils";
-import { useCallback } from "react";
-import { debounce } from "@/lib/utils";
+import { useCallback, useMemo } from "react";
+import { debounce } from "lodash";
 
 interface ToggleFavoriteResponse {
   userId: string;
@@ -63,6 +63,8 @@ export function useFavorite() {
     },
   });
 
+  const debouncedMutate = useMemo(() => debounce(mutate, 500), [mutate]);
+
   const toggleFavorite = useCallback(
     (itemId: string) => {
       if (!authenticatedUser) {
@@ -75,9 +77,9 @@ export function useFavorite() {
         return;
       }
 
-      debounce(() => mutate(itemId), 300)();
+      debouncedMutate(itemId);
     },
-    [authenticatedUser, mutate, toast]
+    [authenticatedUser, debouncedMutate]
   );
   return {
     toggleFavorite,

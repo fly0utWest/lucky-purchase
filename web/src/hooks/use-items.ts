@@ -2,8 +2,8 @@ import { useMutation } from "@tanstack/react-query";
 import { useToast } from "@/shared/providers/toast-provider";
 import { useAuthStore } from "@/store/authStore";
 import { fetchWrapper } from "@/lib/utils";
-import { useCallback } from "react";
-import { debounce } from "@/lib/utils";
+import { useCallback, useMemo } from "react";
+import { debounce } from "lodash";
 import {
   ItemCreationResponse,
   ItemFormValues,
@@ -64,10 +64,39 @@ export function useItems() {
     [authenticatedUser, token, deleteItemAsync]
   );
 
-  const {
-    mutateAsync: createItemAsync,
-    isPending: isCreating,
-  } = useMutation<ItemCreationResponse, Error, FormData>({
+  const debouncedDelete = useMemo(
+    () => debounce(deleteItem, 300),
+    [deleteItem]
+  );
+
+  const handleDeleteItem = useCallback(
+    (itemId: string) => {
+      if (!authenticatedUser) {
+        toast({
+          variant: "destructive",
+          title: "Требуется авторизация",
+          description: "Пожалуйста, войдите в систему, чтобы удалить товар",
+        });
+        return;
+      }
+      if (!hasItem(itemId)) {
+        toast({
+          variant: "destructive",
+          title: "Ошибка",
+          description: "Вы не можете удалить этот товар",
+        });
+        return;
+      }
+      debouncedDelete(itemId);
+    },
+    [authenticatedUser, debouncedDelete, hasItem, toast]
+  );
+
+  const { mutateAsync: createItemAsync, isPending: isCreating } = useMutation<
+    ItemCreationResponse,
+    Error,
+    FormData
+  >({
     mutationFn: async (formData: FormData) => {
       if (!authenticatedUser || !token) {
         throw new Error("Пользователь не авторизован");
