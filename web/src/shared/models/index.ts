@@ -104,7 +104,7 @@ export const FavoriteItemSchema = z.object({
   userId: z.string().uuid("Неверный формат UUID"),
   itemId: z.string().uuid("Неверный формат UUID"),
   createdAt: z.string().datetime("Неверный формат даты"),
-  item: ItemSchema.optional(),
+  item: ItemSchema,
 });
 export const FavoritesResponseSchema = z.object({
   items: z.array(FavoriteItemSchema),

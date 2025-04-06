@@ -88,7 +88,7 @@ export default function ProfilePage() {
       <Card className="overflow-hidden">
         <div className="h-48 bg-gradient-to-r from-primary/10 to-primary/5" />
         <div className="p-6 -mt-16">
-          <div className="flex items-start gap-6">
+          <div className="flex flex-col items-center md:flex-row md:items-start gap-6">
             <div className="relative">
               <div className="h-32 w-32 rounded-full border-4 border-background overflow-hidden bg-primary/10">
                 {user.avatar ? (
@@ -106,9 +106,9 @@ export default function ProfilePage() {
                 )}
               </div>
             </div>
-            <div className="flex-1 pt-16">
-              <div className="flex items-center justify-between">
-                <div>
+            <div className="flex-1 md:pt-16">
+              <div className="flex flex-col gap-6 md:gap-0 md:flex-row items-center justify-between">
+                <div className="text-center md:text-left">
                   <h1 className="text-2xl font-bold">{user.name}</h1>
                   <p className="text-sm text-muted-foreground">
                     На площадке с {new Date(user.createdAt).getFullYear()}
@@ -136,7 +136,7 @@ export default function ProfilePage() {
       {isOwnProfile ? (
         <>
           <section className="space-y-6">
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center flex-wrap">
               <h2 className="text-2xl font-semibold">Мои объявления</h2>
               <Button asChild>
                 <Link href="/items/create">

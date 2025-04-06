@@ -39,7 +39,7 @@ export function ItemDetails({ item }: ItemDetailsProps) {
             </div>
             <div>
               <dt className="text-sm text-secondary-foreground">Категория</dt>
-              <dd className="text-muted-foreground">{item.category.name}</dd>
+              <dd className="text-muted-foreground">{item.category?.name}</dd>
             </div>
           </dl>
         </div>
