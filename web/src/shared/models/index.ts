@@ -100,20 +100,6 @@ export const ItemsResponseSchema = z.object({
 
 export type ItemsResponse = z.infer<typeof ItemsResponseSchema>;
 
-export const FavoriteItemSchema = z.object({
-  userId: z.string().uuid("Неверный формат UUID"),
-  itemId: z.string().uuid("Неверный формат UUID"),
-  createdAt: z.string().datetime("Неверный формат даты"),
-  item: ItemSchema,
-});
-export const FavoritesResponseSchema = z.object({
-  items: z.array(FavoriteItemSchema),
-  count: z.number().nonnegative("Длина не может быть отрицательным значением"),
-});
-
-export type FavoriteItem = z.infer<typeof FavoriteItemSchema>;
-export type FavoritesResponse = z.infer<typeof FavoritesResponseSchema>;
-
 export const itemFormSchema = z.object({
   title: z.string().min(3, "Название должно быть не менее 3 символов"),
   description: z.string().min(10, "Описание должно быть не менее 10 символов"),

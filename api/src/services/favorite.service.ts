@@ -25,7 +25,7 @@ export async function getUserFavorites(userId: string) {
     where: {
       userId,
     },
-    include: {
+    select: {
       item: true,
     },
   });
