@@ -64,7 +64,7 @@ export function useFavorite() {
   });
 
   const toggleFavorite = useCallback(
-    debounce((itemId: string) => {
+    (itemId: string) => {
       if (!authenticatedUser) {
         toast({
           variant: "destructive",
@@ -75,8 +75,8 @@ export function useFavorite() {
         return;
       }
 
-      mutate(itemId);
-    }, 300),
+      debounce(() => mutate(itemId), 300)();
+    },
     [authenticatedUser, mutate, toast]
   );
   return {
