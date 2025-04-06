@@ -6,7 +6,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { ErrorMessage } from "@/components/ui/error-message";
 import ItemCard from "@/components/item-card";
 import { useAuthStore } from "@/store/authStore";
-import { FavoritesResponse } from "@/shared/models";
+import { ItemsResponse, ItemsResponseSchema } from "@/shared/models";
 
 export function FavoriteItems() {
   const { token } = useAuthStore();
@@ -16,14 +16,18 @@ export function FavoriteItems() {
     isLoading,
     isError,
     error,
-  } = useQuery<FavoritesResponse>({
+  } = useQuery<ItemsResponse>({
     queryKey: ["favoriteItems"],
     queryFn: () =>
-      fetchWrapper("favorite/get", {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      fetchWrapper(
+        "favorite/get",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      }),
+        ItemsResponseSchema
+      ),
   });
 
   const items = response?.items || [];
@@ -60,7 +64,7 @@ export function FavoriteItems() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {items?.map((item) => (
-        <ItemCard key={item.itemId} item={item.item} />
+        <ItemCard key={item.id} item={item} />
       ))}
     </div>
   );
