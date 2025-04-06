@@ -46,7 +46,7 @@ export function useItems() {
       toast({
         title: "Ошибка",
         description:
-          error instanceof Error ? error.message : "Произошла ошибка",
+          error instanceof Error ? error.message : "Не удалось удалить объявление",
         variant: "destructive",
       });
     },

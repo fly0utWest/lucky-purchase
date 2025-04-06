@@ -66,7 +66,7 @@ const navItems = [
 const accountItems = [
   {
     title: "Аккаунт",
-    url: "/profile/",
+    url: "/profile/me",
     icon: BadgeCheck,
   },
   {
@@ -166,14 +166,7 @@ export function AppSidebar() {
                       onClick={handleMobileClose}
                     >
                       <item.icon className="size-5" />
-                      <Link
-                        className="w-full"
-                        href={
-                          item.url === "/profile/"
-                            ? `/profile/${authenticatedUser.id}`
-                            : item.url
-                        }
-                      >
+                      <Link className="w-full" href={item.url}>
                         {item.title}
                       </Link>
                     </DropdownMenuItem>

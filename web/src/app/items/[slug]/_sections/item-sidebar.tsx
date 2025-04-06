@@ -22,6 +22,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import Link from "next/link";
 
 interface ItemSidebarProps {
   item: Item;
@@ -34,15 +35,23 @@ export function ItemSidebar({ item }: ItemSidebarProps) {
   const { deleteItem } = useItems();
   const router = useRouter();
 
-  const isOwner = authenticatedUser?.id === item.user.id;
-
+  const isOwner = authenticatedUser?.id === item.user!.id;
   const handleFavoriteClick = (event: React.MouseEvent) => {
     event.preventDefault();
     toggleFavorite(item.id);
   };
 
   const handleContactSeller = () => {
-    console.log("Contact seller", item.user.id);
+    console.log("Contact seller", item.user!.id);
+  };
+
+  const handleDeleteItem = async () => {
+    try {
+      await deleteItem(item.id);
+      router.push("/catalog");
+    } catch (error) {
+      console.error("Не удалось удалить объявление", error);
+    }
   };
 
   const handleDeleteItem = async () => {
@@ -61,7 +70,6 @@ export function ItemSidebar({ item }: ItemSidebarProps) {
 
   return (
     <div className="space-y-6">
-      {/* Price and Actions Card */}
       <Card>
         <div className="space-y-6 p-6">
           <div>
@@ -134,12 +142,12 @@ function SellerCard({ user }: SellerCardProps) {
       <div className="space-y-4 p-6">
         <div className="flex items-center gap-4">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-            {user.avatar ? (
+            {user!.avatar ? (
               <Image
                 width={90}
                 height={90}
-                src={user.avatar}
-                alt={user.name}
+                src={user!.avatar}
+                alt={user!.name}
                 className="h-full w-full rounded-full object-cover"
               />
             ) : (
@@ -147,16 +155,16 @@ function SellerCard({ user }: SellerCardProps) {
             )}
           </div>
           <div>
-            <h3 className="font-semibold">{user.name}</h3>
+            <h3 className="font-semibold">{user!.name}</h3>
             <p className="text-sm text-muted-foreground">Продавец</p>
           </div>
         </div>
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Calendar className="h-4 w-4" />
-          <span>На площадке с {new Date(user.createdAt).getFullYear()}</span>
+          <span>На площадке с {new Date(user!.createdAt).getFullYear()}</span>
         </div>
-        <Button variant="outline" className="w-full" size="sm">
-          Все объявления продавца
+        <Button variant="outline" className="w-full" size="sm" asChild>
+          <Link href={`/profile/${user!.id}`}>Все объявления пользователя</Link>
         </Button>
       </div>
     </Card>

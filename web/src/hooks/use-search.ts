@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchWrapper } from "@/lib/utils";
-import { Item, SearchResponse, SearchResponseSchema } from "@/shared/models";
 import { debounce } from "@/lib/utils";
+import { ItemsResponse, ItemsResponseSchema } from "@/shared/models";
 
 interface UseSearchOptions {
   debounceMs?: number;
@@ -33,13 +33,13 @@ export function useSearch(
   const shouldSearch = debouncedQuery.length >= minChars && enabled;
 
   const { data, isLoading, isError, error, refetch, isFetching } =
-    useQuery<SearchResponse>({
+    useQuery<ItemsResponse>({
       queryKey: ["search", debouncedQuery],
       queryFn: () =>
         fetchWrapper(
           `/search?query=${encodeURIComponent(debouncedQuery)}`,
           undefined,
-          SearchResponseSchema
+          ItemsResponseSchema
         ),
       enabled: shouldSearch,
       staleTime: 5 * 60 * 1000,
@@ -64,7 +64,7 @@ export function useSearch(
   return {
     query: searchInput,
     debouncedQuery,
-    results: data || { foundItems: [], count: 0 },
+    results: data || { items: [], count: 0 },
 
     isInitialLoading: isLoading,
     isFetching,

@@ -1,5 +1,6 @@
 import { Item } from "@prisma/client";
 import { z } from "zod";
+import { UUIDSchema } from "../services/shared.validator";
 
 export const CreateItemSchema = z.object({
   title: z.string(),
@@ -15,6 +16,7 @@ export const CreateItemSchema = z.object({
 export type CreateItemDTO = z.infer<typeof CreateItemSchema>;
 
 export const GetItemsSchema = z.object({
+  userId: z.string().uuid("Неправильный формат id").optional(),
   limit: z
     .string()
     .optional()

@@ -27,7 +27,7 @@ export const registerUserHandler = asyncHandler(
 
 export const getUserByIdHandler = asyncHandler(
   async (req: Request, res: Response) => {
-    const { id } = res.locals.userId;
+    const { id } = res.locals.validatedData;
     const user = await getUserById(id);
 
     if (!user) {

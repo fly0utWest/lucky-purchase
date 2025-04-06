@@ -19,7 +19,7 @@ const getPageTitle = (pathname: string): string => {
       return "Каталог";
     case "/favorites":
       return "Избранное";
-    case "/profile":
+    case "/profile/me":
       return "Личный кабинет";
     case "/settings":
       return "Настройки";
@@ -27,7 +27,7 @@ const getPageTitle = (pathname: string): string => {
       return "Авторизация";
     default:
       if (pathname.startsWith("/profile/")) {
-        return "Профиль";
+        return "Профиль пользователя";
       }
       return "Меню";
   }

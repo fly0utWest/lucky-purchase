@@ -45,28 +45,9 @@ export const upload = multer({
   },
 });
 
-export async function uploadImage(file: Express.Multer.File) {
-  return file.filename;
-}
-
 export async function createItem(data: CreateItemDTO & { userId: string }) {
   const { userId, categoryId, ...itemData } = data;
-
-  return prisma.item.create({
-    data: {
-      ...itemData,
-      category: { connect: { id: categoryId } },
-      user: { connect: { id: userId } },
-    },
-  });
-}
-
-export async function createItemWithImages(
-  data: CreateItemDTO & { userId: string },
-  files: Express.Multer.File[]
-) {
-  const { userId, categoryId, ...itemData } = data;
-  const imageFilenames = files.map((file) => file.filename);
+  const imageFilenames = data.images.map((file) => file.filename);
 
   return prisma.item.create({
     data: {
@@ -78,8 +59,9 @@ export async function createItemWithImages(
   });
 }
 
-export async function getItems({ limit, skip, sort }: GetItemsDTO) {
+export async function getItems({ limit, skip, sort, userId }: GetItemsDTO) {
   return prisma.item.findMany({
+    where: userId ? { userId } : {},
     take: Number(limit),
     skip: Number(skip),
     orderBy: { createdAt: sort },

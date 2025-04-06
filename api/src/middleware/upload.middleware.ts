@@ -5,6 +5,13 @@ export const addFilesToBody = (
   res: Response,
   next: NextFunction
 ) => {
-  req.body.images = req.files;
+  if (req.files) {
+    req.body.images = req.files;
+  }
+
+  if (req.file) {
+    req.body.images = [req.file];
+  }
+  
   next();
 };

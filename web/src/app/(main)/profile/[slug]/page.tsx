@@ -1,140 +1,164 @@
 "use client";
+
 import { useAuthStore } from "@/store/authStore";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { env } from "@/env.mjs";
-import { Item } from "@/shared/models";
 import { Card } from "@/components/ui/card";
-import ItemCard from "@/components/item-card";
-import { User2, Heart, Clock, Settings, LogOut } from "lucide-react";
+import {
+  User,
+  MessageCircle,
+  LogOut,
+  Heart,
+  Package,
+  Upload,
+} from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-
-// Функция для получения избранных товаров
-const fetchFavoriteItems = async (): Promise<Item[]> => {
-  const response = await fetch(
-    `${env.NEXT_PUBLIC_API_BASE_URL}/item/favorites`
-  );
-  if (!response.ok) {
-    throw new Error("Ошибка при загрузке избранных товаров");
-  }
-  return response.json();
-};
-
-// Функция для получения просмотренных товаров
-const fetchViewedItems = async (): Promise<Item[]> => {
-  const response = await fetch(`${env.NEXT_PUBLIC_API_BASE_URL}/item/viewed`);
-  if (!response.ok) {
-    throw new Error("Ошибка при загрузке просмотренных товаров");
-  }
-  return response.json();
-};
+import { fetchWrapper } from "@/lib/utils";
+import Image from "next/image";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { ErrorMessage } from "@/components/ui/error-message";
+import { UserItems } from "./_sectioms/user-items";
+import { FavoriteItems } from "@/app/(main)/profile/[slug]/_sectioms/favorite-items";
+import { PublicUser, PublicUserSchema } from "@/shared/models";
+import React from "react";
 
 export default function ProfilePage() {
   const { slug } = useParams();
-  const { authenticatedUser, logout } = useAuthStore();
+  const router = useRouter();
+  const { authenticatedUser, token, logout } = useAuthStore();
+  const isOwnProfile = authenticatedUser?.id === slug || slug === "me";
 
-  const { data: favoriteItems, isLoading: isFavoritesLoading } = useQuery<
-    Item[]
-  >({
-    queryKey: ["favoriteItems"],
-    queryFn: fetchFavoriteItems,
+  // Редирект на логин если пытаемся получить доступ к /me без авторизации
+  React.useEffect(() => {
+    if (slug === "me" && !token) {
+      router.push("/auth?mode=sign-in");
+    }
+  }, [slug, authenticatedUser, token, router]);
+
+  const {
+    data: user,
+    isLoading,
+    isError,
+    error,
+  } = useQuery<PublicUser>({
+    queryKey: ["user", slug === "me" ? authenticatedUser?.id : slug],
+    queryFn: () =>
+      fetchWrapper(
+        `user/${slug === "me" ? authenticatedUser?.id : slug}`,
+        undefined,
+        PublicUserSchema
+      ),
+    enabled:
+      !!slug && (slug !== "me" || (slug === "me" && !!authenticatedUser?.id)),
   });
 
-  const { data: viewedItems, isLoading: isViewedLoading } = useQuery<Item[]>({
-    queryKey: ["viewedItems"],
-    queryFn: fetchViewedItems,
-  });
+  const handleLogout = () => {
+    logout();
+    router.push("/");
+  };
 
-  if (!authenticatedUser) {
+  if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <Card className="p-6">
-          <h1 className="text-xl font-semibold">Необходима авторизация</h1>
-          <p className="mt-2 text-gray-600">Пожалуйста, войдите в систему</p>
-          <Link href="/auth?mode=sign-in">
-            <Button className="mt-4">Войти</Button>
-          </Link>
-        </Card>
+      <div className="container mx-auto py-20 flex justify-center">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
+  }
+
+  if (isError || !user) {
+    return (
+      <div className="container mx-auto py-10">
+        <ErrorMessage
+          title="Ошибка загрузки профиля"
+          message={
+            error instanceof Error
+              ? error.message
+              : "Не удалось загрузить информацию о пользователе"
+          }
+        />
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto min-h-screen space-y-8 p-4 py-8">
-      {/* Шапка профиля */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Avatar className="h-16 w-16 rounded-lg">
-            <AvatarFallback className="uppercase bg-primary/10 text-primary">
-              {authenticatedUser.name[0]}
-            </AvatarFallback>
-          </Avatar>
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">
-              {authenticatedUser.name}
-            </h1>
-            <p className="text-muted-foreground">
-              На площадке с{" "}
-              {new Date(authenticatedUser.createdAt).getFullYear()}
-            </p>
-          </div>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="icon" asChild>
-            <Link href="/settings">
-              <Settings className="h-5 w-5" />
-            </Link>
-          </Button>
-          <Button variant="outline" size="icon" onClick={() => logout()}>
-            <LogOut className="h-5 w-5" />
-          </Button>
-        </div>
-      </div>
-
-      {/* Вкладки */}
-      <Tabs defaultValue="favorites" className="space-y-4">
-        <TabsList className="bg-background">
-          <TabsTrigger value="favorites" className="flex items-center gap-2">
-            <Heart className="h-4 w-4" />
-            Избранное
-          </TabsTrigger>
-          <TabsTrigger value="viewed" className="flex items-center gap-2">
-            <Clock className="h-4 w-4" />
-            Просмотренные
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="favorites">
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {isFavoritesLoading ? (
-              <div className="text-muted-foreground">Загрузка...</div>
-            ) : favoriteItems?.length ? (
-              favoriteItems.map((item) => (
-                <ItemCard key={item.id} item={item} />
-              ))
-            ) : (
-              <div className="text-muted-foreground">Нет избранных товаров</div>
-            )}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="viewed">
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {isViewedLoading ? (
-              <div className="text-muted-foreground">Загрузка...</div>
-            ) : viewedItems?.length ? (
-              viewedItems.map((item) => <ItemCard key={item.id} item={item} />)
-            ) : (
-              <div className="text-muted-foreground">
-                Нет просмотренных товаров
+    <div className="container mx-auto py-8 space-y-8">
+      {/* Профиль */}
+      <Card className="overflow-hidden">
+        <div className="h-48 bg-gradient-to-r from-primary/10 to-primary/5" />
+        <div className="p-6 -mt-16">
+          <div className="flex flex-col items-center md:flex-row md:items-start gap-6">
+            <div className="relative">
+              <div className="h-32 w-32 rounded-full border-4 border-background overflow-hidden bg-primary/10">
+                {user.avatar ? (
+                  <Image
+                    src={user.avatar}
+                    alt={user.name}
+                    width={128}
+                    height={128}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="h-full w-full flex items-center justify-center">
+                    <User className="h-12 w-12 text-primary" />
+                  </div>
+                )}
               </div>
-            )}
+            </div>
+            <div className="flex-1 md:pt-16">
+              <div className="flex flex-col gap-6 md:gap-0 md:flex-row items-center justify-between">
+                <div className="text-center md:text-left">
+                  <h1 className="text-2xl font-bold">{user.name}</h1>
+                  <p className="text-sm text-muted-foreground">
+                    На площадке с {new Date(user.createdAt).getFullYear()}
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  {isOwnProfile ? (
+                    <Button variant="outline" onClick={handleLogout}>
+                      <LogOut className="mr-2 h-5 w-5" />
+                      Выйти
+                    </Button>
+                  ) : (
+                    <Button>
+                      <MessageCircle className="mr-2 h-5 w-5" />
+                      Написать сообщение
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
-        </TabsContent>
-      </Tabs>
+        </div>
+      </Card>
+
+      {isOwnProfile ? (
+        <>
+          <section className="space-y-6">
+            <div className="flex justify-between items-center flex-wrap">
+              <h2 className="text-2xl font-semibold">Мои объявления</h2>
+              <Button asChild>
+                <Link href="/items/create">
+                  <Upload className="mr-2 h-5 w-5" />
+                  Разместить объявление
+                </Link>
+              </Button>
+            </div>
+            <UserItems userId={user.id} />
+          </section>
+
+          <section className="space-y-6">
+            <h2 className="text-2xl font-semibold">Избранное</h2>
+            <FavoriteItems />
+          </section>
+        </>
+      ) : (
+        <section className="space-y-6">
+          <h2 className="text-2xl font-semibold">Объявления пользователя</h2>
+          <UserItems userId={user.id} />
+        </section>
+      )}
     </div>
   );
 }

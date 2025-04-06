@@ -74,7 +74,7 @@ const CategoriesDropdown: React.FC<CategoriesDropdownProps> = ({
             <SelectItem
               className="hover:cursor-pointer"
               key={item.id}
-              value={item.id}
+              value={item.id!}
             >
               {item.name}
             </SelectItem>
