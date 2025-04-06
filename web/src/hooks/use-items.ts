@@ -108,30 +108,6 @@ export function useItems() {
     return createItemAsync(formData);
   };
 
-  // Delete item handler with debounce remains the same
-  const handleDeleteItem = useCallback(
-    (itemId: string) => {
-      if (!authenticatedUser) {
-        toast({
-          variant: "destructive",
-          title: "Требуется авторизация",
-          description: "Пожалуйста, войдите в систему, чтобы удалить товар",
-        });
-        return;
-      }
-      if (!hasItem(itemId)) {
-        toast({
-          variant: "destructive",
-          title: "Ошибка",
-          description: "Вы не можете удалить этот товар",
-        });
-        return;
-      }
-      debounce(() => deleteItem(itemId), 300)();
-    },
-    [authenticatedUser, deleteItem, hasItem, toast]
-  );
-
   // Return functions and state flags
   return {
     createItem,
