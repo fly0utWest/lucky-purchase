@@ -1,3 +1,4 @@
+import { count } from "console";
 import { z } from "zod";
 
 export const PublicUserSchema = z.object({
@@ -32,10 +33,10 @@ export const AuthenticatedUserSchema = z.object({
 export type AuthenticatedUser = z.infer<typeof AuthenticatedUserSchema>;
 
 const CategorySchema = z.object({
-  id: z.string().uuid(),
-  name: z.string().min(1),
-  description: z.string(),
-  createdAt: z.string().datetime(),
+  id: z.string().uuid().optional(),
+  name: z.string().min(1).optional(),
+  description: z.string().optional(),
+  createdAt: z.string().datetime().optional(),
 });
 
 const CategoryResponseSchema = z.object({
@@ -86,11 +87,32 @@ export const ItemSchema = z.object({
   createdAt: z.string().datetime("Неверный формат даты"),
   userId: z.string().uuid("Неверный формат UUID"),
   categoryId: z.string().uuid("Неверный формат UUID"),
-  user: PublicUserSchema,
-  category: CategorySchema
+  user: PublicUserSchema.optional(),
+  category: CategorySchema.optional(),
 });
 
 export type Item = z.infer<typeof ItemSchema>;
+
+export const ItemsResponseSchema = z.object({
+  items: z.array(ItemSchema),
+  count: z.number().nonnegative("Длина не может быть отрицательным значением"),
+});
+
+export type ItemsResponse = z.infer<typeof ItemsResponseSchema>;
+
+export const FavoriteItemSchema = z.object({
+  userId: z.string().uuid("Неверный формат UUID"),
+  itemId: z.string().uuid("Неверный формат UUID"),
+  createdAt: z.string().datetime("Неверный формат даты"),
+  item: ItemSchema.optional(),
+});
+export const FavoritesResponseSchema = z.object({
+  items: z.array(FavoriteItemSchema),
+  count: z.number().nonnegative("Длина не может быть отрицательным значением"),
+});
+
+export type FavoriteItem = z.infer<typeof FavoriteItemSchema>;
+export type FavoritesResponse = z.infer<typeof FavoritesResponseSchema>;
 
 export const itemFormSchema = z.object({
   title: z.string().min(3, "Название должно быть не менее 3 символов"),
@@ -107,40 +129,3 @@ export const itemFormSchema = z.object({
 });
 
 export type ItemFormValues = z.infer<typeof itemFormSchema>;
-
-export const SearchCategorySchema = z.object({
-  name: z.string().min(1, "Название категории обязательно"),
-});
-
-export const SearchItemSchema = z.object({
-  id: z.string().uuid("Неверный формат UUID"),
-  title: z.string().min(1, "Название обязательно"),
-  description: z.string().min(1, "Описание обязательно"),
-  images: z
-    .array(
-      z.string().refine((val) => /^[A-Za-z0-9_-]+\.[A-Za-z0-9]+$/.test(val), {
-        message: "Неверный формат имени файла изображения",
-      })
-    )
-    .nonempty("Необходимо добавить хотя бы одно изображение"),
-  price: z
-    .number()
-    .int()
-    .positive("Цена должна быть положительным целым числом"),
-  createdAt: z.string().datetime("Неверный формат даты"),
-  userId: z.string().uuid("Неверный формат UUID"),
-  categoryId: z.string().uuid("Неверный формат UUID"),
-  category: SearchCategorySchema,
-});
-
-export const SearchResponseSchema = z.object({
-  foundItems: z.array(SearchItemSchema),
-  count: z
-    .number()
-    .int()
-    .nonnegative("Количество должно быть неотрицательным числом"),
-});
-
-export type SearchCategory = z.infer<typeof SearchCategorySchema>;
-export type SearchItem = z.infer<typeof SearchItemSchema>;
-export type SearchResponse = z.infer<typeof SearchResponseSchema>;

@@ -68,7 +68,7 @@ export function HeaderSearchWidget() {
           <div className="px-1 py-1.5 text-xs font-medium text-muted-foreground">
             Результаты
           </div>
-          {results.foundItems.map((item) => (
+          {results.items.map((item) => (
             <ItemCard key={item.id} item={item} variant="compact" />
           ))}
         </>

@@ -19,23 +19,23 @@ import { fetchWrapper } from "@/lib/utils";
 import Image from "next/image";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { ErrorMessage } from "@/components/ui/error-message";
-import { UserItems } from "./_components/user-items";
-import { FavoriteItems } from "@/app/(main)/profile/[slug]/_components/favorite-items";
+import { UserItems } from "./_sectioms/user-items";
+import { FavoriteItems } from "@/app/(main)/profile/[slug]/_sectioms/favorite-items";
 import { PublicUser, PublicUserSchema } from "@/shared/models";
 import React from "react";
 
 export default function ProfilePage() {
   const { slug } = useParams();
   const router = useRouter();
-  const { authenticatedUser, logout } = useAuthStore();
+  const { authenticatedUser, token, logout } = useAuthStore();
   const isOwnProfile = authenticatedUser?.id === slug || slug === "me";
 
   // Редирект на логин если пытаемся получить доступ к /me без авторизации
   React.useEffect(() => {
-    if (slug === "me" && !authenticatedUser) {
-      router.push("/auth/login");
+    if (slug === "me" && !token) {
+      router.push("/auth?mode=sign-in");
     }
-  }, [slug, authenticatedUser, router]);
+  }, [slug, authenticatedUser, token, router]);
 
   const {
     data: user,

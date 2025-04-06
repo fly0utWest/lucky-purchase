@@ -33,11 +33,12 @@ export const getFavoritesListHandler = asyncHandler(
 
     const userFavoritesList = await getUserFavorites(userId);
 
+    const count = userFavoritesList.length;
+
     console.log(
       `[УСПЕХ] Список избранных объявлений пользователя ${userId} был запрошен.`
     );
-
-    res.status(200).json({ userFavoritesList });
+    res.status(200).json({ items: userFavoritesList, count });
   }
 );
 

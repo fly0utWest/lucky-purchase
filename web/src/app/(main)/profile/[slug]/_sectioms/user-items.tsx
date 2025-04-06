@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { fetchWrapper } from "@/lib/utils";
-import { Item } from "@/shared/models";
+import { ItemsResponse, ItemsResponseSchema } from "@/shared/models";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { ErrorMessage } from "@/components/ui/error-message";
 import ItemCard from "@/components/item-card";
@@ -12,14 +12,10 @@ interface UserItemsProps {
 }
 
 export function UserItems({ userId }: UserItemsProps) {
-  const {
-    data: items,
-    isLoading,
-    isError,
-    error,
-  } = useQuery<Item[]>({
+  const { data, isLoading, isError, error } = useQuery<ItemsResponse>({
     queryKey: ["userItems", userId],
-    queryFn: () => fetchWrapper(`items?userId=${userId}`),
+    queryFn: () =>
+      fetchWrapper(`item/get?userId=${userId}`, undefined, ItemsResponseSchema),
   });
 
   if (isLoading) {
@@ -43,7 +39,7 @@ export function UserItems({ userId }: UserItemsProps) {
     );
   }
 
-  if (!items?.length) {
+  if (!data?.count) {
     return (
       <div className="text-center py-8 text-muted-foreground">
         Нет объявлений
@@ -52,10 +48,10 @@ export function UserItems({ userId }: UserItemsProps) {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {items.map((item) => (
+    <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {data?.items.map((item) => (
         <ItemCard key={item.id} item={item} />
       ))}
-    </div>
+    </section>
   );
 }

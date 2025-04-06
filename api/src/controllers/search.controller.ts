@@ -22,6 +22,6 @@ export const searchItemHandler = asyncHandler(
     console.log(
       `[ИНФО] ${query.length > 0 ? `По запросу ${query} было найдено ${count} объявлений` : "Был выполнен поиск без запроса"}`
     );
-    return res.status(200).json({ foundItems, count });
+    return res.status(200).json({ items: foundItems, count });
   }
 );
