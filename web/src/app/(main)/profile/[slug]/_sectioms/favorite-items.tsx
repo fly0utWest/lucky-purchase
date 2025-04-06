@@ -9,7 +9,7 @@ import { useAuthStore } from "@/store/authStore";
 import { ItemsResponse, ItemsResponseSchema } from "@/shared/models";
 
 export function FavoriteItems() {
-  const { token } = useAuthStore();
+  const { token, authenticatedUser } = useAuthStore();
 
   const {
     data: response,
@@ -17,7 +17,7 @@ export function FavoriteItems() {
     isError,
     error,
   } = useQuery<ItemsResponse>({
-    queryKey: ["favoriteItems"],
+    queryKey: ["favoriteItems", authenticatedUser?.favorites],
     queryFn: () =>
       fetchWrapper(
         "favorite/get",
