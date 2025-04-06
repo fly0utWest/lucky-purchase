@@ -97,6 +97,7 @@ export function useItems() {
     Error,
     FormData
   >({
+
     mutationFn: async (formData: FormData) => {
       if (!authenticatedUser || !token) {
         throw new Error("Пользователь не авторизован");

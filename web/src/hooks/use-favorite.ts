@@ -64,7 +64,7 @@ export function useFavorite() {
   });
 
   const debouncedMutate = useMemo(() => debounce(mutate, 500), [mutate]);
-
+  
   const toggleFavorite = useCallback(
     (itemId: string) => {
       if (!authenticatedUser) {
@@ -80,6 +80,7 @@ export function useFavorite() {
       debouncedMutate(itemId);
     },
     [authenticatedUser, debouncedMutate]
+
   );
   return {
     toggleFavorite,
