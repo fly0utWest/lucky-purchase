@@ -8,7 +8,13 @@ import ItemCard from "@/components/item-card";
 import { useAuthStore } from "@/store/authStore";
 import { ItemsResponse, ItemsResponseSchema } from "@/shared/models";
 
-export function FavoriteItems() {
+
+interface FavoriteItemsProps {
+  userId: string;
+}
+
+export function FavoriteItems({ userId }: FavoriteItemsProps) {
+
   const { token, authenticatedUser } = useAuthStore();
 
   const {

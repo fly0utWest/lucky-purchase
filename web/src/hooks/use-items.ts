@@ -46,21 +46,25 @@ export function useItems() {
       toast({
         title: "Ошибка",
         description:
-          error instanceof Error ? error.message : "Не удалось удалить объявление",
+          error instanceof Error
+            ? error.message
+            : "Не удалось удалить объявление",
         variant: "destructive",
       });
     },
   });
 
-  const deleteItem = async (itemId: string) => {
-    if (!authenticatedUser || !token) {
-      throw new Error("Пользователь не авторизован");
-    }
-    return deleteItemAsync(itemId);
-  };
+  const deleteItem = useCallback(
+    async (itemId: string) => {
+      if (!authenticatedUser || !token) {
+        throw new Error("Пользователь не авторизован");
+      }
+      return deleteItemAsync(itemId);
+    },
+    [authenticatedUser, token, deleteItemAsync]
+  );
 
   const {
-    mutate: createItemMutation,
     mutateAsync: createItemAsync,
     isPending: isCreating,
   } = useMutation<ItemCreationResponse, Error, FormData>({
@@ -106,7 +110,7 @@ export function useItems() {
 
   // Delete item handler with debounce remains the same
   const handleDeleteItem = useCallback(
-    debounce((itemId: string) => {
+    (itemId: string) => {
       if (!authenticatedUser) {
         toast({
           variant: "destructive",
@@ -123,8 +127,8 @@ export function useItems() {
         });
         return;
       }
-      deleteItem(itemId);
-    }, 300),
+      debounce(() => deleteItem(itemId), 300)();
+    },
     [authenticatedUser, deleteItem, hasItem, toast]
   );
 

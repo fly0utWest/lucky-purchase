@@ -16,7 +16,6 @@ import {
   Home,
   Heart,
   Settings,
-  User2,
   ChevronsUpDown,
   LogOut,
   BadgeCheck,
@@ -55,18 +54,13 @@ const navItems = [
     url: "/catalog",
     icon: Search,
   },
-  {
-    title: "Избранное",
-    url: "/favorites",
-    icon: Heart,
-  },
 ];
 
 // Account menu items
 const accountItems = [
   {
     title: "Аккаунт",
-    url: "/profile/me",
+    url: "/profile",
     icon: BadgeCheck,
   },
   {
@@ -166,7 +160,14 @@ export function AppSidebar() {
                       onClick={handleMobileClose}
                     >
                       <item.icon className="size-5" />
-                      <Link className="w-full" href={item.url}>
+                      <Link
+                        className="w-full"
+                        href={
+                          item.url === "/profile"
+                            ? `/profile/${authenticatedUser.id}`
+                            : item.url
+                        }
+                      >
                         {item.title}
                       </Link>
                     </DropdownMenuItem>

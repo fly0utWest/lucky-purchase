@@ -6,22 +6,14 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
-import {
-  User,
-  MessageCircle,
-  LogOut,
-  Heart,
-  Package,
-  Upload,
-} from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { User2, MessageSquare, LogOut, Upload } from "lucide-react";
 import { fetchWrapper } from "@/lib/utils";
 import Image from "next/image";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { ErrorMessage } from "@/components/ui/error-message";
 import { UserItems } from "./_sectioms/user-items";
 import { FavoriteItems } from "@/app/(main)/profile/[slug]/_sectioms/favorite-items";
-import { PublicUser, PublicUserSchema } from "@/shared/models";
+import { PublicUser } from "@/shared/models";
 import React from "react";
 
 export default function ProfilePage() {
@@ -43,15 +35,8 @@ export default function ProfilePage() {
     isError,
     error,
   } = useQuery<PublicUser>({
-    queryKey: ["user", slug === "me" ? authenticatedUser?.id : slug],
-    queryFn: () =>
-      fetchWrapper(
-        `user/${slug === "me" ? authenticatedUser?.id : slug}`,
-        undefined,
-        PublicUserSchema
-      ),
-    enabled:
-      !!slug && (slug !== "me" || (slug === "me" && !!authenticatedUser?.id)),
+    queryKey: ["user", slug],
+    queryFn: () => fetchWrapper(`user/${slug}`),
   });
 
   const handleLogout = () => {
@@ -101,7 +86,7 @@ export default function ProfilePage() {
                   />
                 ) : (
                   <div className="h-full w-full flex items-center justify-center">
-                    <User className="h-12 w-12 text-primary" />
+                    <User2 className="h-12 w-12 text-primary" />
                   </div>
                 )}
               </div>
@@ -111,7 +96,11 @@ export default function ProfilePage() {
                 <div className="text-center md:text-left">
                   <h1 className="text-2xl font-bold">{user.name}</h1>
                   <p className="text-sm text-muted-foreground">
-                    На площадке с {new Date(user.createdAt).getFullYear()}
+                    На площадке с{" "}
+                    {new Date(user.createdAt).toLocaleDateString("ru-RU", {
+                      year: "numeric",
+                      month: "long",
+                    })}
                   </p>
                 </div>
                 <div className="flex gap-2">
@@ -122,7 +111,7 @@ export default function ProfilePage() {
                     </Button>
                   ) : (
                     <Button>
-                      <MessageCircle className="mr-2 h-5 w-5" />
+                      <MessageSquare className="mr-2 h-5 w-5" />
                       Написать сообщение
                     </Button>
                   )}
@@ -150,7 +139,7 @@ export default function ProfilePage() {
 
           <section className="space-y-6">
             <h2 className="text-2xl font-semibold">Избранное</h2>
-            <FavoriteItems />
+            <FavoriteItems userId={user.id} />
           </section>
         </>
       ) : (
