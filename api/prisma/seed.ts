@@ -1,5 +1,5 @@
 // prisma/seed.ts
-import { prisma } from "../src/db/config";
+import { prisma } from "../config/db";
 
 async function main() {
   const categories = [

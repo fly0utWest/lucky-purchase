@@ -8,7 +8,7 @@
     "moduleResolution": "node",
     "esModuleInterop": true
   },
-  "include": ["src/**/*", "prisma/**/*"],
+  "include": ["src/**/*", "prisma/**/*", "config/db", "config/db.ts"],
   "exclude": ["node_modules", "dist"],
   "paths": {
     "@/*": ["./src/*"]

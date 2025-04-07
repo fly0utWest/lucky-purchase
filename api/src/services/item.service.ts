@@ -1,4 +1,4 @@
-import { prisma } from "../db/config";
+import { prisma } from "../../config/db";
 import { CreateItemDTO, GetItemsDTO } from "../validators/item.validator";
 import multer from "multer";
 import path from "path";
