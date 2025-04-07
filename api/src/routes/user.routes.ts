@@ -5,11 +5,21 @@ import {
   registerUserHandler,
 } from "../controllers/user.controllers";
 import { validate } from "../middleware/validate.middleware";
-import { RegisterUserSchema } from "../validators/user.validator";
+import {
+  RegisterUserSchema,
+  UpdateUserAvatarSchema,
+  UpdateUserBackgroudSchema,
+  UpdateUserDataSchema,
+} from "../validators/user.validator";
 import { authenticateJWT } from "../middleware/auth.middleware";
 import { UUIDSchema } from "../services/shared.validator";
-import { UpdateUserSchema } from "../validators/user.validator";
 import { updateUserByIdHandler } from "../controllers/user.controllers";
+import {
+  avatarUploader,
+  backgroundUploader,
+} from "../../config/storage/user.storage";
+import { addFilesToBody } from "../middleware/upload.middleware";
+
 const router = Router();
 
 router.post(
@@ -27,9 +37,25 @@ router.get(
 );
 
 router.put(
+  "/update/avatar",
+  authenticateJWT as RequestHandler,
+  avatarUploader.single("avatar") as RequestHandler,
+  addFilesToBody as RequestHandler,
+  validate(UpdateUserAvatarSchema, "body") as RequestHandler,
+  updateUserByIdHandler as RequestHandler
+);
+router.put(
+  "/update/background",
+  authenticateJWT as RequestHandler,
+  backgroundUploader.single("background") as RequestHandler,
+  addFilesToBody as RequestHandler,
+  validate(UpdateUserBackgroudSchema, "body") as RequestHandler,
+  updateUserByIdHandler as RequestHandler
+);
+router.put(
   "/update",
   authenticateJWT as RequestHandler,
-  validate(UpdateUserSchema, "body") as RequestHandler,
+  validate(UpdateUserDataSchema, "body") as RequestHandler,
   updateUserByIdHandler as RequestHandler
 );
 

@@ -56,8 +56,8 @@ export const getAuthedUserHandler = asyncHandler(
 export const updateUserByIdHandler = asyncHandler(
   async (req: Request, res: Response) => {
     const { userId } = res.locals;
-    const { name, avatar, background, password } = res.locals.validatedData;
-    const updatedUser = await updateUserById(userId, { name, avatar, background, password });
+    const {validatedData} = res.locals;
+    const updatedUser = await updateUserById(userId, validatedData);
     if (!updatedUser) {
       throw new AppError("Пользователь не найден", 404);
     }

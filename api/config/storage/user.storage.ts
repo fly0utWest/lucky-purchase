@@ -4,14 +4,6 @@ const avatarStorage = createStorage("users/avatars");
 
 const backgroundStorage = createStorage("users/backgrounds");
 
-export const avatarUpload = createUploader(avatarStorage, 2 * 1024 * 1024, [
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-]);
+export const avatarUploader = createUploader(avatarStorage);
 
-export const backgroundUpload = createUploader(
-  backgroundStorage,
-  5 * 1024 * 1024,
-  ["image/jpeg", "image/png", "image/webp"]
-);
+export const backgroundUploader = createUploader(backgroundStorage);
