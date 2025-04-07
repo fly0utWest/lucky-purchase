@@ -10,6 +10,12 @@ export const PublicUserSchema = z.object({
     .refine((val) => !val || /^[A-Za-z0-9_-]+\.[A-Za-z0-9]+$/.test(val), {
       message: "Неверный формат строки аватара",
     }),
+  background: z
+    .string()
+    .nullable()
+    .refine((val) => !val || /^[A-Za-z0-9_-]+\.[A-Za-z0-9]+$/.test(val), {
+      message: "Неверный формат строки фона",
+    }),
   createdAt: z.string().datetime("Неверный формат даты"),
 });
 
@@ -20,6 +26,12 @@ export const AuthenticatedUserSchema = z.object({
   name: z.string().min(1, "Имя обязательно"),
   login: z.string().min(3, "Логин должен содержать минимум 3 символа"),
   avatar: z
+    .string()
+    .nullable()
+    .refine((val) => !val || /^[A-Za-z0-9_-]+\.[A-Za-z0-9]+$/.test(val), {
+      message: "Неверный формат строки аватара",
+    }),
+  background: z
     .string()
     .nullable()
     .refine((val) => !val || /^[A-Za-z0-9_-]+\.[A-Za-z0-9]+$/.test(val), {

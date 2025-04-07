@@ -15,6 +15,7 @@ import { UserItems } from "./_sectioms/user-items";
 import { FavoriteItems } from "@/app/(main)/profile/[slug]/_sectioms/favorite-items";
 import { PublicUser } from "@/shared/models";
 import React from "react";
+import { env } from "@/env.mjs";
 
 export default function ProfilePage() {
   const { slug } = useParams();
@@ -71,14 +72,24 @@ export default function ProfilePage() {
     <div className="container mx-auto py-8 space-y-8">
       {/* Профиль */}
       <Card className="overflow-hidden">
-        <div className="h-48 bg-gradient-to-r from-primary/10 to-primary/5" />
+        <div className="h-48 bg-gradient-to-r from-primary/10 to-primary/5 relative">
+          {user.background ? (
+            <Image
+              src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/static/users/backgrounds/${user.background}`}
+              alt="Background"
+              fill
+              className="object-cover"
+            />
+          ) : null}
+          <div className="absolute inset-0 bg-black/20" />
+        </div>
         <div className="p-6 -mt-16">
           <div className="flex flex-col items-center md:flex-row md:items-start gap-6">
             <div className="relative">
               <div className="h-32 w-32 rounded-full border-4 border-background overflow-hidden bg-primary/10">
                 {user.avatar ? (
                   <Image
-                    src={user.avatar}
+                    src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/static/users/avatars/${user.avatar}`}
                     alt={user.name}
                     width={128}
                     height={128}
