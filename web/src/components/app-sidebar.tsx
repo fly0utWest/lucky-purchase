@@ -73,10 +73,13 @@ const accountItems = [
 export function AppSidebar() {
   const { logout, authenticatedUser } = useAuthStore();
   const [mounted, setMounted] = useState(false);
-  const { setOpenMobile } = useSidebar();
+  const { setOpenMobile, setOpen } = useSidebar();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleMobileClose = () => {
     setOpenMobile(false);
+    setOpen(false);
+    setMenuOpen(false);
   };
 
   useEffect(() => {
@@ -110,7 +113,7 @@ export function AppSidebar() {
       <SidebarFooter>
         {authenticatedUser ? (
           <SidebarMenuItem className="list-none">
-            <DropdownMenu>
+            <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton
                   size="lg"
@@ -167,6 +170,7 @@ export function AppSidebar() {
                             ? `/profile/${authenticatedUser.id}`
                             : item.url
                         }
+                        onClick={handleMobileClose}
                       >
                         {item.title}
                       </Link>

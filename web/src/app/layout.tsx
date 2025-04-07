@@ -39,7 +39,7 @@ export default function RootLayout({
           <ThemeProvider enableSystem attribute={"class"} defaultTheme="system">
             <ToastProvider>
               <AuthProvider>
-                <SidebarProvider>
+                <SidebarProvider defaultOpen={false}>
                   <AppSidebar />
                   <SidebarInset>
                     <Header />
