@@ -8,7 +8,7 @@ import {
   createItemHandler,
 } from "../controllers/item.controller";
 import { authenticateJWT } from "../middleware/auth.middleware";
-import { upload } from "../services/item.service";
+import itemUploader from "../../config/storage/item.storage";
 import { addFilesToBody } from "../middleware/upload.middleware";
 import { UUIDSchema } from "../services/shared.validator";
 
@@ -17,7 +17,7 @@ const router = Router();
 router.post(
   "/create",
   authenticateJWT as RequestHandler,
-  upload.array("images", 3),
+  itemUploader.array("images", 3),
   addFilesToBody as RequestHandler,
   validate(CreateItemSchema) as RequestHandler,
   createItemHandler as RequestHandler
