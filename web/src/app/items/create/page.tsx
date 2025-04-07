@@ -14,6 +14,8 @@ import { useForm, Controller } from "react-hook-form";
 import CategoriesDropdown from "@/components/categories-dropdown";
 import Image from "next/image";
 import { useItems } from "@/hooks/use-items";
+import { X } from "lucide-react";
+import { indexOf } from "lodash";
 
 export default function CreateItemPage() {
   const router = useRouter();
@@ -71,6 +73,10 @@ export default function CreateItemPage() {
     }
   }
 
+  const deleteImage = (index: number) => {
+    setImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const onSubmit = async (values: ItemFormValues) => {
     if (images.length === 0) {
       toast({
@@ -99,7 +105,6 @@ export default function CreateItemPage() {
       const result = await createItem(formData);
 
       if (result) {
-
         router.push(`/items/${result.id}`);
       }
     } catch (error) {
@@ -213,6 +218,13 @@ export default function CreateItemPage() {
                   key={index}
                   className="relative aspect-square overflow-hidden rounded-lg bg-gray-100"
                 >
+                  <Button
+                    variant={"destructive"}
+                    className="absolute rounded-full right-2 top-2"
+                    onClick={() => deleteImage(index)}
+                  >
+                    <X size={32} />
+                  </Button>
                   <Image
                     width={196}
                     height={196}
