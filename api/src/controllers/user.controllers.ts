@@ -3,6 +3,7 @@ import {
   getUserByLogin,
   createUser,
   getUserById,
+  updateUserById,
 } from "../services/user.service";
 import { AppError } from "../utils/errors";
 import { getAuthenticatedUserById } from "../services/user.service";
@@ -51,3 +52,17 @@ export const getAuthedUserHandler = asyncHandler(
     res.json(user);
   }
 );
+
+export const updateUserByIdHandler = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { userId } = res.locals;
+    const { name, avatar, background, password } = res.locals.validatedData;
+    const updatedUser = await updateUserById(userId, { name, avatar, background, password });
+    if (!updatedUser) {
+      throw new AppError("Пользователь не найден", 404);
+    }
+    console.log(`[УСПЕХ] Пользователь ${updatedUser.login} обновлен`);
+    return res.status(200).json(updatedUser);
+  }
+);
+

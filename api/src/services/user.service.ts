@@ -1,6 +1,6 @@
 import { prisma } from "../db/config";
 import bcrypt from "bcrypt";
-import { RegisterUserDTO } from "../validators/user.validator";
+import { RegisterUserDTO, UpdateUserDTO } from "../validators/user.validator";
 import { GetItemsSchema } from "../validators/item.validator";
 
 export async function createUser({ login, password, name }: RegisterUserDTO) {
@@ -18,7 +18,7 @@ export async function getUserByLogin(login: string) {
 export async function getUserById(userId: string) {
   return prisma.user.findUnique({
     where: { id: userId },
-    select: { id: true, name: true, avatar: true, createdAt: true },
+    select: { id: true, name: true, avatar: true, background: true, createdAt: true },
   });
 }
 
@@ -30,6 +30,7 @@ export async function getAuthenticatedUserById(userId: string) {
       name: true,
       login: true,
       avatar: true,
+      background: true,
       createdAt: true,
       favorites: {
         select: {
@@ -49,4 +50,33 @@ export async function getAuthenticatedUserById(userId: string) {
   };
 }
 
-export async function updateUserById(userId: string) {}
+
+export async function updateUserById(userId: string, data: UpdateUserDTO) {
+  const user = await prisma.user.update({
+    where: { id: userId },
+    data,
+    select: {
+      id: true,
+      name: true,
+      login: true,
+      avatar: true,
+      background: true,
+      createdAt: true,
+      favorites: {
+        select: {
+          itemId: true,
+        },
+      },
+      items: { select: { id: true } },
+    },
+  });
+
+  if (!user) return null;
+
+  return {
+    ...user,
+    favorites: user.favorites.map((fav) => fav.itemId),
+    items: user.items.map((item) => item.id),
+  };
+}
+
