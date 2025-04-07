@@ -22,7 +22,7 @@
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.12",
     "@types/jsonwebtoken": "^9.0.9",
-    "@types/node": "^20.14.10",
+    "@types/node": "^20.17.30",
     "@types/pg": "^8.11.11",
     "dotenv-cli": "^7.4.2",
     "eslint": "^9.6.0",
@@ -36,7 +36,7 @@
     "prisma": "^6.4.1",
     "ts-jest": "^29.1.5",
     "ts-node": "^10.9.2",
-    "typescript": "^5.5.3",
+    "typescript": "^5.8.3",
     "typescript-eslint": "^7.16.0"
   },
   "overrides": {
@@ -53,5 +53,8 @@
     "multer": "^1.4.5-lts.2",
     "pg": "^8.13.3",
     "zod": "^3.24.2"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
   }
 }
