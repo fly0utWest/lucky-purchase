@@ -1,6 +1,6 @@
 import { prisma } from "../../config/db";
 import bcrypt from "bcrypt";
-import { RegisterUserDTO, UpdateUserDTO } from "../validators/user.validator";
+import { RegisterUserDTO, UpdateUserDataDTO } from "../validators/user.validator";
 import { GetItemsSchema } from "../validators/item.validator";
 
 export async function createUser({ login, password, name }: RegisterUserDTO) {
@@ -56,7 +56,7 @@ export async function getAuthenticatedUserById(userId: string) {
   };
 }
 
-export async function updateUserById(userId: string, data: UpdateUserDTO) {
+export async function updateUserById(userId: string, data: UpdateUserDataDTO) {
   const user = await prisma.user.update({
     where: { id: userId },
     data,
