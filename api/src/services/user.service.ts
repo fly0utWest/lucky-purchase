@@ -1,7 +1,25 @@
-import { prisma } from "../db/config";
+import { prisma } from "../../config/db";
 import bcrypt from "bcrypt";
-import { RegisterUserDTO } from "../validators/user.validator";
-import { GetItemsSchema } from "../validators/item.validator";
+import { UpdateUserDTO, RegisterUserDTO } from "../validators/user.validator";
+
+const autheniticatedUserSelectFields = {
+  id: true,
+  name: true,
+  login: true,
+  avatar: true,
+  background: true,
+  createdAt: true,
+  favorites: {
+    select: {
+      itemId: true,
+    },
+  },
+  items: {
+    select: {
+      id: true,
+    },
+  },
+};
 
 export async function createUser({ login, password, name }: RegisterUserDTO) {
   const encryptedPassword = await bcrypt.hash(password, 10);
@@ -18,26 +36,20 @@ export async function getUserByLogin(login: string) {
 export async function getUserById(userId: string) {
   return prisma.user.findUnique({
     where: { id: userId },
-    select: { id: true, name: true, avatar: true, createdAt: true },
+    select: {
+      id: true,
+      name: true,
+      avatar: true,
+      background: true,
+      createdAt: true,
+    },
   });
 }
 
 export async function getAuthenticatedUserById(userId: string) {
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: {
-      id: true,
-      name: true,
-      login: true,
-      avatar: true,
-      createdAt: true,
-      favorites: {
-        select: {
-          itemId: true,
-        },
-      },
-      items: { select: { id: true } },
-    },
+    select: autheniticatedUserSelectFields,
   });
 
   if (!user) return null;
@@ -49,4 +61,30 @@ export async function getAuthenticatedUserById(userId: string) {
   };
 }
 
-export async function updateUserById(userId: string) {}
+export interface AuthenticatedUserResponse {
+  id: string;
+  name: string;
+  login: string;
+  avatar: string | null;
+  background: string | null;
+  createdAt: Date;
+  favorites: string[];
+  items: string[];
+}
+
+export async function updateUserById(
+  userId: string,
+  data: UpdateUserDTO
+): Promise<AuthenticatedUserResponse | null> {
+  const user = await prisma.user.update({
+    where: { id: userId },
+    data,
+    select: autheniticatedUserSelectFields,
+  });
+
+  return {
+    ...user,
+    favorites: user.favorites.map((fav) => fav.itemId),
+    items: user.items.map((item) => item.id),
+  };
+}

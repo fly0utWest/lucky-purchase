@@ -16,12 +16,12 @@ export function errorHandler(
   }
 
   if (err instanceof ZodError) {
-    console.error(
-      `[ОШИБКА] 400, валидация не прошла успешно, ${JSON.stringify(err.errors, undefined, 2)}`
-    );
-    res
-      .status(400)
-      .json({ message: "Валидация не прошла успешно!", errors: err.errors });
+    const errors = err.errors.map((err) => ({
+      path: err.path.join("."),
+      text: err.message,
+    }));
+    console.error(`[ОШИБКА] 400, валидация не прошла успешно, ${errors}`);
+    res.status(400).json({ message: "Валидация не прошла успешно!", errors });
     return;
   }
 

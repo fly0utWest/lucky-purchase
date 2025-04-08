@@ -5,3 +5,7 @@ export const UUIDSchema = z.object({
 });
 
 export type UUIDDTO = z.infer<typeof UUIDSchema>;
+
+export const fileNamePattern = /^[A-Za-z0-9_-]+\.[A-Za-z0-9]+$/;
+export const invalidFileFormatMessage =
+  "Неправильный формат файла - должно быть file.extension";

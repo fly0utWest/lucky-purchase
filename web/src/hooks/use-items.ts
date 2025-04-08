@@ -4,18 +4,13 @@ import { useAuthStore } from "@/store/authStore";
 import { fetchWrapper } from "@/lib/utils";
 import { useCallback, useMemo } from "react";
 import { debounce } from "lodash";
-import {
-  ItemCreationResponse,
-  ItemFormValues,
-  ItemSchema,
-} from "@/shared/models";
+import { ItemCreationResponse } from "@/shared/models";
 
 export function useItems() {
   const { toast } = useToast();
   const { authenticatedUser, token, addToItems, removeFromItems, hasItem } =
     useAuthStore();
 
-  // Delete item mutation remains the same
   const {
     mutate: deleteItemMutation,
     mutateAsync: deleteItemAsync,
@@ -97,7 +92,6 @@ export function useItems() {
     Error,
     FormData
   >({
-
     mutationFn: async (formData: FormData) => {
       if (!authenticatedUser || !token) {
         throw new Error("Пользователь не авторизован");
