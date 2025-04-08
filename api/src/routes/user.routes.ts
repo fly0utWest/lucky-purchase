@@ -4,7 +4,7 @@ import {
   getUserByIdHandler,
   registerUserHandler,
 } from "../controllers/user.controllers";
-import { validate } from "../middleware/validate.middleware";
+import { validate } from "../middlewares/validate.middleware";
 import {
   RegisterUserSchema,
   UpdateUserAvatarSchema,
@@ -12,14 +12,14 @@ import {
   UpdateUserDataSchema,
   UpdateUserSchema,
 } from "../validators/user.validator";
-import { authenticateJWT } from "../middleware/auth.middleware";
+import { authenticateJWT } from "../middlewares/auth.middleware";
 import { UUIDSchema } from "../services/shared.validator";
 import { updateUserByIdHandler } from "../controllers/user.controllers";
 import {
   avatarUploader,
   backgroundUploader,
 } from "../../config/storage/user.storage";
-import { addFilesToBody } from "../middleware/upload.middleware";
+import { addFilesToBody } from "../middlewares/upload.middleware";
 
 const router = Router();
 

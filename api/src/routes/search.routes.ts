@@ -3,7 +3,7 @@ import {
   getCategoriesHandler,
   searchItemHandler,
 } from "../controllers/search.controller";
-import { validate } from "../middleware/validate.middleware";
+import { validate } from "../middlewares/validate.middleware";
 import { SearchSchema } from "../validators/search.validator";
 
 const router = Router();

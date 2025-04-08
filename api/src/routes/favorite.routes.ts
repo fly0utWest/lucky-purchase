@@ -1,6 +1,6 @@
 import { RequestHandler, Router } from "express";
-import { validate } from "../middleware/validate.middleware";
-import { authenticateJWT } from "../middleware/auth.middleware";
+import { validate } from "../middlewares/validate.middleware";
+import { authenticateJWT } from "../middlewares/auth.middleware";
 import { ToggleFavoriteSchema } from "../validators/favorite.validator";
 import {
   getFavoritesListHandler,
