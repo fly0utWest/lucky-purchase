@@ -25,4 +25,6 @@ export const addFilesToBody = (
       req.body.images = req.file.filename;
     }
   }
+
+  next();
 };
