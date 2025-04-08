@@ -1,5 +1,9 @@
 import { z } from "zod";
 import { User } from "@prisma/client";
+import {
+  fileNamePattern,
+  invalidFileFormatMessage,
+} from "../services/shared.validator";
 
 export const RegisterUserSchema: z.ZodType<
   Pick<User, "login" | "password" | "name">
@@ -11,34 +15,33 @@ export const RegisterUserSchema: z.ZodType<
 
 export type RegisterUserDTO = z.infer<typeof RegisterUserSchema>;
 
-export const UpdateUserDataSchema: z.ZodType<
-  Partial<Pick<User, "name" | "password">>
-> = z.object({
+export const UpdateUserDataSchema = z.object({
   name: z.string().optional(),
   password: z.string().optional(),
 });
 
-export const UpdateUserAvatarSchema: z.ZodType<Pick<User, "avatar">> = z.object(
-  {
-    avatar: z
-      .string()
-      .nullable()
-      .refine((val) => !val || /^[A-Za-z0-9_-]+\.[A-Za-z0-9]+$/.test(val), {
-        message: "Неверный формат имени файла фонового изображения",
-      }),
-  }
-);
+export const UpdateUserAvatarSchema = z.object({
+  avatar: z
+    .string()
+    .nullable()
+    .refine((val) => !val || fileNamePattern.test(val), {
+      message: invalidFileFormatMessage,
+    }),
+});
 
-export const UpdateUserBackgroudSchema: z.ZodType<Pick<User, "background">> =
-  z.object({
-    background: z
-      .string()
-      .nullable()
-      .refine((val) => !val || /^[A-Za-z0-9_-]+\.[A-Za-z0-9]+$/.test(val), {
-        message: "Неверный формат имени файла фонового изображения",
-      }),
-  });
+export const UpdateUserBackgroundSchema = z.object({
+  background: z
+    .string()
+    .nullable()
+    .refine((val) => !val || fileNamePattern.test(val), {
+      message: invalidFileFormatMessage,
+    }),
+});
 
-export type UpdateUserDataDTO = z.infer<typeof UpdateUserDataSchema>;
-export type UpdateUserBackgroundDTO = z.infer<typeof UpdateUserBackgroudSchema>;
-export type UpdateUserAvatarDTO = z.infer<typeof UpdateUserAvatarSchema>;
+export const UpdateUserSchema = z.union([
+  UpdateUserDataSchema,
+  UpdateUserAvatarSchema,
+  UpdateUserBackgroundSchema,
+]);
+
+export type UpdateUserDTO = z.infer<typeof UpdateUserSchema>;
