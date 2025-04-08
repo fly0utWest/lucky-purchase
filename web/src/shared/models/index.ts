@@ -26,6 +26,13 @@ export const AuthenticatedUserSchema = PublicUserSchema.extend({
   items: z.array(z.string().uuid("Неверный формат UUID")),
 });
 
+export const UpdateUserSchema = z.object({
+  name: z.string().min(1, "").optional(),
+  password: z.string().min(1, "").optional(),
+});
+
+export type UpdateUserValues = z.infer<typeof UpdateUserSchema>
+
 export type AuthenticatedUser = z.infer<typeof AuthenticatedUserSchema>;
 
 const CategorySchema = z.object({
