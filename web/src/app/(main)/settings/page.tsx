@@ -7,57 +7,96 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { User2, Upload, Save } from "lucide-react";
 import Image from "next/image";
-import { useState, useEffect } from "react";
-import { useToast } from "@/shared/providers/toast-provider";
+import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { UpdateUserSchema, UpdateUserValues } from "@/shared/models";
+import { UpdateUserFormSchema, UpdateUserFormValues } from "@/shared/models";
 import { useSettings } from "@/hooks/use-settings";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { env } from "@/env.mjs";
+import Link from "next/link";
 
 export default function SettingsPage() {
-  const { isUserUpdating, uploadAvatar } = useSettings();
-  const { authenticatedUser, token, logout } = useAuthStore();
-  const { toast } = useToast();
+  const { isUserUpdating, uploadAvatar, uploadBackground, changeUserValues } =
+    useSettings();
+  const { authenticatedUser, token } = useAuthStore();
   const router = useRouter();
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [backgroundFile, setBackgroundFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const backgroundInputRef = useRef<HTMLInputElement>(null);
+
+  const { formState, handleSubmit, register, reset } =
+    useForm<UpdateUserFormValues>({
+      resolver: zodResolver(UpdateUserFormSchema),
+      defaultValues: {
+        name: authenticatedUser?.name || "",
+        password: "",
+      },
+    });
 
   useEffect(() => {
     if (!token) {
       router.push("/auth?mode=sign-in");
     }
-  }, [token, authenticatedUser, router]);
+  }, [token, router]);
 
-  const form = useForm<UpdateUserValues>({
-    resolver: zodResolver(UpdateUserSchema),
-    defaultValues: {
-      name: authenticatedUser?.name,
-      password: "",
-    },
+  useEffect(() => {
+    if (authenticatedUser) {
+      reset({
+        name: authenticatedUser.name || "",
+        password: "",
+      });
+    }
+  }, [authenticatedUser, reset]);
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      uploadAvatar(file);
+    }
+  };
+
+  const handleBackgroundChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      uploadBackground(file);
+    }
+  };
+
+  const onSubmit = handleSubmit((data) => {
+    const changedData: Partial<UpdateUserFormValues> = {};
+
+    if (
+      data.name &&
+      data.name.trim() !== "" &&
+      data.name !== authenticatedUser?.name
+    ) {
+      changedData.name = data.name;
+    }
+
+    if (data.password && data.password.trim() !== "") {
+      changedData.password = data.password;
+    }
+
+    if (Object.keys(changedData).length > 0) {
+      changeUserValues(changedData);
+    }
   });
 
   return (
     <div className="container mx-auto py-8 space-y-8">
       <Card className="overflow-hidden">
         <div className="h-48 bg-gradient-to-r from-primary/10 to-primary/5 relative">
-          {backgroundFile ? (
+
+          {authenticatedUser?.background ? (
             <Image
-              src={URL.createObjectURL(backgroundFile)}
-              alt="Background"
-              fill
-              className="object-cover"
-            />
-          ) : authenticatedUser?.background ? (
-            <Image
-              src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/static/users/backgrounds/${authenticatedUser?.background}`}
+              src={`${env.NEXT_PUBLIC_API_BASE_URL}/static/users/backgrounds/${authenticatedUser?.background}`}
               alt="Background"
               fill
               className="object-cover"
             />
           ) : null}
-          <div className="absolute inset-0 bg-black/20" />
-          <div className="absolute bottom-4 right-4">
+          <div className="absolute flex bottom-4 right-4">
             <Label
               htmlFor="background"
               className="cursor-pointer bg-background/80 hover:bg-background p-2 rounded-full"
@@ -69,15 +108,25 @@ export default function SettingsPage() {
               type="file"
               accept="image/*"
               className="hidden"
+              ref={backgroundInputRef}
+              onChange={handleBackgroundChange}
+
             />
           </div>
         </div>
         <div className="p-6 -mt-16">
           <div className="flex flex-col items-center gap-6">
             <div className="relative">
-              <div className="h-32 w-32 rounded-full border-4 border-background overflow-hidden bg-primary/10">
-                {/* Avatar will go here  */}
-              </div>
+
+              <Avatar className="h-32 w-32 rounded-full border-4 border-background overflow-hidden bg-primary/10">
+                <AvatarImage
+                  src={`${env.NEXT_PUBLIC_STATIC_URL}/users/avatars/${authenticatedUser?.avatar}`}
+                />
+                <AvatarFallback>
+                  <User2 />
+                </AvatarFallback>
+              </Avatar>
+
               <Label
                 htmlFor="avatar"
                 className="absolute bottom-0 right-0 cursor-pointer bg-background/80 hover:bg-background p-2 rounded-full"
@@ -89,13 +138,16 @@ export default function SettingsPage() {
                 type="file"
                 accept="image/*"
                 className="hidden"
+                ref={fileInputRef}
+                onChange={handleAvatarChange}
               />
             </div>
           </div>
         </div>
       </Card>
 
-      <form className="space-y-8">
+
+      <form className="space-y-8" onSubmit={onSubmit}>
         <Card className="p-6">
           <div className="space-y-6">
             <div className="space-y-2">
@@ -103,7 +155,7 @@ export default function SettingsPage() {
               <Input
                 id="email"
                 type="email"
-                value={authenticatedUser?.login || "jjj"}
+                value={authenticatedUser?.login || ""}
                 disabled
                 className="bg-muted"
               />
@@ -116,13 +168,12 @@ export default function SettingsPage() {
               <Label htmlFor="name">Имя</Label>
               <Input
                 id="name"
-                {...form.register("name")}
+                {...register("name")}
                 placeholder="Введите ваше имя"
-                defaultValue={authenticatedUser?.name}
               />
-              {form.formState.errors.name && (
+              {formState.errors.name && (
                 <p className="text-sm text-destructive">
-                  {form.formState.errors.name.message}
+                  {formState.errors.name.message}
                 </p>
               )}
             </div>
@@ -138,12 +189,12 @@ export default function SettingsPage() {
               <Input
                 id="password"
                 type="password"
-                {...form.register("password")}
+                {...register("password")}
                 placeholder="Введите новый пароль"
               />
-              {form.formState.errors.password && (
+              {formState.errors.password && (
                 <p className="text-sm text-destructive">
-                  {form.formState.errors.password.message}
+                  {formState.errors.password.message}
                 </p>
               )}
             </div>
@@ -154,7 +205,7 @@ export default function SettingsPage() {
           <Button
             type="submit"
             className="w-full sm:w-auto"
-            disabled={isUserUpdating}
+            disabled={isUserUpdating || !formState.isDirty}
           >
             <Save className="mr-2 h-5 w-5" />
             Сохранить изменения

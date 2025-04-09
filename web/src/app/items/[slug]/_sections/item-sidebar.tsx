@@ -23,6 +23,9 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import Link from "next/link";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { env } from "@/env.mjs";
+import { User2 } from "lucide-react";
 
 interface ItemSidebarProps {
   item: Item;
@@ -127,19 +130,16 @@ function SellerCard({ user }: SellerCardProps) {
     <Card>
       <div className="space-y-4 p-6">
         <div className="flex items-center gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-            {user!.avatar ? (
-              <Image
-                width={90}
-                height={90}
-                src={user!.avatar}
-                alt={user!.name}
-                className="h-full w-full rounded-full object-cover"
-              />
-            ) : (
-              <User className="h-6 w-6 text-primary" />
-            )}
-          </div>
+          <Avatar className="h-24 w-24 rounded-full">
+            <AvatarImage
+              src={`${env.NEXT_PUBLIC_STATIC_URL}/users/avatars/${
+                user!.avatar
+              }`}
+            />
+            <AvatarFallback className="rounded-full uppercase">
+              {user!.name[0]}
+            </AvatarFallback>
+          </Avatar>
           <div>
             <h3 className="font-semibold">{user!.name}</h3>
             <p className="text-sm text-muted-foreground">Продавец</p>

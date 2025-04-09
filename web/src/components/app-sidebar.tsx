@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -41,6 +40,8 @@ import {
 
 import { Button } from "./ui/button";
 import { useAuthStore } from "@/store/authStore";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { env } from "@/env.mjs";
 
 // Navigation items
 const navItems = [
@@ -114,9 +115,12 @@ export function AppSidebar() {
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton
                   size="lg"
-                  className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                  className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground "
                 >
-                  <Avatar className="h-8 w-8 rounded-lg flex items-center justify-center">
+                  <Avatar className="h-10 w- rounded-full">
+                    <AvatarImage
+                      src={`${env.NEXT_PUBLIC_STATIC_URL}/users/avatars/${authenticatedUser.avatar}`}
+                    />
                     <AvatarFallback className="rounded-lg uppercase">
                       {authenticatedUser.name[0]}
                     </AvatarFallback>
@@ -139,8 +143,11 @@ export function AppSidebar() {
               >
                 <DropdownMenuLabel className="p-0 font-normal">
                   <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                    <Avatar className="h-8 w-8 rounded-lg flex items-center justify-center">
-                      <AvatarFallback className="rounded-lg uppercase">
+                    <Avatar className="h-8 w-8 rounded-full">
+                      <AvatarImage
+                        src={`${env.NEXT_PUBLIC_STATIC_URL}/users/avatars/${authenticatedUser.avatar}`}
+                      />
+                      <AvatarFallback className="rounded-full uppercase">
                         {authenticatedUser.name[0]}
                       </AvatarFallback>
                     </Avatar>

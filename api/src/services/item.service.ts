@@ -37,6 +37,7 @@ export async function getItemById(id: string) {
           id: true,
           name: true,
           createdAt: true,
+          avatar: true,
         },
       },
       category: {
