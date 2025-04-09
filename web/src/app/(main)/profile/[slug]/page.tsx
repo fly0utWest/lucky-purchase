@@ -16,19 +16,13 @@ import { FavoriteItems } from "@/app/(main)/profile/[slug]/_sectioms/favorite-it
 import { PublicUser } from "@/shared/models";
 import React from "react";
 import { env } from "@/env.mjs";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function ProfilePage() {
   const { slug } = useParams();
   const router = useRouter();
   const { authenticatedUser, token, logout } = useAuthStore();
-  const isOwnProfile = authenticatedUser?.id === slug || slug === "me";
-
-  // Редирект на логин если пытаемся получить доступ к /me без авторизации
-  React.useEffect(() => {
-    if (slug === "me" && !token) {
-      router.push("/auth?mode=sign-in");
-    }
-  }, [slug, authenticatedUser, token, router]);
+  const isOwnProfile = authenticatedUser?.id === slug;
 
   const {
     data: user,
@@ -70,27 +64,49 @@ export default function ProfilePage() {
 
   return (
     <div className="container mx-auto py-8 space-y-8">
-      {/* Профиль */}
       <Card className="overflow-hidden">
-        <div className="h-48 bg-gradient-to-r from-primary/10 to-primary/5" />
+        <div className="h-48 bg-gradient-to-r from-primary/10 to-primary/5 relative">
+          {user?.background ? (
+            <Image
+              src={`${env.NEXT_PUBLIC_API_BASE_URL}/static/users/backgrounds/${user?.background}`}
+              alt="Background"
+              fill
+              className="object-cover"
+            />
+          ) : null}
+          {isOwnProfile && !authenticatedUser?.background ? (
+            <Link
+              className="absolute flex justify-center items-center opacity-0 hover:opacity-100 transition-opacity inset-0 w-full h-full bg-muted/50"
+              href="/settings"
+            >
+              <figure className="flex flex-col items-center">
+                <Upload size={64} />
+                <figcaption>Загрузите фон</figcaption>
+              </figure>
+            </Link>
+          ) : null}
+        </div>
         <div className="p-6 -mt-16">
           <div className="flex flex-col items-center md:flex-row md:items-start gap-6">
             <div className="relative">
-              <div className="h-32 w-32 rounded-full border-4 border-background overflow-hidden bg-primary/10">
-                {user.avatar ? (
-                  <Image
-                    src={`${env.NEXT_PUBLIC_STATIC_URL}/users/avatars/${user.avatar}`}
-                    alt={user.name}
-                    width={128}
-                    height={128}
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <div className="h-full w-full flex items-center justify-center">
-                    <User2 className="h-12 w-12 text-primary" />
-                  </div>
-                )}
-              </div>
+              <Avatar className="h-32 w-32 rounded-full border-4 border-background overflow-hidden bg-primary/10">
+                <AvatarImage
+                  src={`${env.NEXT_PUBLIC_STATIC_URL}/users/avatars/${user?.avatar}`}
+                />
+                <AvatarFallback>
+                  {isOwnProfile && !authenticatedUser?.background ? (
+                    <Link
+                      className="absolute flex justify-center items-center inset-0 w-full h-full bg-muted/50"
+                      href="/settings"
+                    >
+                      <figure className="flex flex-col items-center">
+                        <Upload />
+                        <figcaption>Загрузить</figcaption>
+                      </figure>
+                    </Link>
+                  ) : null}
+                </AvatarFallback>
+              </Avatar>
             </div>
             <div className="flex-1 md:pt-16">
               <div className="flex flex-col gap-6 md:gap-0 md:flex-row items-center justify-between">
