@@ -1,7 +1,10 @@
 import { useAuthStore } from "@/store/authStore";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Users, ShoppingBag, BadgeCheck } from "lucide-react";
+import { Users, ShoppingBag, BadgeCheck, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const stats = [
   {
@@ -29,78 +32,136 @@ function HeroButtons({ children }: { children: React.ReactNode }) {
   );
 }
 
+function SearchBar() {
+  const [query, setQuery] = useState("");
+  const router = useRouter();
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (query.trim()) {
+      router.push(`/catalog?search=${encodeURIComponent(query.trim())}`);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSearch} className="relative max-w-md mx-auto w-full">
+      <Input
+        type="text"
+        placeholder="Что вы ищете сегодня?"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        className="bg-black/30 text-white border-none pl-4 pr-12 py-6 h-12 text-base rounded-full shadow-sm placeholder:text-gray-300"
+      />
+      <Button
+        type="submit"
+        size="icon"
+        className="absolute right-1 top-1 rounded-full h-10 w-10 bg-primary hover:bg-primary/90"
+      >
+        <Search className="h-5 w-5" />
+        <span className="sr-only">Искать</span>
+      </Button>
+    </form>
+  );
+}
+
 export default function HeroSection() {
   const { authenticatedUser } = useAuthStore();
 
   return (
-    <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-primary/10 via-primary/5 to-background p-10 text-center shadow-sm">
-      <div className="relative z-10">
+    <div className="relative min-h-[70vh] flex items-center justify-center bg-gradient-to-br from-primary/20 via-primary/1 to-primary/1 text-white rounded-lg shadow-md">
+      <div className="absolute inset-0 -z-10 overflow-hidden rounded-lg">
+        <div className="absolute -left-20 top-1/4 h-40 w-40 rounded-full bg-primary/10 blur-3xl opacity-40" />
+        <div className="absolute right-10 top-1/2 h-52 w-52 rounded-full bg-primary/5 blur-3xl opacity-30" />
+        <div className="absolute bottom-10 left-1/3 h-32 w-32 rounded-full bg-primary/8 blur-3xl opacity-40" />
+      </div>
+
+      <div className="container mx-auto px-4 py-12 relative z-10 text-center">
         {authenticatedUser ? (
-          <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <h1 className="text-4xl font-bold">
-              Привет, {authenticatedUser.name}! 👋
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-3xl mx-auto">
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
+              Привет,{" "}
+              <span className="text-primary">{authenticatedUser.name}</span>! 👋
             </h1>
-            <p className="text-xl text-muted-foreground">
+            <p className="text-lg md:text-xl text-gray-300">
               Готовы к новым сделкам сегодня?
             </p>
-            <HeroButtons>
-              <Button asChild size="lg">
-                <Link href="/items/create">Разместить товар</Link>
+
+            <SearchBar />
+
+            <div className="flex flex-col md:flex-row justify-center gap-4 mt-6">
+              <Button
+                asChild
+                size="lg"
+                className="bg-primary text-white hover:bg-primary/90 px-6"
+              >
+                <Link href="/items/new">Разместить объявление</Link>
               </Button>
-              <Button asChild variant="outline" size="lg">
-                <Link href="/catalog">Перейти в каталог</Link>
+              <Button
+                asChild
+                variant="outline"
+                size="lg"
+                className="bg-white/90 dark:bg-white/10 text-primary dark:text-white border-white/20 hover:bg-white/80 dark:hover:bg-white/20 px-6"
+              >
+                <Link href="/catalog">Начать продавать</Link>
               </Button>
-            </HeroButtons>
+            </div>
           </div>
         ) : (
-          <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <h1 className="text-4xl font-bold">
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-3xl mx-auto">
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
               Добро пожаловать на платформу
-              <br />
-              <span className="bg-gradient-to-r from-primary to-primary/50 bg-clip-text text-transparent">
-                &ldquo;Удачная покупка&rdquo;
-              </span>
+              <div className="mt-2">
+                <span className="text-primary">
+                  &ldquo;Удачная покупка&rdquo;
+                </span>
+              </div>
             </h1>
-            <p className="mx-auto max-w-2xl text-xl text-muted-foreground">
+            <p className="mx-auto max-w-xl text-lg md:text-xl text-gray-300">
               Ваше место для безопасных покупок и продаж. Присоединяйтесь к
               тысячам довольных пользователей!
             </p>
+
+            <SearchBar />
+
             <HeroButtons>
-              <Button asChild size="lg">
-                <Link href="/auth">Начать покупать</Link>
+              <Button
+                asChild
+                size="lg"
+                className="bg-primary text-white font-medium px-6"
+              >
+                <Link href="/auth?mode=sign-in">Начать покупать</Link>
               </Button>
-              <Button asChild variant="outline" size="lg">
-                <Link href="/auth">Начать продавать</Link>
+              <Button
+                asChild
+                variant="outline"
+                size="lg"
+                className="bg-white/90 dark:bg-white/10 text-primary dark:text-white border-white/20 hover:bg-white/80 dark:hover:bg-white/20 px-6"
+              >
+                <Link href="/auth?mode=sign-up">Начать продавать</Link>
               </Button>
             </HeroButtons>
           </div>
         )}
 
         <div className="mt-12">
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-3 max-w-3xl mx-auto">
             {stats.map((stat, index) => (
               <div
                 key={stat.label}
                 className="flex flex-col items-center gap-2 animate-in fade-in slide-in-from-bottom-4 duration-500"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                <div className="rounded-full bg-primary/10 p-3">
-                  <stat.icon className="h-6 w-6 text-primary" />
+                <div className="rounded-full bg-white/10 p-4">
+                  <stat.icon className="h-6 w-6 text-primary/90" />
                 </div>
-                <div className="text-2xl font-bold">{stat.value}</div>
-                <div className="text-sm text-muted-foreground">
-                  {stat.label}
+                <div className="text-2xl md:text-3xl font-bold text-white">
+                  {stat.value}
                 </div>
+                <div className="text-sm text-gray-300">{stat.label}</div>
               </div>
             ))}
           </div>
         </div>
-      </div>
-
-      {/* Декоративные элементы */}
-      <div className="absolute left-0 top-0 -z-10 h-full w-full">
-        <div className="absolute left-1/4 top-1/4 h-32 w-32 rounded-full bg-primary/5 blur-3xl" />
-        <div className="absolute right-1/4 top-1/2 h-32 w-32 rounded-full bg-primary/10 blur-3xl" />
       </div>
     </div>
   );
