@@ -50,7 +50,7 @@ function SearchBar() {
         placeholder="Что вы ищете сегодня?"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className="bg-black/30 text-white border-none pl-4 pr-12 py-6 h-12 text-base rounded-full shadow-sm placeholder:text-gray-300"
+        className="bg-gray-600/20 dark:bg-black/30 text-gray-700 dark:text-white border-none pl-4 pr-12 py-6 h-12 text-base rounded-full shadow-sm placeholder:text-gray-500 dark:placeholder:text-gray-300"
       />
       <Button
         type="submit"
@@ -68,7 +68,7 @@ export default function HeroSection() {
   const { authenticatedUser } = useAuthStore();
 
   return (
-    <div className="relative min-h-[70vh] flex items-center justify-center bg-gradient-to-br from-primary/20 via-primary/1 to-primary/1 text-white rounded-lg shadow-md">
+    <div className="relative min-h-[70vh] flex items-center justify-center bg-gradient-to-br from-pink-200/80 via-pink-100/50 to-pink-50/30 dark:from-primary/20 dark:via-primary/1 dark:to-primary/1 text-gray-800 dark:text-white rounded-lg shadow-md">
       <div className="absolute inset-0 -z-10 overflow-hidden rounded-lg">
         <div className="absolute -left-20 top-1/4 h-40 w-40 rounded-full bg-primary/10 blur-3xl opacity-40" />
         <div className="absolute right-10 top-1/2 h-52 w-52 rounded-full bg-primary/5 blur-3xl opacity-30" />
@@ -78,11 +78,11 @@ export default function HeroSection() {
       <div className="container mx-auto px-4 py-12 relative z-10 text-center">
         {authenticatedUser ? (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-3xl mx-auto">
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-800 dark:text-white">
               Привет,{" "}
               <span className="text-primary">{authenticatedUser.name}</span>! 👋
             </h1>
-            <p className="text-lg md:text-xl text-gray-300">
+            <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300">
               Готовы к новым сделкам сегодня?
             </p>
 
@@ -94,21 +94,21 @@ export default function HeroSection() {
                 size="lg"
                 className="bg-primary text-white hover:bg-primary/90 px-6"
               >
-                <Link href="/items/new">Разместить объявление</Link>
+                <Link href="/items/create">начать продавать</Link>
               </Button>
               <Button
                 asChild
                 variant="outline"
                 size="lg"
-                className="bg-white/90 dark:bg-white/10 text-primary dark:text-white border-white/20 hover:bg-white/80 dark:hover:bg-white/20 px-6"
+                className="bg-white/90 dark:bg-white/10 text-primary dark:text-white border-gray-200 dark:border-white/20 hover:bg-white/80 dark:hover:bg-white/20 px-6"
               >
-                <Link href="/catalog">Начать продавать</Link>
+                <Link href="/catalog">Начать покупать</Link>
               </Button>
             </div>
           </div>
         ) : (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-3xl mx-auto">
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-gray-800 dark:text-white">
               Добро пожаловать на платформу
               <div className="mt-2">
                 <span className="text-primary">
@@ -116,7 +116,7 @@ export default function HeroSection() {
                 </span>
               </div>
             </h1>
-            <p className="mx-auto max-w-xl text-lg md:text-xl text-gray-300">
+            <p className="mx-auto max-w-xl text-lg md:text-xl text-gray-600 dark:text-gray-300">
               Ваше место для безопасных покупок и продаж. Присоединяйтесь к
               тысячам довольных пользователей!
             </p>
@@ -135,7 +135,7 @@ export default function HeroSection() {
                 asChild
                 variant="outline"
                 size="lg"
-                className="bg-white/90 dark:bg-white/10 text-primary dark:text-white border-white/20 hover:bg-white/80 dark:hover:bg-white/20 px-6"
+                className="bg-white/90 dark:bg-white/10 text-primary dark:text-white border-gray-200 dark:border-white/20 hover:bg-white/80 dark:hover:bg-white/20 px-6"
               >
                 <Link href="/auth?mode=sign-up">Начать продавать</Link>
               </Button>
@@ -151,13 +151,31 @@ export default function HeroSection() {
                 className="flex flex-col items-center gap-2 animate-in fade-in slide-in-from-bottom-4 duration-500"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                <div className="rounded-full bg-white/10 p-4">
-                  <stat.icon className="h-6 w-6 text-primary/90" />
+                <div
+                  className={`rounded-full p-4 ${
+                    index === 0
+                      ? "bg-pink-500/15 dark:bg-pink-500/20"
+                      : index === 1
+                      ? "bg-blue-500/15 dark:bg-blue-500/20"
+                      : "bg-green-500/15 dark:bg-green-500/20"
+                  }`}
+                >
+                  <stat.icon
+                    className={`h-6 w-6 ${
+                      index === 0
+                        ? "text-pink-500"
+                        : index === 1
+                        ? "text-blue-500"
+                        : "text-green-500"
+                    }`}
+                  />
                 </div>
-                <div className="text-2xl md:text-3xl font-bold text-white">
+                <div className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white">
                   {stat.value}
                 </div>
-                <div className="text-sm text-gray-300">{stat.label}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-300">
+                  {stat.label}
+                </div>
               </div>
             ))}
           </div>
