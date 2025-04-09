@@ -72,6 +72,7 @@ export interface AuthenticatedUserResponse {
   favorites: string[];
   items: string[];
 }
+
 export async function updateUserById(
   userId: string,
   data: UpdateUserDTO
@@ -102,6 +103,7 @@ export async function updateUserById(
     const encryptedPassword = await bcrypt.hash(data.password!, 10);
     data.password = encryptedPassword;
   }
+
 
   const user = await prisma.user.update({
     where: { id: userId },

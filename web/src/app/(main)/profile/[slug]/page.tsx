@@ -18,6 +18,7 @@ import React from "react";
 import { env } from "@/env.mjs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
+
 export default function ProfilePage() {
   const { slug } = useParams();
   const router = useRouter();
