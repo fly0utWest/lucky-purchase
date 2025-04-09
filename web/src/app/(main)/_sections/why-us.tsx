@@ -7,7 +7,7 @@ import {
   Clock,
 } from "lucide-react";
 import { SectionHeader } from "@/components/ui/section-header";
-import { AnimatedCard } from "@/components/ui/animated-card";
+import { FeatureCard } from "@/components/ui/feature-card";
 
 const features = [
   {
@@ -52,12 +52,11 @@ export default function WhyUs() {
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {features.map((feature, index) => (
-          <AnimatedCard
+          <FeatureCard
             key={feature.title}
             icon={feature.icon}
             title={feature.title}
             description={feature.description}
-            index={index}
           />
         ))}
       </div>
