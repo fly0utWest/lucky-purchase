@@ -51,6 +51,7 @@ export default function WhyUs() {
           description="Создаем лучшие условия для покупателей и продавцов"
         />
 
+
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 mt-8">
           {features.map((feature, index) => (
             <FeatureCard
@@ -61,6 +62,7 @@ export default function WhyUs() {
             />
           ))}
         </div>
+
       </div>
     </section>
   );
