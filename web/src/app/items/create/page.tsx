@@ -248,6 +248,7 @@ export default function CreateItemPage() {
                     accept="image/*"
                     multiple
                     onChange={handleImageChange}
+                    key={Date.now()}
                   />
                 </label>
               )}
