@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
-import { User2, MessageSquare, LogOut, Upload } from "lucide-react";
+import { User2, MessageSquare, LogOut, Upload, Settings } from "lucide-react";
 import { fetchWrapper } from "@/lib/utils";
 import Image from "next/image";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
@@ -123,10 +123,18 @@ export default function ProfilePage() {
                 </div>
                 <div className="flex gap-2">
                   {isOwnProfile ? (
-                    <Button variant="outline" onClick={handleLogout}>
-                      <LogOut className="mr-2 h-5 w-5" />
-                      Выйти
-                    </Button>
+                    <>
+                      <Button variant="outline" asChild>
+                        <Link href="/settings">
+                          <Settings className="mr-2 h-5 w-5" />
+                          Настройки
+                        </Link>
+                      </Button>
+                      <Button variant="outline" onClick={handleLogout}>
+                        <LogOut className="mr-2 h-5 w-5" />
+                        Выйти
+                      </Button>
+                    </>
                   ) : (
                     <Button>
                       <MessageSquare className="mr-2 h-5 w-5" />
