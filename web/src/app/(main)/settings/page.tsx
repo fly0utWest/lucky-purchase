@@ -11,7 +11,7 @@ import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { UpdateUserSchema, UpdateUserValues } from "@/shared/models";
+import { UpdateUserFormSchema, UpdateUserFormValues } from "@/shared/models";
 import { useSettings } from "@/hooks/use-settings";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { env } from "@/env.mjs";
@@ -25,19 +25,29 @@ export default function SettingsPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const backgroundInputRef = useRef<HTMLInputElement>(null);
 
+  const { formState, handleSubmit, register, reset } =
+    useForm<UpdateUserFormValues>({
+      resolver: zodResolver(UpdateUserFormSchema),
+      defaultValues: {
+        name: authenticatedUser?.name || "",
+        password: "",
+      },
+    });
+
   useEffect(() => {
     if (!token) {
       router.push("/auth?mode=sign-in");
     }
-  }, [token, authenticatedUser, router]);
+  }, [token, router]);
 
-  const { formState, handleSubmit, register } = useForm<UpdateUserValues>({
-    resolver: zodResolver(UpdateUserSchema),
-    defaultValues: {
-      name: authenticatedUser?.name || "",
-      password: "",
-    },
-  });
+  useEffect(() => {
+    if (authenticatedUser) {
+      reset({
+        name: authenticatedUser.name || "",
+        password: "",
+      });
+    }
+  }, [authenticatedUser, reset]);
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -54,7 +64,23 @@ export default function SettingsPage() {
   };
 
   const onSubmit = handleSubmit((data) => {
-    changeUserValues(data);
+    const changedData: Partial<UpdateUserFormValues> = {};
+
+    if (
+      data.name &&
+      data.name.trim() !== "" &&
+      data.name !== authenticatedUser?.name
+    ) {
+      changedData.name = data.name;
+    }
+
+    if (data.password && data.password.trim() !== "") {
+      changedData.password = data.password;
+    }
+
+    if (Object.keys(changedData).length > 0) {
+      changeUserValues(changedData);
+    }
   });
 
   return (
@@ -140,7 +166,6 @@ export default function SettingsPage() {
                 id="name"
                 {...register("name")}
                 placeholder="Введите ваше имя"
-                defaultValue={authenticatedUser?.name}
               />
               {formState.errors.name && (
                 <p className="text-sm text-destructive">

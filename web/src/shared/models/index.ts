@@ -27,11 +27,50 @@ export const AuthenticatedUserSchema = PublicUserSchema.extend({
 });
 
 export const UpdateUserSchema = z.object({
-  name: z.string().min(1, "Имя должно быть как минимум 1 символ в длину").optional(),
-  password: z.string().min(6, "Пароль должен содержать минимум 6 символов").optional(),
+  name: z
+    .string()
+    .min(1, "Имя должно быть как минимум 1 символ в длину")
+    .optional(),
+  password: z
+    .string()
+    .min(6, "Пароль должен содержать минимум 6 символов")
+    .optional(),
 });
 
-export type UpdateUserValues = z.infer<typeof UpdateUserSchema>
+export const UpdateUserFormSchema = z
+  .object({
+    name: z.string().optional(),
+    password: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      // Если имя указано, оно должно быть не менее 1 символа
+      if (data.name && data.name.length > 0) {
+        return data.name.length >= 1;
+      }
+      return true;
+    },
+    {
+      message: "Имя должно быть как минимум 1 символ в длину",
+      path: ["name"],
+    }
+  )
+  .refine(
+    (data) => {
+      // Если пароль указан, он должен быть не менее 6 символов
+      if (data.password && data.password.length > 0) {
+        return data.password.length >= 6;
+      }
+      return true;
+    },
+    {
+      message: "Пароль должен содержать минимум 6 символов",
+      path: ["password"],
+    }
+  );
+
+export type UpdateUserValues = z.infer<typeof UpdateUserSchema>;
+export type UpdateUserFormValues = z.infer<typeof UpdateUserFormSchema>;
 
 export type AuthenticatedUser = z.infer<typeof AuthenticatedUserSchema>;
 

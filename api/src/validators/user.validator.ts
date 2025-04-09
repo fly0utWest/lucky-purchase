@@ -15,10 +15,26 @@ export const RegisterUserSchema: z.ZodType<
 
 export type RegisterUserDTO = z.infer<typeof RegisterUserSchema>;
 
-export const UpdateUserDataSchema = z.object({
-  name: z.string().optional(),
-  password: z.string().optional(),
-});
+export const UpdateUserDataSchema = z
+  .object({
+    name: z
+      .string()
+      .min(1, "Имя должно быть как минимум 1 символ в длину")
+      .optional(),
+    password: z
+      .string()
+      .min(6, "Пароль должен содержать минимум 6 символов")
+      .optional(),
+  })
+  .refine(
+    (data) => {
+      // Проверяем, что хотя бы одно поле присутствует
+      return Object.keys(data).length > 0;
+    },
+    {
+      message: "Должно быть указано хотя бы одно поле для обновления",
+    }
+  );
 
 export const UpdateUserAvatarSchema = z.object({
   avatar: z
