@@ -27,8 +27,8 @@ export const AuthenticatedUserSchema = PublicUserSchema.extend({
 });
 
 export const UpdateUserSchema = z.object({
-  name: z.string().min(1, "").optional(),
-  password: z.string().min(1, "").optional(),
+  name: z.string().min(1, "Имя должно быть как минимум 1 символ в длину").optional(),
+  password: z.string().min(6, "Пароль должен содержать минимум 6 символов").optional(),
 });
 
 export type UpdateUserValues = z.infer<typeof UpdateUserSchema>

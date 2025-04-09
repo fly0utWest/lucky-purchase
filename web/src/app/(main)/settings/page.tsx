@@ -7,8 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { User2, Upload, Save } from "lucide-react";
 import Image from "next/image";
-import { useState, useEffect, useRef } from "react";
-import { useToast } from "@/shared/providers/toast-provider";
+import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,8 +20,7 @@ import Link from "next/link";
 export default function SettingsPage() {
   const { isUserUpdating, uploadAvatar, uploadBackground, changeUserValues } =
     useSettings();
-  const { authenticatedUser, token, logout } = useAuthStore();
-  const { toast } = useToast();
+  const { authenticatedUser, token } = useAuthStore();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const backgroundInputRef = useRef<HTMLInputElement>(null);
@@ -33,7 +31,7 @@ export default function SettingsPage() {
     }
   }, [token, authenticatedUser, router]);
 
-  const form = useForm<UpdateUserValues>({
+  const { formState, handleSubmit, register } = useForm<UpdateUserValues>({
     resolver: zodResolver(UpdateUserSchema),
     defaultValues: {
       name: authenticatedUser?.name || "",
@@ -55,7 +53,7 @@ export default function SettingsPage() {
     }
   };
 
-  const onSubmit = form.handleSubmit((data) => {
+  const onSubmit = handleSubmit((data) => {
     changeUserValues(data);
   });
 
@@ -70,19 +68,8 @@ export default function SettingsPage() {
               fill
               className="object-cover"
             />
-          ) : (
-            <Link
-              className="absolute flex justify-center items-center opacity-0 hover:opacity-100 transition-opacity inset-0 w-full h-full bg-muted/50"
-              href="/settings"
-            >
-              <figure className="flex flex-col items-center">
-                <Upload size={64} />
-                <figcaption>Загрузите фон</figcaption>
-              </figure>
-            </Link>
-          )}
-          <div className="absolute inset-0 bg-black/20" />
-          <div className="absolute bottom-4 right-4">
+          ) : null}
+          <div className="absolute flex bottom-4 right-4">
             <Label
               htmlFor="background"
               className="cursor-pointer bg-background/80 hover:bg-background p-2 rounded-full"
@@ -151,13 +138,13 @@ export default function SettingsPage() {
               <Label htmlFor="name">Имя</Label>
               <Input
                 id="name"
-                {...form.register("name")}
+                {...register("name")}
                 placeholder="Введите ваше имя"
                 defaultValue={authenticatedUser?.name}
               />
-              {form.formState.errors.name && (
+              {formState.errors.name && (
                 <p className="text-sm text-destructive">
-                  {form.formState.errors.name.message}
+                  {formState.errors.name.message}
                 </p>
               )}
             </div>
@@ -173,12 +160,12 @@ export default function SettingsPage() {
               <Input
                 id="password"
                 type="password"
-                {...form.register("password")}
+                {...register("password")}
                 placeholder="Введите новый пароль"
               />
-              {form.formState.errors.password && (
+              {formState.errors.password && (
                 <p className="text-sm text-destructive">
-                  {form.formState.errors.password.message}
+                  {formState.errors.password.message}
                 </p>
               )}
             </div>
@@ -189,7 +176,7 @@ export default function SettingsPage() {
           <Button
             type="submit"
             className="w-full sm:w-auto"
-            disabled={isUserUpdating}
+            disabled={isUserUpdating || !formState.isDirty}
           >
             <Save className="mr-2 h-5 w-5" />
             Сохранить изменения

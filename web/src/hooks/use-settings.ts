@@ -4,10 +4,12 @@ import { fetchWrapper } from "@/lib/utils";
 import { AuthenticatedUser } from "@/shared/models";
 import { useToast } from "@/shared/providers/toast-provider";
 import { UpdateUserValues } from "@/shared/models";
+import { useRouter } from "next/navigation";
 
 export const useSettings = () => {
-  const { token, setAuthenticatedUser } = useAuthStore();
+  const { token, setAuthenticatedUser, authenticatedUser } = useAuthStore();
   const { toast } = useToast();
+  const router = useRouter();
 
   const { mutate: uploadAvatar, isPending: isAvatarUploading } = useMutation({
     mutationFn: async (file: File) => {
@@ -91,6 +93,8 @@ export const useSettings = () => {
         title: "Успешно",
         description: "Данные пользователя обновлены",
       });
+
+      router.push(`/profile/${authenticatedUser?.id}`);
     },
     onError: (error) => {
       toast({
