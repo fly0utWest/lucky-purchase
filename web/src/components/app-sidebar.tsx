@@ -18,6 +18,15 @@ import {
   ChevronsUpDown,
   LogOut,
   BadgeCheck,
+  ShoppingBag,
+  HelpCircle,
+  Smartphone,
+  Car,
+  BookOpen,
+  Shirt,
+  Laptop,
+  Baby,
+  Dumbbell,
 } from "lucide-react";
 
 import {
@@ -29,6 +38,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarFooter,
+  SidebarSeparator,
+  SidebarGroupLabel,
 } from "@/components/ui/sidebar";
 
 import {
@@ -43,8 +54,8 @@ import { useAuthStore } from "@/store/authStore";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { env } from "@/env.mjs";
 
-// Navigation items
-const navItems = [
+// Navigation items - базовые пункты меню для всех пользователей
+const commonNavItems = [
   {
     title: "Домой",
     url: "/",
@@ -54,6 +65,52 @@ const navItems = [
     title: "Каталог товаров",
     url: "/catalog",
     icon: Search,
+  },
+];
+
+// Main categories
+const categoryItems = [
+  {
+    title: "Электроника",
+    url: "/catalog?category=Электроника",
+    icon: Smartphone,
+    color: "text-blue-500",
+  },
+  {
+    title: "Транспорт",
+    url: "/catalog?category=Транспорт",
+    icon: Car,
+    color: "text-red-500",
+  },
+  {
+    title: "Одежда",
+    url: "/catalog?category=Одежда",
+    icon: Shirt,
+    color: "text-purple-500",
+  },
+  {
+    title: "Компьютеры",
+    url: "/catalog?category=Компьютеры",
+    icon: Laptop,
+    color: "text-yellow-500",
+  },
+  {
+    title: "Детские товары",
+    url: "/catalog?category=Детские товары",
+    icon: Baby,
+    color: "text-pink-500",
+  },
+  {
+    title: "Спорт",
+    url: "/catalog?category=Спорт",
+    icon: Dumbbell,
+    color: "text-orange-500",
+  },
+  {
+    title: "Хобби",
+    url: "/catalog?category=Хобби",
+    icon: BookOpen,
+    color: "text-teal-500",
   },
 ];
 
@@ -69,12 +126,25 @@ const accountItems = [
     url: "/settings",
     icon: Settings,
   },
+  {
+    title: "Поддержка",
+    url: "/support",
+    icon: HelpCircle,
+  },
+  {
+    title: "О сервисе",
+    url: "/about",
+    icon: BookOpen,
+  },
 ];
 
 export function AppSidebar() {
   const { logout, authenticatedUser } = useAuthStore();
   const [mounted, setMounted] = useState(false);
   const { setOpenMobile } = useSidebar();
+
+  // Формируем полное меню в зависимости от авторизации
+  const navItems = [...commonNavItems];
 
   const handleMobileClose = () => {
     setOpenMobile(false);
@@ -91,6 +161,7 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarContent>
+        {/* Основные пункты навигации */}
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -104,10 +175,63 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  onClick={handleMobileClose}
+                  asChild
+                  className="text-primary"
+                >
+                  <Link
+                    href={
+                      authenticatedUser
+                        ? "/items/create"
+                        : "/auth?mode=sign-in&redirect=/items/create"
+                    }
+                  >
+                    <ShoppingBag className="size-5" />
+                    <span>Разместить объявление</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Разделитель */}
+        <SidebarSeparator className="my-2" />
+
+        {/* Блок категорий */}
+        <SidebarGroup>
+          <SidebarGroupLabel className="px-3">
+            Популярные категории
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {categoryItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton onClick={handleMobileClose} asChild>
+                    <Link href={item.url}>
+                      <item.icon className={`size-5 ${item.color}`} />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+              <SidebarMenuItem>
+                <SidebarMenuButton onClick={handleMobileClose} asChild>
+                  <Link href="/catalog">
+                    <Search className="size-5" />
+                    <span>Все категории</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
+      {/* Футер только с авторизацией */}
       <SidebarFooter>
         {authenticatedUser ? (
           <SidebarMenuItem className="list-none">
@@ -115,13 +239,13 @@ export function AppSidebar() {
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton
                   size="lg"
-                  className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground "
+                  className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                 >
-                  <Avatar className="h-10 w- rounded-full">
+                  <Avatar className="h-10 w-10 rounded-full">
                     <AvatarImage
                       src={`${env.NEXT_PUBLIC_STATIC_URL}/users/avatars/${authenticatedUser.avatar}`}
                     />
-                    <AvatarFallback className="rounded-lg uppercase">
+                    <AvatarFallback className="rounded-full uppercase">
                       {authenticatedUser.name[0]}
                     </AvatarFallback>
                   </Avatar>
@@ -195,9 +319,19 @@ export function AppSidebar() {
             </DropdownMenu>
           </SidebarMenuItem>
         ) : (
-          <Button asChild onClick={handleMobileClose}>
-            <Link href={"/auth?mode=sign-in"}>Войти</Link>
-          </Button>
+          <div className="space-y-2 px-2">
+            <Button asChild onClick={handleMobileClose} className="w-full">
+              <Link href={"/auth?mode=sign-in"}>Войти</Link>
+            </Button>
+            <Button
+              variant="outline"
+              asChild
+              onClick={handleMobileClose}
+              className="w-full"
+            >
+              <Link href={"/auth?mode=sign-up"}>Регистрация</Link>
+            </Button>
+          </div>
         )}
       </SidebarFooter>
     </Sidebar>
