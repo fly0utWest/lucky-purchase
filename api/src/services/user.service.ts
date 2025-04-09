@@ -1,5 +1,6 @@
 import { prisma } from "../../config/db";
 import bcrypt from "bcrypt";
+import { unlink } from "fs/promises";
 import { UpdateUserDTO, RegisterUserDTO } from "../validators/user.validator";
 
 const autheniticatedUserSelectFields = {
@@ -71,11 +72,32 @@ export interface AuthenticatedUserResponse {
   favorites: string[];
   items: string[];
 }
-
 export async function updateUserById(
   userId: string,
   data: UpdateUserDTO
 ): Promise<AuthenticatedUserResponse | null> {
+  if ("avatar" in data) {
+    const oldUser = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { avatar: true },
+    });
+
+    if (oldUser?.avatar) {
+      unlink(`${process.cwd()}/static/users/avatars/${oldUser.avatar}`);
+    }
+  }
+
+  if ("background" in data) {
+    const oldUser = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { background: true },
+    });
+
+    if (oldUser?.background) {
+      unlink(`${process.cwd()}/static/users/backgrounds/${oldUser.background}`);
+    }
+  }
+
   const user = await prisma.user.update({
     where: { id: userId },
     data,
