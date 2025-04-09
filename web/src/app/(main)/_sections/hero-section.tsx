@@ -33,7 +33,7 @@ export default function HeroSection() {
   const { authenticatedUser } = useAuthStore();
 
   return (
-    <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-primary/10 via-primary/5 to-background p-8 text-center">
+    <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-primary/10 via-primary/5 to-background p-10 text-center shadow-sm">
       <div className="relative z-10">
         {authenticatedUser ? (
           <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">

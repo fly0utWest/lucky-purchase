@@ -64,39 +64,41 @@ const categories = [
 
 export default function Categories() {
   return (
-    <section className="space-y-6">
-      <SectionHeader
-        title="Популярные категории"
-        description="Выберите категорию и найдите нужные товары"
-      />
+    <section className="bg-muted/30 py-12 rounded-xl">
+      <div className="container mx-auto px-4">
+        <SectionHeader
+          title="Популярные категории"
+          description="Выберите категорию и найдите нужные товары"
+        />
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {categories.map((category, index) => (
-          <div
-            key={category.name}
-            className="animate-in fade-in slide-in-from-bottom-4 duration-300"
-            style={{ animationDelay: `${index * 100}ms` }}
-          >
-            <Link
-              href={`/catalog?category=${category.name}`}
-              className="group block space-y-2 rounded-xl bg-card p-6 shadow-sm transition-all hover:shadow-md"
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 mt-8">
+          {categories.map((category, index) => (
+            <div
+              key={category.name}
+              className="animate-in fade-in slide-in-from-bottom-4 duration-300"
+              style={{ animationDelay: `${index * 100}ms` }}
             >
-              <div
-                className={`mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10`}
+              <Link
+                href={`/catalog?category=${category.name}`}
+                className="group block space-y-2 rounded-xl bg-card p-6 shadow-sm transition-all hover:shadow-md"
               >
-                <category.icon
-                  className={`h-6 w-6 ${category.color} transition-transform group-hover:scale-110`}
-                />
-              </div>
-              <div className="text-center">
-                <h3 className="font-semibold">{category.name}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {category.description}
-                </p>
-              </div>
-            </Link>
-          </div>
-        ))}
+                <div
+                  className={`mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10`}
+                >
+                  <category.icon
+                    className={`h-6 w-6 ${category.color} transition-transform group-hover:scale-110`}
+                  />
+                </div>
+                <div className="text-center">
+                  <h3 className="font-semibold">{category.name}</h3>
+                  <p className="text-sm text-muted-foreground">
+                    {category.description}
+                  </p>
+                </div>
+              </Link>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

@@ -44,21 +44,23 @@ const features = [
 
 export default function WhyUs() {
   return (
-    <section className="space-y-6">
-      <SectionHeader
-        title="Почему выбирают нас"
-        description="Создаем лучшие условия для покупателей и продавцов"
-      />
+    <section className="bg-muted/30 py-12 rounded-xl">
+      <div className="container mx-auto px-4">
+        <SectionHeader
+          title="Почему выбирают нас"
+          description="Создаем лучшие условия для покупателей и продавцов"
+        />
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {features.map((feature, index) => (
-          <FeatureCard
-            key={feature.title}
-            icon={feature.icon}
-            title={feature.title}
-            description={feature.description}
-          />
-        ))}
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 mt-8">
+          {features.map((feature, index) => (
+            <FeatureCard
+              key={feature.title}
+              icon={feature.icon}
+              title={feature.title}
+              description={feature.description}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );
