@@ -1,4 +1,3 @@
-import { count } from "console";
 import { z } from "zod";
 
 export const PublicUserSchema = z.object({
@@ -10,25 +9,29 @@ export const PublicUserSchema = z.object({
     .refine((val) => !val || /^[A-Za-z0-9_-]+\.[A-Za-z0-9]+$/.test(val), {
       message: "Неверный формат строки аватара",
     }),
+  background: z
+    .string()
+    .nullable()
+    .refine((val) => !val || /^[A-Za-z0-9_-]+\.[A-Za-z0-9]+$/.test(val), {
+      message: "Неверный формат строки фона",
+    }),
   createdAt: z.string().datetime("Неверный формат даты"),
 });
 
 export type PublicUser = z.infer<typeof PublicUserSchema>;
 
-export const AuthenticatedUserSchema = z.object({
-  id: z.string().uuid("Неверный формат UUID"),
-  name: z.string().min(1, "Имя обязательно"),
+export const AuthenticatedUserSchema = PublicUserSchema.extend({
   login: z.string().min(3, "Логин должен содержать минимум 3 символа"),
-  avatar: z
-    .string()
-    .nullable()
-    .refine((val) => !val || /^[A-Za-z0-9_-]+\.[A-Za-z0-9]+$/.test(val), {
-      message: "Неверный формат строки аватара",
-    }),
-  createdAt: z.string().datetime("Неверный формат даты"),
   favorites: z.array(z.string().uuid("Неверный формат UUID")),
   items: z.array(z.string().uuid("Неверный формат UUID")),
 });
+
+export const UpdateUserSchema = z.object({
+  name: z.string().min(1, "Имя должно быть как минимум 1 символ в длину").optional(),
+  password: z.string().min(6, "Пароль должен содержать минимум 6 символов").optional(),
+});
+
+export type UpdateUserValues = z.infer<typeof UpdateUserSchema>
 
 export type AuthenticatedUser = z.infer<typeof AuthenticatedUserSchema>;
 

@@ -1,7 +1,26 @@
 import { prisma } from "../../config/db";
 import bcrypt from "bcrypt";
-import { RegisterUserDTO, UpdateUserDataDTO } from "../validators/user.validator";
-import { GetItemsSchema } from "../validators/item.validator";
+import { unlink } from "fs/promises";
+import { UpdateUserDTO, RegisterUserDTO } from "../validators/user.validator";
+
+const autheniticatedUserSelectFields = {
+  id: true,
+  name: true,
+  login: true,
+  avatar: true,
+  background: true,
+  createdAt: true,
+  favorites: {
+    select: {
+      itemId: true,
+    },
+  },
+  items: {
+    select: {
+      id: true,
+    },
+  },
+};
 
 export async function createUser({ login, password, name }: RegisterUserDTO) {
   const encryptedPassword = await bcrypt.hash(password, 10);
@@ -31,20 +50,7 @@ export async function getUserById(userId: string) {
 export async function getAuthenticatedUserById(userId: string) {
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: {
-      id: true,
-      name: true,
-      login: true,
-      avatar: true,
-      background: true,
-      createdAt: true,
-      favorites: {
-        select: {
-          itemId: true,
-        },
-      },
-      items: { select: { id: true } },
-    },
+    select: autheniticatedUserSelectFields,
   });
 
   if (!user) return null;
@@ -56,27 +62,52 @@ export async function getAuthenticatedUserById(userId: string) {
   };
 }
 
-export async function updateUserById(userId: string, data: UpdateUserDataDTO) {
+export interface AuthenticatedUserResponse {
+  id: string;
+  name: string;
+  login: string;
+  avatar: string | null;
+  background: string | null;
+  createdAt: Date;
+  favorites: string[];
+  items: string[];
+}
+export async function updateUserById(
+  userId: string,
+  data: UpdateUserDTO
+): Promise<AuthenticatedUserResponse | null> {
+  if ("avatar" in data) {
+    const oldUser = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { avatar: true },
+    });
+
+    if (oldUser?.avatar) {
+      unlink(`${process.cwd()}/static/users/avatars/${oldUser.avatar}`);
+    }
+  }
+
+  if ("background" in data) {
+    const oldUser = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { background: true },
+    });
+
+    if (oldUser?.background) {
+      unlink(`${process.cwd()}/static/users/backgrounds/${oldUser.background}`);
+    }
+  }
+
+  if ("password" in data) {
+    const encryptedPassword = await bcrypt.hash(data.password!, 10);
+    data.password = encryptedPassword;
+  }
+
   const user = await prisma.user.update({
     where: { id: userId },
     data,
-    select: {
-      id: true,
-      name: true,
-      login: true,
-      avatar: true,
-      background: true,
-      createdAt: true,
-      favorites: {
-        select: {
-          itemId: true,
-        },
-      },
-      items: { select: { id: true } },
-    },
+    select: autheniticatedUserSelectFields,
   });
-
-  if (!user) return null;
 
   return {
     ...user,

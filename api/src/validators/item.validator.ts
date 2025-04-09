@@ -1,6 +1,10 @@
 import { Item } from "@prisma/client";
 import { z } from "zod";
 import { UUIDSchema } from "../services/shared.validator";
+import {
+  fileNamePattern,
+  invalidFileFormatMessage,
+} from "../services/shared.validator";
 
 export const CreateItemSchema = z.object({
   title: z.string(),
@@ -10,7 +14,9 @@ export const CreateItemSchema = z.object({
     .positive("Цена должна быть положительным числом")
     .max(999999999, "Цена не может быть больше 999 999 999"),
   categoryId: z.string().uuid("Формат id неправилен"),
-  images: z.array(z.any()).min(1, "Добавьте хотя бы одно изображение"),
+  images: z
+    .array(z.string().regex(fileNamePattern, invalidFileFormatMessage))
+    .min(1, "Добавьте хотя бы одно изображение"),
 });
 
 export type CreateItemDTO = z.infer<typeof CreateItemSchema>;

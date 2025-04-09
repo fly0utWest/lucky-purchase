@@ -7,32 +7,12 @@ import { Request } from "express";
 import { unlink } from "fs/promises";
 import { AppError } from "../utils/errors";
 
-const storage = multer.diskStorage({
-  destination: (
-    req: Request,
-    file: Express.Multer.File,
-    cb: (error: Error | null, destination: string) => void
-  ) => {
-    cb(null, "static/items");
-  },
-  filename: (
-    req: Request,
-    file: Express.Multer.File,
-    cb: (error: Error | null, filename: string) => void
-  ) => {
-    const uniqueName = `${crypto.randomBytes(16).toString("hex")}${path.extname(file.originalname)}`;
-    cb(null, uniqueName);
-  },
-});
-
 export async function createItem(data: CreateItemDTO & { userId: string }) {
   const { userId, categoryId, ...itemData } = data;
-  const imageFilenames = data.images.map((file) => file.filename);
 
   return prisma.item.create({
     data: {
       ...itemData,
-      images: imageFilenames,
       category: { connect: { id: categoryId } },
       user: { connect: { id: userId } },
     },
