@@ -16,12 +16,12 @@ export const getCategoriesHandler = asyncHandler(
 
 export const searchItemHandler = asyncHandler(
   async (req: Request, res: Response) => {
-    const { query }: SearchDTO = res.locals.validatedData;
-    const foundItems = await searchItem(query);
-    const count = foundItems.length;
-    console.log(
-      `[ИНФО] ${query.length > 0 ? `По запросу ${query} было найдено ${count} объявлений` : "Был выполнен поиск без запроса"}`
-    );
-    return res.status(200).json({ items: foundItems, count });
+    const validatedData: SearchDTO = res.locals.validatedData;
+    const { items, pagination } = await searchItem(validatedData);
+    // const count = foundItems.pagination.;
+    // console.log(
+    //   `[ИНФО] ${query.length > 0 ? `По запросу ${query} было найдено ${count} объявлений` : "Был выполнен поиск без запроса"}`
+    // );
+    return res.status(200).json({ items, count: items.length });
   }
 );

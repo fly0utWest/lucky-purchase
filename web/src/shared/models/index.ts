@@ -157,3 +157,18 @@ export const itemFormSchema = z.object({
 });
 
 export type ItemFormValues = z.infer<typeof itemFormSchema>;
+
+export const PaginationSchema = z.object({
+  total: z.number(),
+  skip: z.number(),
+  take: z.number(),
+  hasMore: z.boolean(),
+});
+
+export const SearchItemsResponseSchema = z.object({
+  items: z.array(ItemSchema),
+  pagination: PaginationSchema,
+});
+
+export type Pagination = z.infer<typeof PaginationSchema>;
+export type SearchItemsResponse = z.infer<typeof SearchItemsResponseSchema>;
