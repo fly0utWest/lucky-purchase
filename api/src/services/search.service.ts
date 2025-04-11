@@ -8,7 +8,7 @@ export async function getCategories() {
 
 export async function searchItem(params: SearchDTO) {
   const {
-    query,
+    query: encodedQuery,
     sortBy,
     sortDirection,
     minPrice,
@@ -18,9 +18,13 @@ export async function searchItem(params: SearchDTO) {
     take,
   } = params;
 
-  const trimmedQuery = query.trim();
-  const includedCategoryFields = { select: { id: true, name: true } };
+  let query = encodedQuery;
+  query = decodeURIComponent(encodedQuery);
 
+  const trimmedQuery = query.trim();
+  console.log("Поисковый запрос после декодирования:", trimmedQuery);
+
+  const includedCategoryFields = { select: { id: true, name: true } };
   const whereClause: Prisma.ItemWhereInput = {};
 
   if (trimmedQuery !== "") {
@@ -50,11 +54,9 @@ export async function searchItem(params: SearchDTO) {
 
   if (minPrice !== undefined || maxPrice !== undefined) {
     whereClause.price = {};
-
     if (minPrice !== undefined) {
       whereClause.price.gte = minPrice;
     }
-
     if (maxPrice !== undefined) {
       whereClause.price.lte = maxPrice;
     }
@@ -64,10 +66,15 @@ export async function searchItem(params: SearchDTO) {
     whereClause.categoryId = categoryId;
   }
 
-  console.log("Полученные параметры сортировки:", { sortBy, sortDirection });
+  console.log("Параметры запроса:", {
+    trimmedQuery,
+    minPrice,
+    maxPrice,
+    categoryId,
+    whereClause,
+  });
 
   let orderBy: Prisma.ItemOrderByWithRelationInput = {};
-
   switch (sortBy) {
     case "expensive":
       orderBy = { price: "desc" };
@@ -86,27 +93,32 @@ export async function searchItem(params: SearchDTO) {
       break;
   }
 
-  console.log("Параметры сортировки перед запросом:", orderBy);
-
-  const items = await prisma.item.findMany({
-    where: whereClause,
-    include: { category: includedCategoryFields },
-    orderBy,
-    skip,
-    take,
-  });
-
-  const total = await prisma.item.count({
-    where: whereClause,
-  });
-
-  return {
-    items,
-    pagination: {
-      total,
+  try {
+    const items = await prisma.item.findMany({
+      where: whereClause,
+      include: { category: includedCategoryFields },
+      orderBy,
       skip,
       take,
-      hasMore: skip + take < total,
-    },
-  };
+    });
+
+    const total = await prisma.item.count({
+      where: whereClause,
+    });
+
+    console.log(`Найдено ${items.length} из ${total} элементов`);
+
+    return {
+      items,
+      pagination: {
+        total,
+        skip,
+        take,
+        hasMore: skip + take < total,
+      },
+    };
+  } catch (error) {
+    console.error("Ошибка при выполнении поискового запроса:", error);
+    throw error;
+  }
 }
