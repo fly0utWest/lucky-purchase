@@ -8,19 +8,24 @@ export async function getCategories() {
 
 export async function searchItem(params: SearchDTO) {
   const {
-    query,
+    query: encodedQuery,
     sortBy,
     sortDirection,
     minPrice,
     maxPrice,
-    categoryId,
+    category: encodedCategory,
     skip,
     take,
   } = params;
 
-  const trimmedQuery = query.trim();
-  const includedCategoryFields = { select: { id: true, name: true } };
+  let category;
+  let query = encodedQuery;
+  query = decodeURIComponent(encodedQuery);
 
+  const trimmedQuery = query.trim();
+  console.log("Поисковый запрос после декодирования:", trimmedQuery);
+
+  const includedCategoryFields = { select: { name: true } };
   const whereClause: Prisma.ItemWhereInput = {};
 
   if (trimmedQuery !== "") {
@@ -50,24 +55,29 @@ export async function searchItem(params: SearchDTO) {
 
   if (minPrice !== undefined || maxPrice !== undefined) {
     whereClause.price = {};
-
     if (minPrice !== undefined) {
       whereClause.price.gte = minPrice;
     }
-
     if (maxPrice !== undefined) {
       whereClause.price.lte = maxPrice;
     }
   }
 
-  if (categoryId) {
-    whereClause.categoryId = categoryId;
+  if (encodedCategory) {
+    category = encodedCategory;
+    category = decodeURIComponent(encodedCategory);
+    whereClause.category = { name: category };
   }
 
-  console.log("Полученные параметры сортировки:", { sortBy, sortDirection });
+  console.log("Параметры запроса:", {
+    trimmedQuery,
+    minPrice,
+    maxPrice,
+    category,
+    whereClause,
+  });
 
   let orderBy: Prisma.ItemOrderByWithRelationInput = {};
-
   switch (sortBy) {
     case "expensive":
       orderBy = { price: "desc" };
@@ -85,8 +95,6 @@ export async function searchItem(params: SearchDTO) {
       orderBy = { createdAt: "desc" };
       break;
   }
-
-  console.log("Параметры сортировки перед запросом:", orderBy);
 
   const items = await prisma.item.findMany({
     where: whereClause,

@@ -46,7 +46,7 @@ export function HeaderSearchWidget() {
   };
 
   const SearchResults = () => (
-    <div className="p-2 bg-background">
+    <div className="p-2 bg-background max-h-[calc(100vh-10rem)] overflow-y-auto">
       {isLoading && query.length >= 1 && (
         <div className="py-6 text-center">
           <Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" />
@@ -58,20 +58,22 @@ export function HeaderSearchWidget() {
           Ничего не найдено
         </div>
       )}
-      {query.length < 1 && (
+      {query.length < 1 && results.length < 1 && (
         <div className="py-6 text-center text-sm text-muted-foreground">
           Начните печатать...
         </div>
       )}
       {results.length > 0 && (
-        <>
+        <div className="space-y-2">
           <div className="px-1 py-1.5 text-xs font-medium text-muted-foreground">
-            Результаты
+            {query.length >= 1 ? "Результаты" : "Недавние объявления"}
           </div>
-          {results.map((item) => (
-            <ItemCard key={item.id} item={item} variant="compact" />
-          ))}
-        </>
+          <div className="space-y-2">
+            {results.map((item) => (
+              <ItemCard key={item.id} item={item} variant="compact" />
+            ))}
+          </div>
+        </div>
       )}
     </div>
   );

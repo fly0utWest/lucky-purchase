@@ -216,7 +216,7 @@ export default function CreateItemPage() {
               {images.map((image, index) => (
                 <div
                   key={index}
-                  className="relative aspect-square overflow-hidden rounded-lg bg-gray-100"
+                  className="relative aspect-square overflow-hidden rounded-lg bg-muted"
                 >
                   <Button
                     variant={"destructive"}
@@ -235,10 +235,10 @@ export default function CreateItemPage() {
                 </div>
               ))}
               {images.length < 3 && (
-                <label className="flex aspect-square cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100">
+                <label className="flex aspect-square cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-input bg-muted hover:bg-muted/50">
                   <div className="flex flex-col items-center justify-center">
-                    <ImagePlus className="h-8 w-8 text-gray-400" />
-                    <span className="mt-2 text-sm text-gray-600">
+                    <ImagePlus className="h-8 w-8 text-muted-foreground" />
+                    <span className="mt-2 text-sm text-muted-foreground">
                       Добавить фото
                     </span>
                   </div>

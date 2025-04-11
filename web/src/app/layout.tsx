@@ -22,7 +22,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: 'Торговая площадка "Удачная покупка"',
-  metadataBase: new URL("https://lp-web.fly0utwest.dev/"),
+  metadataBase: new URL("https://lucky-purchase.fly0utwest.dev/"),
 };
 
 export default function RootLayout({

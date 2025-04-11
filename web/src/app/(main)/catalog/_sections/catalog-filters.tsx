@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
@@ -16,6 +15,8 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useSearch } from "@/hooks/use-search";
 import { Item } from "@/shared/models";
+import CategoriesDropdown from "@/components/categories-dropdown";
+import { useRouter, useSearchParams } from "next/navigation"; // Import router and search params
 
 type LayoutType = "grid-1" | "grid-2" | "grid-3";
 
@@ -32,10 +33,18 @@ export function CatalogFilters({
   setItems,
   setLoading,
 }: CatalogFiltersProps) {
-  const { query, handleInputChange, setSearchParam, searchParams, refetch } =
-    useSearch("", {
-      minChars: 0,
-    });
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const {
+    query,
+    handleInputChange,
+    setSearchParam,
+    searchParams: filterParams,
+    refetch,
+  } = useSearch("", {
+    minChars: 0,
+  });
 
   const applyFilters = () => {
     setLoading(true);
@@ -50,6 +59,14 @@ export function CatalogFilters({
       });
   };
 
+  // Extract category from URL when component mounts
+  useEffect(() => {
+    const categoryFromUrl = searchParams.get("category");
+    if (categoryFromUrl) {
+      setSearchParam("category", categoryFromUrl);
+    }
+  }, [searchParams, setSearchParam]);
+
   useEffect(() => {
     setLoading(true);
     refetch()
@@ -61,68 +78,59 @@ export function CatalogFilters({
       .catch(() => {
         setLoading(false);
       });
-  }, []);
-  
+  }, [filterParams]);
+
+  const handleCategoryChange = (categoryId: string) => {
+    setSearchParam("category", categoryId);
+
+    const currentUrl = new URL(window.location.href);
+    if (categoryId) {
+      currentUrl.searchParams.set("category", categoryId);
+    } else {
+      currentUrl.searchParams.delete("category");
+    }
+
+    // Use router.push or router.replace depending on your navigation preference
+    router.push(currentUrl.toString());
+  };
+
   return (
-    <Card className="rounded-xl shadow-sm p-6">
-      <div className="space-y-6">
-        <div>
-          <label className="text-sm font-medium mb-2 block">Поиск</label>
+    <Card className="rounded-xl shadow-sm p-4 sm:p-6">
+      <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-stretch sm:items-center">
+        <div className="w-full sm:w-auto">
           <Input
             placeholder="Поиск товаров..."
             value={query}
             onChange={handleInputChange}
+            className="w-full"
           />
         </div>
 
         <div>
-          <label className="text-sm font-medium mb-2 block">Сортировка</label>
-          <Select
-            value={searchParams.sortBy}
-            onValueChange={(value) => setSearchParam("sortBy", value)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Сортировка" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="newest">Сначала новые</SelectItem>
-              <SelectItem value="oldest">Сначала старые</SelectItem>
-              <SelectItem value="expensive">Сначала дорогие</SelectItem>
-              <SelectItem value="cheap">Сначала дешевые</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div>
-          <label className="text-sm font-medium mb-2 block">Цена</label>
-          <div className="space-y-2">
-            <Slider
-              min={0}
-              max={100000000}
-              step={100}
-              value={[
-                searchParams.minPrice || 0,
-                searchParams.maxPrice || 100000000,
-              ]}
-              onValueChange={(value) => {
-                setSearchParam("minPrice", value[0]);
-                setSearchParam("maxPrice", value[1]);
-              }}
-              className="my-4"
+          <div className="flex items-center gap-2">
+            <Select
+              value={filterParams.sortBy}
+              onValueChange={(value) => setSearchParam("sortBy", value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Сортировка" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="newest">Сначала новые</SelectItem>
+                <SelectItem value="oldest">Сначала старые</SelectItem>
+                <SelectItem value="expensive">Сначала дорогие</SelectItem>
+                <SelectItem value="cheap">Сначала дешевые</SelectItem>
+              </SelectContent>
+            </Select>
+            <CategoriesDropdown
+              isValueName
+              value={filterParams.category}
+              onValueChange={handleCategoryChange}
             />
-            <div className="flex items-center justify-between text-sm">
-              <span>{searchParams.minPrice?.toLocaleString() || 0} ₽</span>
-              <span>
-                {searchParams.maxPrice?.toLocaleString() || 100000000} ₽
-              </span>
-            </div>
           </div>
         </div>
 
         <div className="flex justify-end gap-2">
-          <Button onClick={applyFilters} className="bg-primary text-white">
-            Отфильтровать
-          </Button>
           <Button
             variant="outline"
             size="icon"

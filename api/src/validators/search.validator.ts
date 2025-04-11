@@ -10,7 +10,7 @@ export const SearchSchema = z
     sortDirection: z.enum(["asc", "desc"]).optional().default("desc"),
     minPrice: z.number().positive().optional(),
     maxPrice: z.number().positive().optional(),
-    categoryId: z.string().uuid().optional(),
+    category: z.string().optional(),
     skip: z.number().int().nonnegative().optional().default(0),
     take: z.number().int().positive().optional().default(20),
   })

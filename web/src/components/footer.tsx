@@ -1,6 +1,9 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Twitter, Facebook, Instagram } from "lucide-react";
+import { Users, Phone,  } from "lucide-react";
+import {
+  Send as TelegramIcon,
+  PersonStanding as OkIcon,
+} from "lucide-react";
 import Logo from "./logo";
 
 export default function Footer() {
@@ -14,17 +17,34 @@ export default function Footer() {
 
           {/* Социальные сети */}
           <div className="flex flex-col gap-4 items-center md:flex-row *:text-ring *:flex *:flex-row *:gap-2">
-            <Link href="#">
-              {" "}
-              <Twitter /> <span className="md:hidden">Twitter</span>
+            <Link
+              href="https://vk.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Users className="h-5 w-5" />{" "}
+              <span className="md:hidden">ВКонтакте</span>
             </Link>
-            <Link href="#">
-              {" "}
-              <Facebook /> <span className="md:hidden">Facebook</span>
+            <Link href="https://t.me" target="_blank" rel="noopener noreferrer">
+            
+              <TelegramIcon className="h-5 w-5" />{" "}
+              <span className="md:hidden">Telegram</span>
             </Link>
-            <Link href="#">
-              {" "}
-              <Instagram /> <span className="md:hidden">Instagram</span>
+            <Link
+              href="https://ok.ru"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <OkIcon className="h-6 w-6" />{" "}
+              <span className="md:hidden">Одноклассники</span>
+            </Link>
+            <Link
+              href="https://wa.me"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Phone className="h-5 w-5" />{" "}
+              <span className="md:hidden">WhatsApp</span>
             </Link>
           </div>
         </div>
@@ -33,8 +53,8 @@ export default function Footer() {
             <Link href="/about" className="hover:underline">
               О нас
             </Link>
-            <Link href="/contact" className="hover:underline">
-              Контакты
+            <Link href="/contacts-support" className="hover:underline">
+              Контакты и Поддержка
             </Link>
             <Link href="/terms" className="hover:underline">
               Условия

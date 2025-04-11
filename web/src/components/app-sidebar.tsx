@@ -74,43 +74,49 @@ const categoryItems = [
     title: "Электроника",
     url: "/catalog?category=Электроника",
     icon: Smartphone,
-    color: "text-blue-500",
+    color: "text-[hsl(var(--chart-1))]",
   },
   {
     title: "Транспорт",
     url: "/catalog?category=Транспорт",
     icon: Car,
-    color: "text-red-500",
+    color: "text-[hsl(var(--chart-2))]",
+  },
+  {
+    title: "Для дома",
+    url: "/catalog?category=для дома",
+    icon: Home,
+    color: "text-[hsl(var(--chart-3))]",
   },
   {
     title: "Одежда",
     url: "/catalog?category=Одежда",
     icon: Shirt,
-    color: "text-purple-500",
+    color: "text-[hsl(var(--chart-4))]",
   },
   {
     title: "Компьютеры",
     url: "/catalog?category=Компьютеры",
     icon: Laptop,
-    color: "text-yellow-500",
+    color: "text-[hsl(var(--chart-5))]",
   },
   {
     title: "Детские товары",
     url: "/catalog?category=Детские товары",
     icon: Baby,
-    color: "text-pink-500",
+    color: "text-[hsl(var(--chart-1))]",
   },
   {
     title: "Спорт",
     url: "/catalog?category=Спорт",
     icon: Dumbbell,
-    color: "text-orange-500",
+    color: "text-[hsl(var(--chart-2))]",
   },
   {
     title: "Хобби",
     url: "/catalog?category=Хобби",
     icon: BookOpen,
-    color: "text-teal-500",
+    color: "text-[hsl(var(--chart-3))]",
   },
 ];
 
@@ -128,7 +134,7 @@ const accountItems = [
   },
   {
     title: "Поддержка",
-    url: "/support",
+    url: "/contacts-support",
     icon: HelpCircle,
   },
   {
