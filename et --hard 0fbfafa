@@ -1,0 +1,108 @@
+[33m0fbfafa[m[33m ([m[1;36mHEAD -> [m[1;32mdev[m[33m)[m HEAD@{0}: reset: moving to 0fbfafa
+[33me56889b[m[33m ([m[1;31morigin/dev[m[33m)[m HEAD@{1}: reset: moving to e56889b
+[33me56889b[m[33m ([m[1;31morigin/dev[m[33m)[m HEAD@{2}: reset: moving to e56889b
+[33me56889b[m[33m ([m[1;31morigin/dev[m[33m)[m HEAD@{3}: reset: moving to HEAD
+[33me56889b[m[33m ([m[1;31morigin/dev[m[33m)[m HEAD@{4}: reset: moving to e56889b
+[33me960a5a[m HEAD@{5}: commit: сохраняю текущие изменения перед откатом
+[33m0fbfafa[m[33m ([m[1;36mHEAD -> [m[1;32mdev[m[33m)[m HEAD@{6}: commit: ну я хуй его занет куда я вообще залез это просто коммит что бы вернуться к началу. мне хотя бы весело...
+[33me56889b[m[33m ([m[1;31morigin/dev[m[33m)[m HEAD@{7}: reset: moving to HEAD
+[33me56889b[m[33m ([m[1;31morigin/dev[m[33m)[m HEAD@{8}: reset: moving to HEAD
+[33me56889b[m[33m ([m[1;31morigin/dev[m[33m)[m HEAD@{9}: pull: Fast-forward
+[33m92ad978[m HEAD@{10}: reset: moving to HEAD
+[33m92ad978[m HEAD@{11}: reset: moving to HEAD
+[33m92ad978[m HEAD@{12}: commit: web-refactor: hero_section refactor
+[33md069de8[m HEAD@{13}: commit: hero section redesign
+[33m82693e9[m HEAD@{14}: commit: времнная hero section
+[33m5d68092[m HEAD@{15}: pull: Merge made by the 'ort' strategy.
+[33m790c683[m HEAD@{16}: commit: новое навигационное меню
+[33m39add74[m HEAD@{17}: reset: moving to HEAD
+[33m39add74[m HEAD@{18}: commit (amend): редизайн пока не финальный...
+[33m6d72221[m HEAD@{19}: commit: редезайн пока не финальный...
+[33m268195f[m HEAD@{20}: commit: исправил загрузку картинок в хроме
+[33m17335c0[m HEAD@{21}: pull --rebase (finish): returning to refs/heads/dev
+[33m17335c0[m HEAD@{22}: pull --rebase (pick): удалил framer-motion, добавил кнопку настроек в профиле
+[33ma24c6dc[m HEAD@{23}: pull --rebase (start): checkout a24c6dc5fdf07bd383fe8b3947ac40077fdf43d6
+[33m164f82f[m HEAD@{24}: commit: удалил framer-motion, добавил кнопку настроек в профиле
+[33m2df794e[m HEAD@{25}: commit: feat,fix...: поправили настройки(валидации), добавили аватарки по всему сайту
+[33m1487d6b[m HEAD@{26}: commit (merge): Merge branch 'dev' of github.com:fly0utWest/marketplace-project into dev
+[33m22ea6c7[m HEAD@{27}: reset: moving to HEAD
+[33m22ea6c7[m HEAD@{28}: checkout: moving from test to dev
+[33m462022b[m[33m ([m[1;32mtest[m[33m)[m HEAD@{29}: commit (merge): Merge branch 'dev' into test
+[33mf0033f9[m[33m ([m[1;31morigin/test[m[33m)[m HEAD@{30}: checkout: moving from dev to test
+[33m22ea6c7[m HEAD@{31}: checkout: moving from test to dev
+[33mf0033f9[m[33m ([m[1;31morigin/test[m[33m)[m HEAD@{32}: checkout: moving from dev to test
+[33m22ea6c7[m HEAD@{33}: checkout: moving from test to dev
+[33mf0033f9[m[33m ([m[1;31morigin/test[m[33m)[m HEAD@{34}: reset: moving to HEAD
+[33mf0033f9[m[33m ([m[1;31morigin/test[m[33m)[m HEAD@{35}: reset: moving to HEAD
+[33mf0033f9[m[33m ([m[1;31morigin/test[m[33m)[m HEAD@{36}: checkout: moving from dev to test
+[33m22ea6c7[m HEAD@{37}: commit: refactor: dto name fix
+[33m165ca26[m HEAD@{38}: pull: Fast-forward
+[33mad46486[m HEAD@{39}: checkout: moving from test to dev
+[33mf0033f9[m[33m ([m[1;31morigin/test[m[33m)[m HEAD@{40}: reset: moving to HEAD
+[33mf0033f9[m[33m ([m[1;31morigin/test[m[33m)[m HEAD@{41}: commit: feat: автоматическое закрытие сайдбара и выпадающего меню
+[33m66505f4[m HEAD@{42}: reset: moving to HEAD
+[33m66505f4[m HEAD@{43}: commit: feat: улучшен интерфейс каталога, добавлены анимации и улучшена стилизация
+[33m0ed12c0[m HEAD@{44}: reset: moving to HEAD
+[33m0ed12c0[m HEAD@{45}: commit: fix: обновлены пути к изображениям в профиле и настройках
+[33mad46486[m HEAD@{46}: checkout: moving from dev to test
+[33mad46486[m HEAD@{47}: commit: web-feat: added draft update user handler
+[33m27442ec[m HEAD@{48}: reset: moving to HEAD~1
+[33m2dfea29[m HEAD@{49}: pull: Fast-forward
+[33m27442ec[m HEAD@{50}: reset: moving to HEAD
+[33m27442ec[m HEAD@{51}: pull: Fast-forward
+[33m02a2198[m HEAD@{52}: reset: moving to HEAD
+[33m02a2198[m HEAD@{53}: pull: Fast-forward
+[33m3292c98[m HEAD@{54}: checkout: moving from main to dev
+[33m801057f[m[33m ([m[1;32mmain[m[33m)[m HEAD@{55}: pull: Fast-forward
+[33m477cc42[m HEAD@{56}: checkout: moving from dev to main
+[33m3292c98[m HEAD@{57}: pull: Fast-forward
+[33m2be1317[m HEAD@{58}: commit: web-fix: пиздец мы удалили весь код и заново все писали кароче...[D
+[33m794b022[m HEAD@{59}: reset: moving to 794b022
+[33m084c272[m HEAD@{60}: reset: moving to HEAD
+[33m084c272[m HEAD@{61}: pull: Fast-forward
+[33m612cd01[m HEAD@{62}: pull --rebase (finish): returning to refs/heads/dev
+[33m612cd01[m HEAD@{63}: pull --rebase (pick): web-refactor: removed unused debounced function
+[33m890e60f[m HEAD@{64}: pull --rebase (start): checkout 890e60f464da13ad447b9d7443f1d70dc27fa8bf
+[33m794b022[m HEAD@{65}: commit: web-refactor: removed unused debounced function
+[33m47d3389[m HEAD@{66}: reset: moving to HEAD
+[33m47d3389[m HEAD@{67}: reset: moving to HEAD
+[33m47d3389[m HEAD@{68}: commit: refactor: profile/me has been removed in favor of regular profile id
+[33macddf08[m HEAD@{69}: reset: moving to HEAD
+[33macddf08[m HEAD@{70}: pull: Fast-forward
+[33mca0682b[m HEAD@{71}: reset: moving to HEAD
+[33mca0682b[m HEAD@{72}: commit (merge): Merge branch 'dev' of github.com:fly0utWest/marketplace-project into dev
+[33m30ea2d9[m HEAD@{73}: commit: refactor(profile): update profile page structure and fix favorites display
+[33m7cfe4d6[m HEAD@{74}: commit: jesus
+[33m4817f5f[m HEAD@{75}: reset: moving to HEAD
+[33m4817f5f[m HEAD@{76}: pull: Fast-forward
+[33md4b173a[m HEAD@{77}: reset: moving to origin/dev
+[33md4b173a[m HEAD@{78}: pull: Fast-forward
+[33m24e660e[m HEAD@{79}: commit: favorite can be added on item page
+[33mae1bfd3[m HEAD@{80}: commit: feat: add favorites functionality and fix auth persistence
+[33m31ddf42[m HEAD@{81}: merge refs/remotes/origin/dev: Merge made by the 'ort' strategy.
+[33mb637a02[m HEAD@{82}: commit: Merge changes and resolve conflicts
+[33m5bf197e[m HEAD@{83}: pull origin dev: Fast-forward
+[33m6d472ed[m HEAD@{84}: reset: moving to HEAD
+[33m6d472ed[m HEAD@{85}: checkout: moving from main to dev
+[33m477cc42[m HEAD@{86}: merge refs/remotes/origin/main: Fast-forward
+[33m66d05c2[m HEAD@{87}: pull: Fast-forward
+[33m33c8f6e[m HEAD@{88}: reset: moving to HEAD
+[33m33c8f6e[m HEAD@{89}: pull: Fast-forward
+[33mfead255[m HEAD@{90}: commit: fix statci server and some sections
+[33m27ff0bd[m HEAD@{91}: commit: configure image upload for items
+[33maeefd15[m HEAD@{92}: commit: move static files to Caddy
+[33maadb751[m HEAD@{93}: reset: moving to HEAD~2
+[33m6e20721[m HEAD@{94}: commit: move static files to Caddy
+[33m007b7af[m HEAD@{95}: reset: moving to HEAD
+[33m007b7af[m HEAD@{96}: commit: move static files to Caddy
+[33maadb751[m HEAD@{97}: commit: Enhanced the catalog page, implemented infinite scroll, fixed product duplication during loading, improved product card design
+[33mc6b0c69[m HEAD@{98}: commit: added catalog page and set up seed script
+[33mf96043a[m HEAD@{99}: reset: moving to HEAD
+[33mf96043a[m HEAD@{100}: reset: moving to HEAD
+[33mf96043a[m HEAD@{101}: reset: moving to HEAD
+[33mf96043a[m HEAD@{102}: reset: moving to HEAD
+[33mf96043a[m HEAD@{103}: pull: Fast-forward
+[33mbab3468[m HEAD@{104}: pull: Fast-forward
+[33m76584c6[m HEAD@{105}: pull: Fast-forward
+[33ma2ad63f[m HEAD@{106}: pull: Fast-forward
+[33m74923e8[m HEAD@{107}: pull: Fast-forw

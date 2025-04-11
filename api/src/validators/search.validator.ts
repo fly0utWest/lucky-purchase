@@ -3,7 +3,10 @@ import z from "zod";
 export const SearchSchema = z
   .object({
     query: z.string().optional().default(""),
-    sortBy: z.enum(["newest", "price", "title"]).optional().default("newest"),
+    sortBy: z
+      .enum(["newest", "oldest", "expensive", "cheap"])
+      .optional()
+      .default("newest"),
     sortDirection: z.enum(["asc", "desc"]).optional().default("desc"),
     minPrice: z.number().positive().optional(),
     maxPrice: z.number().positive().optional(),
