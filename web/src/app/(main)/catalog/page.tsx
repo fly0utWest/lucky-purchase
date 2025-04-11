@@ -1,191 +1,18 @@
 "use client";
 
 import React, { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Slider } from "@/components/ui/slider";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
-import { LayoutGrid, Rows } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { useSearch } from "@/hooks/use-search";
 import ItemCard from "@/components/item-card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Item } from "@/shared/models";
+import { CatalogFilters } from "./_sections/catalog-filters";
 
 type LayoutType = "grid-1" | "grid-2" | "grid-3";
 
-interface CatalogFiltersProps {
-  layout: LayoutType;
-  onLayoutChange: (layout: LayoutType) => void;
-}
-
-function CatalogFilters({ layout, onLayoutChange }: CatalogFiltersProps) {
-  const { query, handleInputChange, setSearchParam, searchParams, refetch } =
-    useSearch("", {
-      minChars: 0,
-    });
-
-  const applyFilters = () => {
-    const params = new URLSearchParams();
-    if (query) params.set("query", query);
-
-    if (searchParams.sortBy) {
-      params.set("sortBy", searchParams.sortBy);
-    }
-
-    // Преобразуем цены в числа и проверяем их
-    const minPrice = Number(searchParams.minPrice);
-    const maxPrice = Number(searchParams.maxPrice);
-
-    if (!isNaN(minPrice) && minPrice > 0) {
-      params.set("minPrice", minPrice.toString());
-    }
-    if (!isNaN(maxPrice) && maxPrice > 0) {
-      params.set("maxPrice", maxPrice.toString());
-    }
-
-    if (searchParams.categoryId) {
-      params.set("categoryId", searchParams.categoryId);
-    }
-
-    const newUrl = `${window.location.pathname}?${params.toString()}`;
-    window.history.pushState({}, "", newUrl);
-
-    // Обновляем параметры поиска с преобразованными значениями
-    const updatedParams = {
-      ...searchParams,
-      minPrice: searchParams.minPrice
-        ? Number(searchParams.minPrice)
-        : undefined,
-      maxPrice: searchParams.maxPrice
-        ? Number(searchParams.maxPrice)
-        : undefined,
-    };
-
-    // Обновляем каждый параметр отдельно
-    Object.entries(updatedParams).forEach(([key, value]) => {
-      setSearchParam(key as keyof typeof updatedParams, value);
-    });
-
-    refetch();
-  };
-
-  return (
-    <Card className="rounded-xl shadow-sm p-6">
-      <div className="space-y-6">
-        <div>
-          <label className="text-sm font-medium mb-2 block">Поиск</label>
-          <Input
-            placeholder="Поиск товаров..."
-            value={query}
-            onChange={handleInputChange}
-          />
-        </div>
-
-        <div>
-          <label className="text-sm font-medium mb-2 block">Сортировка</label>
-          <Select
-            value={searchParams.sortBy}
-            onValueChange={(value) => {
-              setSearchParam("sortBy", value);
-              applyFilters();
-            }}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Сортировка" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="newest">Сначала новые</SelectItem>
-              <SelectItem value="oldest">Сначала старые</SelectItem>
-              <SelectItem value="expensive">Сначала дорогие</SelectItem>
-              <SelectItem value="cheap">Сначала дешевые</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div>
-          <label className="text-sm font-medium mb-2 block">Цена</label>
-          <div className="space-y-2">
-            <Slider
-              min={0}
-              max={100000000}
-              step={100}
-              value={[
-                searchParams.minPrice || 0,
-                searchParams.maxPrice || 100000000,
-              ]}
-              onValueChange={(value) => {
-                const [min, max] = value;
-                // Убеждаемся, что значения являются числами
-                const minPrice = Number(min);
-                const maxPrice = Number(max);
-
-                if (!isNaN(minPrice) && !isNaN(maxPrice)) {
-                  setSearchParam("minPrice", minPrice);
-                  setSearchParam("maxPrice", maxPrice);
-                }
-              }}
-              className="my-4"
-            />
-            <div className="flex items-center justify-between text-sm">
-              <span>{searchParams.minPrice?.toLocaleString() || 0} ₽</span>
-              <span>
-                {searchParams.maxPrice?.toLocaleString() || 100000000} ₽
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex justify-end gap-2">
-          <Button onClick={applyFilters} className="bg-primary text-white">
-            Отфильтровать
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => onLayoutChange("grid-1")}
-            className={cn(
-              layout === "grid-1" && "bg-primary text-primary-foreground"
-            )}
-          >
-            <Rows className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => onLayoutChange("grid-2")}
-            className={cn(
-              layout === "grid-2" && "bg-primary text-primary-foreground"
-            )}
-          >
-            <LayoutGrid className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => onLayoutChange("grid-3")}
-            className={cn(
-              layout === "grid-3" && "bg-primary text-primary-foreground"
-            )}
-          >
-            <LayoutGrid className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-    </Card>
-  );
-}
-
 export default function CatalogPage() {
   const [layout, setLayout] = useState<LayoutType>("grid-2");
-  const { results, isLoading } = useSearch("", { minChars: 0 });
+  const [isLoading, setIsLoading] = useState(true);
+  const [items, setItems] = useState<Item[]>([]);
 
   const getGridClasses = () => {
     switch (layout) {
@@ -205,16 +32,23 @@ export default function CatalogPage() {
       <h1 className="text-3xl font-bold mb-8">Каталог товаров</h1>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
         <div className="md:col-span-1">
-          <CatalogFilters layout={layout} onLayoutChange={setLayout} />
+          <CatalogFilters
+            setLoading={(state) => setIsLoading(state)}
+            setItems={(data) => {
+              setItems(data);
+            }}
+            layout={layout}
+            onLayoutChange={setLayout}
+          />
         </div>
         <div className="md:col-span-3">
           {isLoading ? (
             <div className="flex justify-center items-center h-64">
               <LoadingSpinner size="lg" />
             </div>
-          ) : results && results.length > 0 ? (
+          ) : items && items.length > 0 ? (
             <div className={`grid ${getGridClasses()} gap-4`}>
-              {results.map((item: Item) => (
+              {items.map((item: Item) => (
                 <ItemCard
                   key={item.id}
                   item={item}

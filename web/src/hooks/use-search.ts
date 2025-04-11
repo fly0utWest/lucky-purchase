@@ -17,17 +17,6 @@ interface SearchParams {
   take?: number;
 }
 
-interface BackendSearchParams {
-  query?: string;
-  sortBy?: "newest" | "oldest" | "expensive" | "cheap";
-  sortDirection?: "asc" | "desc";
-  minPrice?: number;
-  maxPrice?: number;
-  categoryId?: string;
-  skip?: number;
-  take?: number;
-}
-
 interface UseSearchOptions {
   debounceMs?: number;
   enabled?: boolean;

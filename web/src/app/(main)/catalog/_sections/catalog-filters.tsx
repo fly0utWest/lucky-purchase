@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
@@ -13,17 +15,22 @@ import { LayoutGrid, Rows } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useSearch } from "@/hooks/use-search";
+import { Item } from "@/shared/models";
 
 type LayoutType = "grid-1" | "grid-2" | "grid-3";
 
 interface CatalogFiltersProps {
   layout: LayoutType;
   onLayoutChange: (layout: LayoutType) => void;
+  setLoading: (isLoading: boolean) => void;
+  setItems: (data: Item[]) => void;
 }
 
 export function CatalogFilters({
   layout,
   onLayoutChange,
+  setItems,
+  setLoading,
 }: CatalogFiltersProps) {
   const { query, handleInputChange, setSearchParam, searchParams, refetch } =
     useSearch("", {
@@ -31,9 +38,31 @@ export function CatalogFilters({
     });
 
   const applyFilters = () => {
-    refetch();
+    setLoading(true);
+    refetch()
+      .then((response) => {
+        const searchResults = response?.data?.items || [];
+        setItems(searchResults);
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
   };
 
+  useEffect(() => {
+    setLoading(true);
+    refetch()
+      .then((response) => {
+        const searchResults = response?.data?.items || [];
+        setItems(searchResults);
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
+  }, []);
+  
   return (
     <Card className="rounded-xl shadow-sm p-6">
       <div className="space-y-6">
