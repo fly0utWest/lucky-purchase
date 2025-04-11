@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 import { useSearch } from "@/hooks/use-search";
 import { Item } from "@/shared/models";
 import CategoriesDropdown from "@/components/categories-dropdown";
-import { useRouter, useSearchParams } from "next/navigation"; // Import router and search params
+import { useRouter, useSearchParams } from "next/navigation";
 
 type LayoutType = "grid-1" | "grid-2" | "grid-3";
 
@@ -46,7 +46,10 @@ export function CatalogFilters({
     minChars: 0,
   });
 
-  const applyFilters = () => {
+  // This flag prevents initial double requests
+  const [initialParamsSet, setInitialParamsSet] = React.useState(false);
+
+  const fetchItems = () => {
     setLoading(true);
     refetch()
       .then((response) => {
@@ -59,26 +62,23 @@ export function CatalogFilters({
       });
   };
 
-  // Extract category from URL when component mounts
+  // Extract category from URL only once when component mounts
   useEffect(() => {
     const categoryFromUrl = searchParams.get("category");
+
     if (categoryFromUrl) {
       setSearchParam("category", categoryFromUrl);
     }
-  }, [searchParams, setSearchParam]);
 
+    setInitialParamsSet(true);
+  }, [searchParams]); // Removed setSearchParam from deps to avoid potential re-runs
+
+  // Only fetch when either initialParamsSet becomes true OR filterParams changes after initial setup
   useEffect(() => {
-    setLoading(true);
-    refetch()
-      .then((response) => {
-        const searchResults = response?.data?.items || [];
-        setItems(searchResults);
-        setLoading(false);
-      })
-      .catch(() => {
-        setLoading(false);
-      });
-  }, [filterParams]);
+    if (initialParamsSet) {
+      fetchItems();
+    }
+  }, [initialParamsSet, filterParams]);
 
   const handleCategoryChange = (categoryId: string) => {
     setSearchParam("category", categoryId);
