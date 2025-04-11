@@ -63,7 +63,7 @@ export function CatalogFilters({
   useEffect(() => {
     const categoryFromUrl = searchParams.get("category");
     if (categoryFromUrl) {
-      setSearchParam("categoryId", categoryFromUrl);
+      setSearchParam("category", categoryFromUrl);
     }
   }, [searchParams, setSearchParam]);
 
@@ -81,7 +81,7 @@ export function CatalogFilters({
   }, [filterParams]);
 
   const handleCategoryChange = (categoryId: string) => {
-    setSearchParam("categoryId", categoryId);
+    setSearchParam("category", categoryId);
 
     const currentUrl = new URL(window.location.href);
     if (categoryId) {
@@ -106,25 +106,28 @@ export function CatalogFilters({
           />
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
-          <Select
-            value={filterParams.sortBy}
-            onValueChange={(value) => setSearchParam("sortBy", value)}
-          >
-            <SelectTrigger className="w-full sm:w-[180px]">
-              <SelectValue placeholder="Сортировка" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="newest">Сначала новые</SelectItem>
-              <SelectItem value="oldest">Сначала старые</SelectItem>
-              <SelectItem value="expensive">Сначала дорогие</SelectItem>
-              <SelectItem value="cheap">Сначала дешевые</SelectItem>
-            </SelectContent>
-          </Select>
-          <CategoriesDropdown
-            value={filterParams.categoryId}
-            onValueChange={handleCategoryChange}
-          />
+        <div>
+          <div className="flex items-center gap-2">
+            <Select
+              value={filterParams.sortBy}
+              onValueChange={(value) => setSearchParam("sortBy", value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Сортировка" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="newest">Сначала новые</SelectItem>
+                <SelectItem value="oldest">Сначала старые</SelectItem>
+                <SelectItem value="expensive">Сначала дорогие</SelectItem>
+                <SelectItem value="cheap">Сначала дешевые</SelectItem>
+              </SelectContent>
+            </Select>
+            <CategoriesDropdown
+              isValueName
+              value={filterParams.category}
+              onValueChange={handleCategoryChange}
+            />
+          </div>
         </div>
 
         <div className="flex justify-end gap-2">

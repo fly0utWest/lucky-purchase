@@ -102,7 +102,7 @@ const categoryItems = [
   },
   {
     title: "Спорт",
-    url: "/catalog?category=929a1bac-c9fa-4b23-9a54-b0b449d9adce",
+    url: "/catalog?category=Спорт",
     icon: Dumbbell,
     color: "text-orange-500",
   },

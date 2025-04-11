@@ -22,6 +22,7 @@ interface CategoriesDropdownProps {
   disabled?: boolean;
   className?: string;
   required?: boolean;
+  isValueName?: boolean;
 }
 
 const CategoriesDropdown: React.FC<CategoriesDropdownProps> = ({
@@ -31,11 +32,12 @@ const CategoriesDropdown: React.FC<CategoriesDropdownProps> = ({
   disabled = false,
   className = "",
   required = false,
+  isValueName = false,
 }) => {
   const { data, isLoading, error, refetch } = useQuery<CategoryResponse>({
     queryKey: ["categories"],
     queryFn: () => fetchWrapper("/search/categories"),
-    staleTime: 5 * 60 * 1000, 
+    staleTime: 5 * 60 * 1000,
     retry: 2,
   });
 
@@ -74,7 +76,7 @@ const CategoriesDropdown: React.FC<CategoriesDropdownProps> = ({
             <SelectItem
               className="hover:cursor-pointer"
               key={item.id}
-              value={item.id!}
+              value={isValueName ? item.name! : item.id!}
             >
               {item.name}
             </SelectItem>

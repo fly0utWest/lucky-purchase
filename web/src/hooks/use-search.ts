@@ -12,7 +12,7 @@ interface SearchParams {
   sortDirection?: "asc" | "desc";
   minPrice?: number;
   maxPrice?: number;
-  categoryId?: string;
+  category?: string;
   skip?: number;
   take?: number;
 }
@@ -87,8 +87,8 @@ export function useSearch(
       }
     }
 
-    if (params.categoryId)
-      queryParams.set("categoryId", encodeURIComponent(params.categoryId));
+    if (params.category)
+      queryParams.set("category", encodeURIComponent(params.category));
     if (params.skip !== undefined) queryParams.set("skip", String(params.skip));
     if (params.take !== undefined) queryParams.set("take", String(params.take));
 
