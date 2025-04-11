@@ -128,7 +128,7 @@ const accountItems = [
   },
   {
     title: "Поддержка",
-    url: "/support",
+    url: "/contacts-support",
     icon: HelpCircle,
   },
   {

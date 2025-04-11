@@ -95,35 +95,36 @@ export function CatalogFilters({
   };
 
   return (
-    <Card className="rounded-xl flex items-center shadow-sm p-6">
-      <div className="gap-6 items-center flex">
-        <Input
-          placeholder="Поиск товаров..."
-          value={query}
-          onChange={handleInputChange}
-        />
+    <Card className="rounded-xl shadow-sm p-4 sm:p-6">
+      <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-stretch sm:items-center">
+        <div className="w-full sm:w-auto">
+          <Input
+            placeholder="Поиск товаров..."
+            value={query}
+            onChange={handleInputChange}
+            className="w-full"
+          />
+        </div>
 
-        <div>
-          <div className="flex items-center gap-2">
-            <Select
-              value={filterParams.sortBy}
-              onValueChange={(value) => setSearchParam("sortBy", value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Сортировка" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="newest">Сначала новые</SelectItem>
-                <SelectItem value="oldest">Сначала старые</SelectItem>
-                <SelectItem value="expensive">Сначала дорогие</SelectItem>
-                <SelectItem value="cheap">Сначала дешевые</SelectItem>
-              </SelectContent>
-            </Select>
-            <CategoriesDropdown
-              value={filterParams.categoryId}
-              onValueChange={handleCategoryChange}
-            />
-          </div>
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
+          <Select
+            value={filterParams.sortBy}
+            onValueChange={(value) => setSearchParam("sortBy", value)}
+          >
+            <SelectTrigger className="w-full sm:w-[180px]">
+              <SelectValue placeholder="Сортировка" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="newest">Сначала новые</SelectItem>
+              <SelectItem value="oldest">Сначала старые</SelectItem>
+              <SelectItem value="expensive">Сначала дорогие</SelectItem>
+              <SelectItem value="cheap">Сначала дешевые</SelectItem>
+            </SelectContent>
+          </Select>
+          <CategoriesDropdown
+            value={filterParams.categoryId}
+            onValueChange={handleCategoryChange}
+          />
         </div>
 
         <div className="flex justify-end gap-2">
