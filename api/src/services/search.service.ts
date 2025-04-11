@@ -93,32 +93,25 @@ export async function searchItem(params: SearchDTO) {
       break;
   }
 
-  try {
-    const items = await prisma.item.findMany({
-      where: whereClause,
-      include: { category: includedCategoryFields },
-      orderBy,
+  const items = await prisma.item.findMany({
+    where: whereClause,
+    include: { category: includedCategoryFields },
+    orderBy,
+    skip,
+    take,
+  });
+
+  const total = await prisma.item.count({
+    where: whereClause,
+  });
+
+  return {
+    items,
+    pagination: {
+      total,
       skip,
       take,
-    });
-
-    const total = await prisma.item.count({
-      where: whereClause,
-    });
-
-    console.log(`Найдено ${items.length} из ${total} элементов`);
-
-    return {
-      items,
-      pagination: {
-        total,
-        skip,
-        take,
-        hasMore: skip + take < total,
-      },
-    };
-  } catch (error) {
-    console.error("Ошибка при выполнении поискового запроса:", error);
-    throw error;
-  }
+      hasMore: skip + take < total,
+    },
+  };
 }
