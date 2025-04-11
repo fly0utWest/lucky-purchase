@@ -28,7 +28,6 @@ export const UpdateUserDataSchema = z
   })
   .refine(
     (data) => {
-      // Проверяем, что хотя бы одно поле присутствует
       return Object.keys(data).length > 0;
     },
     {
