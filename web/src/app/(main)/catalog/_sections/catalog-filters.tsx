@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useSearch } from "@/hooks/use-search";
 import { Item } from "@/shared/models";
+import CategoriesDropdown from "@/components/categories-dropdown";
 
 type LayoutType = "grid-1" | "grid-2" | "grid-3";
 
@@ -62,7 +63,7 @@ export function CatalogFilters({
         setLoading(false);
       });
   }, []);
-  
+
   return (
     <Card className="rounded-xl shadow-sm p-6">
       <div className="space-y-6">
@@ -77,20 +78,27 @@ export function CatalogFilters({
 
         <div>
           <label className="text-sm font-medium mb-2 block">Сортировка</label>
-          <Select
-            value={searchParams.sortBy}
-            onValueChange={(value) => setSearchParam("sortBy", value)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Сортировка" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="newest">Сначала новые</SelectItem>
-              <SelectItem value="oldest">Сначала старые</SelectItem>
-              <SelectItem value="expensive">Сначала дорогие</SelectItem>
-              <SelectItem value="cheap">Сначала дешевые</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="flex flex-col gap-2">
+            <Select
+              value={searchParams.sortBy}
+              onValueChange={(value) => setSearchParam("sortBy", value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Сортировка" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="newest">Сначала новые</SelectItem>
+                <SelectItem value="oldest">Сначала старые</SelectItem>
+                <SelectItem value="expensive">Сначала дорогие</SelectItem>
+                <SelectItem value="cheap">Сначала дешевые</SelectItem>
+              </SelectContent>
+            </Select>
+            <CategoriesDropdown
+              onValueChange={(categoryId: string) => {
+                setSearchParam("categoryId", categoryId);
+              }}
+            />
+          </div>
         </div>
 
         <div>
