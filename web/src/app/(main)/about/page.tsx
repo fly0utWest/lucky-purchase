@@ -121,8 +121,8 @@ export default function AboutPage() {
         </h2>
         <div className="grid gap-4 md:grid-cols-3">
           <Link
-            href="/faq"
-            className="group bg-card/50 hover:bg-card p-4 rounded-lg border border-border/50 hover:border-primary/50 transition-all duration-300"
+            href="/#how-it-works"
+            className="group block rounded-lg border p-4 hover:border-primary/50 transition-colors"
           >
             <div className="flex items-center justify-between mb-2">
               <h3 className="font-medium">Часто задаваемые вопросы</h3>

@@ -14,8 +14,14 @@ const nextConfig: NextConfig = {
         hostname: "lp-api.fly0utwest.dev",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "genqrcode.com",
+        pathname: "/**",
+      },
     ],
   },
 };
+
 
 export default nextConfig;

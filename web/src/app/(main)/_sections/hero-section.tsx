@@ -33,59 +33,57 @@ const STATS_CONFIG = [
 ];
 
 // Мемоизация компонентов для предотвращения ненужных ререндеров
-const HeroButtons = memo(({ children }: { children: React.ReactNode }) => {
-  return (
-    <div className="flex flex-col md:flex-row justify-center gap-4">
-      {children}
-    </div>
-  );
-});
+const HeroButtons = memo(({ children }: { children: React.ReactNode }) => (
+  <nav className="flex flex-col md:flex-row justify-center gap-4">
+    {children}
+  </nav>
+));
 HeroButtons.displayName = "HeroButtons";
 
 // Декоративные элементы вынесены в отдельный компонент
 const DecorativeElements = memo(() => (
-  <div className="absolute inset-0 -z-10 flex flex-wrap justify-between items-center pointer-events-none">
-    <div className="flex-1 h-full flex justify-start items-center">
-      <div className="w-40 h-40 rounded-full bg-primary/10 blur-3xl opacity-40 transform -translate-x-10" />
-    </div>
-    <div className="flex-1 h-full flex justify-end items-center">
-      <div className="w-52 h-52 rounded-full bg-primary/5 blur-3xl opacity-30" />
-    </div>
-    <div className="w-full h-1/4 flex justify-center items-end">
-      <div className="w-32 h-32 rounded-full bg-primary/8 blur-3xl opacity-40 transform -translate-y-10" />
-    </div>
-  </div>
+  <figure className="absolute inset-0 -z-10 flex flex-wrap justify-between items-center pointer-events-none">
+    <section className="flex-1 h-full flex justify-start items-center">
+      <span className="w-40 h-40 rounded-full bg-primary/10 blur-3xl opacity-40 transform -translate-x-10" />
+    </section>
+    <section className="flex-1 h-full flex justify-end items-center">
+      <span className="w-52 h-52 rounded-full bg-primary/5 blur-3xl opacity-30" />
+    </section>
+    <section className="w-full h-1/4 flex justify-center items-end">
+      <span className="w-32 h-32 rounded-full bg-primary/8 blur-3xl opacity-40 transform -translate-y-10" />
+    </section>
+  </figure>
 ));
 DecorativeElements.displayName = "DecorativeElements";
 
 const StatItem = memo(
   ({ stat, index }: { stat: (typeof STATS_CONFIG)[0]; index: number }) => (
-    <div
+    <article
       className="flex flex-col items-center gap-2 animate-in fade-in slide-in-from-bottom-4 duration-500"
       style={{ animationDelay: `${index * 100}ms` }}
     >
-      <div className={cn("rounded-full p-4", stat.bgColor)}>
+      <figure className={cn("rounded-full p-4", stat.bgColor)}>
         <stat.icon className={cn("h-6 w-6", stat.iconColor)} />
-      </div>
-      <div className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white">
+      </figure>
+      <h3 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white">
         {stat.value}
-      </div>
-      <div className="text-sm text-gray-600 dark:text-gray-300">
-        {stat.label}
-      </div>
-    </div>
+      </h3>
+      <p className="text-sm text-gray-600 dark:text-gray-300">{stat.label}</p>
+    </article>
   )
 );
 StatItem.displayName = "StatItem";
 
 const StatsSection = memo(() => (
-  <div className="mt-12">
-    <div className="grid grid-cols-1 gap-8 sm:grid-cols-3 max-w-3xl mx-auto">
+  <section className="mt-12">
+    <ul className="grid grid-cols-1 gap-8 sm:grid-cols-3 max-w-3xl mx-auto">
       {STATS_CONFIG.map((stat, index) => (
-        <StatItem key={stat.label} stat={stat} index={index} />
+        <li key={stat.label}>
+          <StatItem stat={stat} index={index} />
+        </li>
       ))}
-    </div>
-  </div>
+    </ul>
+  </section>
 ));
 StatsSection.displayName = "StatsSection";
 
@@ -106,39 +104,39 @@ const SearchBar = memo(() => {
   return (
     <form onSubmit={handleSearch} className="relative max-w-md mx-auto w-full">
       <Input
-        type="text"
+        type="search"
         placeholder="Что вы ищете сегодня?"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         className="bg-gray-600/20 dark:bg-black/30 text-gray-700 dark:text-white border-none pl-4 pr-12 py-6 h-12 text-base rounded-full shadow-sm placeholder:text-gray-500 dark:placeholder:text-gray-300"
       />
-      <div className="absolute right-1 top-1">
-        <Button
-          type="submit"
-          size="icon"
-          className="rounded-full h-10 w-10 bg-primary hover:bg-primary/90"
-        >
-          <Search className="h-5 w-5" />
-          <span className="sr-only">Искать</span>
-        </Button>
-      </div>
+      <Button
+        type="submit"
+        size="icon"
+        className="absolute right-1 top-1 rounded-full h-10 w-10 bg-primary hover:bg-primary/90"
+      >
+        <Search className="h-5 w-5" />
+        <span className="sr-only">Искать</span>
+      </Button>
     </form>
   );
 });
 SearchBar.displayName = "SearchBar";
 
 const AuthenticatedContent = memo(({ name }: { name: string }) => (
-  <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-3xl mx-auto">
-    <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-800 dark:text-white">
-      Привет, <span className="text-primary">{name}</span>! 👋
-    </h1>
-    <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300">
-      Готовы к новым сделкам сегодня?
-    </p>
+  <section className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-3xl mx-auto">
+    <header>
+      <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-800 dark:text-white">
+        Привет, <span className="text-primary">{name}</span>! 👋
+      </h1>
+      <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300">
+        Готовы к новым сделкам сегодня?
+      </p>
+    </header>
 
     <SearchBar />
 
-    <div className="flex flex-col md:flex-row justify-center gap-4 mt-6">
+    <HeroButtons>
       <Button
         asChild
         size="lg"
@@ -154,23 +152,25 @@ const AuthenticatedContent = memo(({ name }: { name: string }) => (
       >
         <Link href="/catalog">Начать покупать</Link>
       </Button>
-    </div>
-  </div>
+    </HeroButtons>
+  </section>
 ));
 AuthenticatedContent.displayName = "AuthenticatedContent";
 
 const GuestContent = memo(() => (
-  <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-3xl mx-auto">
-    <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-gray-800 dark:text-white">
-      Добро пожаловать на платформу
-      <div className="mt-2">
-        <span className="text-primary">&ldquo;Удачная покупка&rdquo;</span>
-      </div>
-    </h1>
-    <p className="mx-auto max-w-xl text-lg md:text-xl text-gray-600 dark:text-gray-300">
-      Ваше место для безопасных покупок и продаж. Присоединяйтесь к тысячам
-      довольных пользователей!
-    </p>
+  <section className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-3xl mx-auto">
+    <header>
+      <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-gray-800 dark:text-white">
+        Добро пожаловать на платформу
+        <span className="block mt-2 text-primary">
+          &ldquo;Удачная покупка&rdquo;
+        </span>
+      </h1>
+      <p className="mx-auto max-w-xl text-lg md:text-xl text-gray-600 dark:text-gray-300">
+        Ваше место для безопасных покупок и продаж. Присоединяйтесь к тысячам
+        довольных пользователей!
+      </p>
+    </header>
 
     <SearchBar />
 
@@ -191,7 +191,7 @@ const GuestContent = memo(() => (
         <Link href="/auth?mode=sign-up">Начать продавать</Link>
       </Button>
     </HeroButtons>
-  </div>
+  </section>
 ));
 GuestContent.displayName = "GuestContent";
 
@@ -200,10 +200,10 @@ const HeroSection = () => {
   const { authenticatedUser } = useAuthStore();
 
   return (
-    <div className="relative min-h-[70vh] flex items-center justify-center bg-gradient-to-br from-pink-200/80 via-pink-100/50 to-pink-50/30 dark:from-primary/20 dark:via-primary/1 dark:to-primary/1 text-gray-800 dark:text-white rounded-lg shadow-md overflow-hidden">
+    <main className="relative min-h-[70vh] flex items-center justify-center bg-gradient-to-br from-pink-200/80 via-pink-100/50 to-pink-50/30 dark:from-primary/20 dark:via-primary/1 dark:to-primary/1 text-gray-800 dark:text-white rounded-lg shadow-md overflow-hidden">
       <DecorativeElements />
 
-      <div className="container mx-auto px-4 py-12 relative z-10 text-center">
+      <section className="container mx-auto px-4 py-12 relative z-10 text-center">
         {authenticatedUser ? (
           <AuthenticatedContent name={authenticatedUser.name} />
         ) : (
@@ -211,8 +211,8 @@ const HeroSection = () => {
         )}
 
         <StatsSection />
-      </div>
-    </div>
+      </section>
+    </main>
   );
 };
 
