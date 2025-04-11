@@ -78,7 +78,7 @@ const categoryItems = [
   },
   {
     title: "Транспорт",
-    url: "/catalog?category=Транспорт",
+    url: "/catalog?category?=Транспорт",
     icon: Car,
     color: "text-red-500",
   },
@@ -102,7 +102,7 @@ const categoryItems = [
   },
   {
     title: "Спорт",
-    url: "/catalog?category=Спорт",
+    url: "/catalog?category=929a1bac-c9fa-4b23-9a54-b0b449d9adce",
     icon: Dumbbell,
     color: "text-orange-500",
   },
