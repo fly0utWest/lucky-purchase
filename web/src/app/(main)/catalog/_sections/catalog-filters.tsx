@@ -63,7 +63,7 @@ export function CatalogFilters({
   useEffect(() => {
     const categoryFromUrl = searchParams.get("category");
     if (categoryFromUrl) {
-      setSearchParam("categoryId", categoryFromUrl);
+      setSearchParam("category", categoryFromUrl);
     }
   }, [searchParams, setSearchParam]);
 
@@ -81,7 +81,7 @@ export function CatalogFilters({
   }, [filterParams]);
 
   const handleCategoryChange = (categoryId: string) => {
-    setSearchParam("categoryId", categoryId);
+    setSearchParam("category", categoryId);
 
     const currentUrl = new URL(window.location.href);
     if (categoryId) {
@@ -120,7 +120,8 @@ export function CatalogFilters({
               </SelectContent>
             </Select>
             <CategoriesDropdown
-              value={filterParams.categoryId}
+              isValueName
+              value={filterParams.category}
               onValueChange={handleCategoryChange}
             />
           </div>

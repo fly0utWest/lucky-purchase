@@ -13,18 +13,19 @@ export async function searchItem(params: SearchDTO) {
     sortDirection,
     minPrice,
     maxPrice,
-    categoryId,
+    category: encodedCategory,
     skip,
     take,
   } = params;
 
+  let category;
   let query = encodedQuery;
   query = decodeURIComponent(encodedQuery);
 
   const trimmedQuery = query.trim();
   console.log("Поисковый запрос после декодирования:", trimmedQuery);
 
-  const includedCategoryFields = { select: { id: true, name: true } };
+  const includedCategoryFields = { select: { name: true } };
   const whereClause: Prisma.ItemWhereInput = {};
 
   if (trimmedQuery !== "") {
@@ -62,15 +63,17 @@ export async function searchItem(params: SearchDTO) {
     }
   }
 
-  if (categoryId) {
-    whereClause.categoryId = categoryId;
+  if (encodedCategory) {
+    category = encodedCategory;
+    category = decodeURIComponent(encodedCategory);
+    whereClause.category = { name: category };
   }
 
   console.log("Параметры запроса:", {
     trimmedQuery,
     minPrice,
     maxPrice,
-    categoryId,
+    category,
     whereClause,
   });
 
