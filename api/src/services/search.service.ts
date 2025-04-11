@@ -64,20 +64,29 @@ export async function searchItem(params: SearchDTO) {
     whereClause.categoryId = categoryId;
   }
 
+  console.log("Полученные параметры сортировки:", { sortBy, sortDirection });
+
   let orderBy: Prisma.ItemOrderByWithRelationInput = {};
 
   switch (sortBy) {
-    case "price":
-      orderBy.price = sortDirection;
+    case "expensive":
+      orderBy = { price: "desc" };
       break;
-    case "title":
-      orderBy.title = sortDirection;
+    case "cheap":
+      orderBy = { price: "asc" };
       break;
     case "newest":
+      orderBy = { createdAt: "desc" };
+      break;
+    case "oldest":
+      orderBy = { createdAt: "asc" };
+      break;
     default:
-      orderBy.createdAt = sortDirection;
+      orderBy = { createdAt: "desc" };
       break;
   }
+
+  console.log("Параметры сортировки перед запросом:", orderBy);
 
   const items = await prisma.item.findMany({
     where: whereClause,

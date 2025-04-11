@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchWrapper } from "@/lib/utils";
@@ -6,7 +8,18 @@ import { ItemsResponseSchema, SearchItemsResponse } from "@/shared/models";
 
 interface SearchParams {
   query?: string;
-  sortBy?: "newest" | "price" | "title";
+  sortBy?: "newest" | "oldest" | "expensive" | "cheap";
+  sortDirection?: "asc" | "desc";
+  minPrice?: number;
+  maxPrice?: number;
+  categoryId?: string;
+  skip?: number;
+  take?: number;
+}
+
+interface BackendSearchParams {
+  query?: string;
+  sortBy?: "newest" | "oldest" | "expensive" | "cheap";
   sortDirection?: "asc" | "desc";
   minPrice?: number;
   maxPrice?: number;
@@ -58,21 +71,37 @@ export function useSearch(
     enabled;
 
   const buildQueryString = useCallback((params: SearchParams) => {
+    console.log("Параметры перед формированием запроса:", params);
     const queryParams = new URLSearchParams();
 
-    if (params.query) queryParams.set("query", params.query);
-    if (params.sortBy) queryParams.set("sortBy", params.sortBy);
-    if (params.sortDirection)
+    if (params.query)
+      queryParams.set("query", encodeURIComponent(params.query));
+
+    if (params.sortBy) {
+      queryParams.set("sortBy", params.sortBy);
+    }
+
+    if (params.sortDirection) {
       queryParams.set("sortDirection", params.sortDirection);
-    if (params.minPrice !== undefined)
-      queryParams.set("minPrice", params.minPrice.toString());
-    if (params.maxPrice !== undefined)
-      queryParams.set("maxPrice", params.maxPrice.toString());
-    if (params.categoryId) queryParams.set("categoryId", params.categoryId);
-    if (params.skip !== undefined)
-      queryParams.set("skip", params.skip.toString());
-    if (params.take !== undefined)
-      queryParams.set("take", params.take.toString());
+    }
+
+    if (params.minPrice !== undefined) {
+      const minPrice = Number(params.minPrice);
+      if (!isNaN(minPrice)) {
+        queryParams.set("minPrice", minPrice.toString());
+      }
+    }
+    if (params.maxPrice !== undefined) {
+      const maxPrice = Number(params.maxPrice);
+      if (!isNaN(maxPrice)) {
+        queryParams.set("maxPrice", maxPrice.toString());
+      }
+    }
+
+    if (params.categoryId)
+      queryParams.set("categoryId", encodeURIComponent(params.categoryId));
+    if (params.skip !== undefined) queryParams.set("skip", String(params.skip));
+    if (params.take !== undefined) queryParams.set("take", String(params.take));
 
     return queryParams.toString();
   }, []);
@@ -80,12 +109,23 @@ export function useSearch(
   const { data, isLoading, isError, error, refetch, isFetching } =
     useQuery<SearchItemsResponse>({
       queryKey: ["search", searchParams],
-      queryFn: () =>
-        fetchWrapper(
-          `/search?${buildQueryString(searchParams)}`,
+      queryFn: () => {
+        const params = {
+          ...searchParams,
+          minPrice: searchParams.minPrice
+            ? Number(searchParams.minPrice)
+            : undefined,
+          maxPrice: searchParams.maxPrice
+            ? Number(searchParams.maxPrice)
+            : undefined,
+        };
+
+        return fetchWrapper(
+          `/search?${buildQueryString(params)}`,
           undefined,
           ItemsResponseSchema
-        ),
+        );
+      },
       enabled: shouldSearch,
       staleTime: 5 * 60 * 1000,
     });
@@ -109,7 +149,19 @@ export function useSearch(
 
   const setSearchParam = useCallback(
     (param: keyof SearchParams, value: any) => {
-      setSearchParams((prev) => ({ ...prev, [param]: value }));
+      console.log(`Установка параметра ${param}:`, value);
+      if (param === "sortBy") {
+        // Автоматически устанавливаем направление сортировки
+        const direction = value === "expensive" ? "desc" : "asc";
+        console.log(`Автоматическая установка sortDirection:`, direction);
+        setSearchParams((prev) => ({
+          ...prev,
+          [param]: value,
+          sortDirection: direction,
+        }));
+      } else {
+        setSearchParams((prev) => ({ ...prev, [param]: value }));
+      }
     },
     []
   );
