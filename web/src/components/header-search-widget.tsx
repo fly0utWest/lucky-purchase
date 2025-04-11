@@ -53,7 +53,7 @@ export function HeaderSearchWidget() {
           <p className="text-sm text-muted-foreground mt-2">Ищем...</p>
         </div>
       )}
-      {!isLoading && query.length >= 1 && results.count === 0 && (
+      {!isLoading && query.length >= 1 && results.length === 0 && (
         <div className="py-6 text-center text-sm text-muted-foreground">
           Ничего не найдено
         </div>
@@ -63,12 +63,12 @@ export function HeaderSearchWidget() {
           Начните печатать...
         </div>
       )}
-      {results.count > 0 && (
+      {results.length > 0 && (
         <>
           <div className="px-1 py-1.5 text-xs font-medium text-muted-foreground">
             Результаты
           </div>
-          {results.items.map((item) => (
+          {results.map((item) => (
             <ItemCard key={item.id} item={item} variant="compact" />
           ))}
         </>
