@@ -36,23 +36,31 @@ export function useSearch(
   } = options || {};
 
   const [searchInput, setSearchInput] = useState<string>(initialQuery);
+  const [debouncedQuery, setDebouncedQuery] = useState<string>(initialQuery);
 
+  // Combined state update to prevent multiple renders
   const [searchParams, setSearchParams] = useState<SearchParams>({
     query: initialQuery,
     ...initialParams,
   });
 
-  const [debouncedQuery, setDebouncedQuery] = useState<string>(initialQuery);
-
+  // Using useRef to preserve the debounce function across renders
   const debouncedSetQuery = useRef(
     debounce((value: string) => {
       setDebouncedQuery(value);
+      // Only update searchParams once when the debounced value changes
       setSearchParams((prev) => ({ ...prev, query: value }));
     }, debounceMs)
   ).current;
 
+  // Effect to handle search input changes
   useEffect(() => {
     debouncedSetQuery(searchInput);
+
+    // Cleanup debounce on unmount
+    return () => {
+      debouncedSetQuery.cancel();
+    };
   }, [searchInput, debouncedSetQuery]);
 
   const shouldSearch =
@@ -60,7 +68,6 @@ export function useSearch(
     enabled;
 
   const buildQueryString = useCallback((params: SearchParams) => {
-    console.log("Параметры перед формированием запроса:", params);
     const queryParams = new URLSearchParams();
 
     if (params.query)
@@ -133,16 +140,16 @@ export function useSearch(
   const clearSearch = useCallback(() => {
     setSearchInput("");
     setDebouncedQuery("");
+    // Batch update in a single state change
     setSearchParams((prev) => ({ ...prev, query: "" }));
   }, []);
 
+  // Improved setSearchParam to batch updates
   const setSearchParam = useCallback(
     (param: keyof SearchParams, value: any) => {
-      console.log(`Установка параметра ${param}:`, value);
       if (param === "sortBy") {
-        // Автоматически устанавливаем направление сортировки
+        // Batch update both sortBy and sortDirection in a single state change
         const direction = value === "expensive" ? "desc" : "asc";
-        console.log(`Автоматическая установка sortDirection:`, direction);
         setSearchParams((prev) => ({
           ...prev,
           [param]: value,
@@ -155,6 +162,7 @@ export function useSearch(
     []
   );
 
+  // Use a callback to batch multiple param updates in one state change
   const updateSearchParams = useCallback((newParams: Partial<SearchParams>) => {
     setSearchParams((prev) => ({ ...prev, ...newParams }));
   }, []);

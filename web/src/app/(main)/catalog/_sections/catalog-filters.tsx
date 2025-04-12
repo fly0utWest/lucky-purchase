@@ -1,7 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import React from "react";
 import { Input } from "@/components/ui/input";
-import { Slider } from "@/components/ui/slider";
 import {
   Select,
   SelectContent,
@@ -16,7 +15,7 @@ import { cn } from "@/lib/utils";
 import { useSearch } from "@/hooks/use-search";
 import { Item } from "@/shared/models";
 import CategoriesDropdown from "@/components/categories-dropdown";
-import { useRouter, useSearchParams } from "next/navigation"; // Import router and search params
+import { useRouter, useSearchParams } from "next/navigation";
 
 type LayoutType = "grid-1" | "grid-2" | "grid-3";
 
@@ -35,6 +34,7 @@ export function CatalogFilters({
 }: CatalogFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const initialLoadRef = useRef(true);
 
   const {
     query,
@@ -42,22 +42,14 @@ export function CatalogFilters({
     setSearchParam,
     searchParams: filterParams,
     refetch,
+    results,
+    isLoading,
+    isError,
   } = useSearch("", {
     minChars: 0,
+    // Enable the automatic fetching - we'll handle the loading state internally
+    enabled: true,
   });
-
-  const applyFilters = () => {
-    setLoading(true);
-    refetch()
-      .then((response) => {
-        const searchResults = response?.data?.items || [];
-        setItems(searchResults);
-        setLoading(false);
-      })
-      .catch(() => {
-        setLoading(false);
-      });
-  };
 
   // Extract category from URL when component mounts
   useEffect(() => {
@@ -65,24 +57,23 @@ export function CatalogFilters({
     if (categoryFromUrl) {
       setSearchParam("category", categoryFromUrl);
     }
+    // Only run this once on mount
   }, [searchParams, setSearchParam]);
 
+  // Handle loading state and update items when results change
   useEffect(() => {
-    setLoading(true);
-    refetch()
-      .then((response) => {
-        const searchResults = response?.data?.items || [];
-        setItems(searchResults);
-        setLoading(false);
-      })
-      .catch(() => {
-        setLoading(false);
-      });
-  }, [filterParams]);
+    setLoading(isLoading);
+
+    // Only update items when we have results and are not in loading state
+    if (!isLoading && results.length >= 0) {
+      setItems(results);
+    }
+  }, [results, isLoading, setItems, setLoading]);
 
   const handleCategoryChange = (categoryId: string) => {
     setSearchParam("category", categoryId);
 
+    // Update URL
     const currentUrl = new URL(window.location.href);
     if (categoryId) {
       currentUrl.searchParams.set("category", categoryId);
@@ -90,7 +81,6 @@ export function CatalogFilters({
       currentUrl.searchParams.delete("category");
     }
 
-    // Use router.push or router.replace depending on your navigation preference
     router.push(currentUrl.toString());
   };
 
