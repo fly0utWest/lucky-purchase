@@ -34,6 +34,7 @@ export function CatalogFilters({
 }: CatalogFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const initialLoadRef = useRef(true);
 
   const {
     query,
@@ -58,7 +59,6 @@ export function CatalogFilters({
 
   useEffect(() => {
     setLoading(isLoading);
-
     if (!isLoading && results.length >= 0) {
       setItems(results);
     }
