@@ -47,24 +47,19 @@ export function CatalogFilters({
     isError,
   } = useSearch("", {
     minChars: 0,
-    // Enable the automatic fetching - we'll handle the loading state internally
     enabled: true,
   });
 
-  // Extract category from URL when component mounts
   useEffect(() => {
     const categoryFromUrl = searchParams.get("category");
     if (categoryFromUrl) {
       setSearchParam("category", categoryFromUrl);
     }
-    // Only run this once on mount
   }, [searchParams, setSearchParam]);
 
-  // Handle loading state and update items when results change
   useEffect(() => {
     setLoading(isLoading);
 
-    // Only update items when we have results and are not in loading state
     if (!isLoading && results.length >= 0) {
       setItems(results);
     }

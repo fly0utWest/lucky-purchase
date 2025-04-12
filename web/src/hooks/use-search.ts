@@ -38,26 +38,21 @@ export function useSearch(
   const [searchInput, setSearchInput] = useState<string>(initialQuery);
   const [debouncedQuery, setDebouncedQuery] = useState<string>(initialQuery);
 
-  // Combined state update to prevent multiple renders
   const [searchParams, setSearchParams] = useState<SearchParams>({
     query: initialQuery,
     ...initialParams,
   });
 
-  // Using useRef to preserve the debounce function across renders
   const debouncedSetQuery = useRef(
     debounce((value: string) => {
       setDebouncedQuery(value);
-      // Only update searchParams once when the debounced value changes
       setSearchParams((prev) => ({ ...prev, query: value }));
     }, debounceMs)
   ).current;
 
-  // Effect to handle search input changes
   useEffect(() => {
     debouncedSetQuery(searchInput);
 
-    // Cleanup debounce on unmount
     return () => {
       debouncedSetQuery.cancel();
     };
@@ -140,15 +135,12 @@ export function useSearch(
   const clearSearch = useCallback(() => {
     setSearchInput("");
     setDebouncedQuery("");
-    // Batch update in a single state change
     setSearchParams((prev) => ({ ...prev, query: "" }));
   }, []);
 
-  // Improved setSearchParam to batch updates
   const setSearchParam = useCallback(
     (param: keyof SearchParams, value: any) => {
       if (param === "sortBy") {
-        // Batch update both sortBy and sortDirection in a single state change
         const direction = value === "expensive" ? "desc" : "asc";
         setSearchParams((prev) => ({
           ...prev,
@@ -162,7 +154,6 @@ export function useSearch(
     []
   );
 
-  // Use a callback to batch multiple param updates in one state change
   const updateSearchParams = useCallback((newParams: Partial<SearchParams>) => {
     setSearchParams((prev) => ({ ...prev, ...newParams }));
   }, []);
