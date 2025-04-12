@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
-// Константы для конфигурации и стилей
 const STATS_CONFIG = [
   {
     icon: Users,
@@ -32,7 +31,6 @@ const STATS_CONFIG = [
   },
 ];
 
-// Мемоизация компонентов для предотвращения ненужных ререндеров
 const HeroButtons = memo(({ children }: { children: React.ReactNode }) => (
   <nav className="flex flex-col md:flex-row justify-center gap-4">
     {children}
@@ -40,7 +38,6 @@ const HeroButtons = memo(({ children }: { children: React.ReactNode }) => (
 ));
 HeroButtons.displayName = "HeroButtons";
 
-// Декоративные элементы вынесены в отдельный компонент
 const DecorativeElements = memo(() => (
   <figure className="absolute inset-0 -z-10 flex flex-wrap justify-between items-center pointer-events-none">
     <section className="flex-1 h-full flex justify-start items-center">
@@ -87,42 +84,6 @@ const StatsSection = memo(() => (
 ));
 StatsSection.displayName = "StatsSection";
 
-const SearchBar = memo(() => {
-  const [query, setQuery] = useState("");
-  const router = useRouter();
-
-  const handleSearch = useCallback(
-    (e: React.FormEvent) => {
-      e.preventDefault();
-      if (query.trim()) {
-        router.push(`/catalog?search=${encodeURIComponent(query.trim())}`);
-      }
-    },
-    [query, router]
-  );
-
-  return (
-    <form onSubmit={handleSearch} className="relative max-w-md mx-auto w-full">
-      <Input
-        type="search"
-        placeholder="Что вы ищете сегодня?"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        className="bg-gray-600/20 dark:bg-black/30 text-gray-700 dark:text-white border-none pl-4 pr-12 py-6 h-12 text-base rounded-full shadow-sm placeholder:text-gray-500 dark:placeholder:text-gray-300"
-      />
-      <Button
-        type="submit"
-        size="icon"
-        className="absolute right-1 top-1 rounded-full h-10 w-10 bg-primary hover:bg-primary/90"
-      >
-        <Search className="h-5 w-5" />
-        <span className="sr-only">Искать</span>
-      </Button>
-    </form>
-  );
-});
-SearchBar.displayName = "SearchBar";
-
 const AuthenticatedContent = memo(({ name }: { name: string }) => (
   <section className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-3xl mx-auto">
     <header>
@@ -133,8 +94,6 @@ const AuthenticatedContent = memo(({ name }: { name: string }) => (
         Готовы к новым сделкам сегодня?
       </p>
     </header>
-
-    <SearchBar />
 
     <HeroButtons>
       <Button
@@ -172,8 +131,6 @@ const GuestContent = memo(() => (
       </p>
     </header>
 
-    <SearchBar />
-
     <HeroButtons>
       <Button
         asChild
@@ -194,8 +151,6 @@ const GuestContent = memo(() => (
   </section>
 ));
 GuestContent.displayName = "GuestContent";
-
-// Основной компонент использует мемоизированные подкомпоненты
 const HeroSection = () => {
   const { authenticatedUser } = useAuthStore();
 
