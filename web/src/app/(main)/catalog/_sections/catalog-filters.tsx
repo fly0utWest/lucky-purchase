@@ -73,7 +73,6 @@ export function CatalogFilters({
   const handleCategoryChange = (categoryId: string) => {
     setSearchParam("category", categoryId);
 
-    // Update URL
     const currentUrl = new URL(window.location.href);
     if (categoryId) {
       currentUrl.searchParams.set("category", categoryId);
