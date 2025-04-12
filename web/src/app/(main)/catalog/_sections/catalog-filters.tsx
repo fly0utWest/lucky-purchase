@@ -1,7 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import React from "react";
 import { Input } from "@/components/ui/input";
-import { Slider } from "@/components/ui/slider";
 import {
   Select,
   SelectContent,
@@ -35,6 +34,7 @@ export function CatalogFilters({
 }: CatalogFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const initialLoadRef = useRef(true);
 
   const {
     query,
@@ -42,43 +42,33 @@ export function CatalogFilters({
     setSearchParam,
     searchParams: filterParams,
     refetch,
+    results,
+    isLoading,
+    isError,
   } = useSearch("", {
     minChars: 0,
+    // Enable the automatic fetching - we'll handle the loading state internally
+    enabled: true,
   });
 
-  // This flag prevents initial double requests
-  const [initialParamsSet, setInitialParamsSet] = React.useState(false);
-
-  const fetchItems = () => {
-    setLoading(true);
-    refetch()
-      .then((response) => {
-        const searchResults = response?.data?.items || [];
-        setItems(searchResults);
-        setLoading(false);
-      })
-      .catch(() => {
-        setLoading(false);
-      });
-  };
-
-  // Extract category from URL only once when component mounts
+  // Extract category from URL when component mounts
   useEffect(() => {
     const categoryFromUrl = searchParams.get("category");
-
     if (categoryFromUrl) {
       setSearchParam("category", categoryFromUrl);
     }
+    // Only run this once on mount
+  }, [searchParams, setSearchParam]);
 
-    setInitialParamsSet(true);
-  }, [searchParams]); // Removed setSearchParam from deps to avoid potential re-runs
-
-  // Only fetch when either initialParamsSet becomes true OR filterParams changes after initial setup
+  // Handle loading state and update items when results change
   useEffect(() => {
-    if (initialParamsSet) {
-      fetchItems();
+    setLoading(isLoading);
+
+    // Only update items when we have results and are not in loading state
+    if (!isLoading && results.length >= 0) {
+      setItems(results);
     }
-  }, [initialParamsSet, filterParams]);
+  }, [results, isLoading, setItems, setLoading]);
 
   const handleCategoryChange = (categoryId: string) => {
     setSearchParam("category", categoryId);
@@ -90,7 +80,6 @@ export function CatalogFilters({
       currentUrl.searchParams.delete("category");
     }
 
-    // Use router.push or router.replace depending on your navigation preference
     router.push(currentUrl.toString());
   };
 
