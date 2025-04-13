@@ -34,7 +34,6 @@ export function CatalogFilters({
 }: CatalogFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const initialLoadRef = useRef(true);
 
   const {
     query,
