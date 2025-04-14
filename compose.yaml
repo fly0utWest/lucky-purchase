@@ -23,7 +23,7 @@ services:
       - ./api/static:/app/static
     restart: always
   web:
-    build: 
+    build:
       context: ./web
       args:
         NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:10000}
@@ -34,8 +34,8 @@ services:
     depends_on:
       - api
     environment:
-      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:10000}
-      NEXT_PUBLIC_STATIC_URL: ${NEXT_PUBLIC_STATIC_URL:-http://localhost:10000/static/}
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:7777}
+      NEXT_PUBLIC_STATIC_URL: ${NEXT_PUBLIC_STATIC_URL:-http://localhost:7777/static/}
     volumes:
       - ./api/static:/app/static
     restart: always
