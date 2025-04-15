@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { AppError } from "../utils/errors";
-
+import { AppError, SocketError } from "../utils/errors";
+import { Socket } from "socket.io";
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
@@ -13,7 +13,9 @@ export function authenticateJWT(
   const token = req.header("Authorization")?.split(" ")[1];
 
   if (!token) {
-    return next(new AppError("Отказано в доступе: токен не был предоставлен", 401));
+    return next(
+      new AppError("Отказано в доступе: токен не был предоставлен", 401)
+    );
   }
 
   try {
@@ -27,5 +29,15 @@ export function authenticateJWT(
     next();
   } catch (error) {
     return next(new AppError("Отказано в доступе: повреждённый токен", 403));
+  }
+}
+
+export function authenticateJWTSocket(
+  socket: Socket,
+  next: (error: unknown) => void
+) {
+  try {
+  } catch (error) {
+    next(error);
   }
 }
