@@ -19,6 +19,7 @@ services:
     environment:
       DATABASE_URL: "${DATABASE_URL:-postgresql://admin:admin@postgres:5432/lucky_purchase}"
       PORT: ${API_PORT:-7777}
+      JWT_SECRET: "${JWT_SECRET:-q9T5vi5Y/4rSrav0+dxRPrVSAlEwTed/SPwIOl53DVaW8ysGnDPaZqEjPM2w3AnFbFS7pAtQvkbYZJlOPFttDw==}"
     volumes:
       - ./api/static:/app/static
     restart: always
