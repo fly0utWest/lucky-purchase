@@ -8,25 +8,19 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  login     String   @unique
-  name      String
-  password  String
-  avatar    String?
+  id         String   @id @default(uuid())
+  login      String   @unique
+  name       String
+  password   String
+  avatar     String?
   background String?
-  createdAt DateTime @default(now())
-  
+  createdAt  DateTime @default(now())
+
   items     Item[]
   favorites Favorite[]
-}
 
-model Category {
-  id          String   @id @default(uuid())
-  name        String   @unique
-  description String
-  createdAt   DateTime @default(now())
-  
-  items       Item[] 
+  sentMessages  Message[]          @relation("SentMessages")
+  conversations UserConversation[]
 }
 
 model Item {
@@ -36,16 +30,71 @@ model Item {
   images      String[]
   price       Int
   createdAt   DateTime @default(now())
-  
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  categoryId  String
-  category    Category @relation(fields: [categoryId], references: [id])
-  
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
   favoritedBy Favorite[]
-  
+
+  conversations Conversation[]
+
   @@index([categoryId])
+}
+
+model Conversation {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  itemId String
+  item   Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  participants UserConversation[]
+  messages     Message[]
+
+  @@index([itemId])
+}
+
+model UserConversation {
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  joinedAt DateTime @default(now())
+
+  @@id([userId, conversationId])
+  @@index([userId])
+  @@index([conversationId])
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  content   String
+  createdAt DateTime @default(now())
+
+  senderId String
+  sender   User   @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  read Boolean @default(false)
+
+  @@index([senderId])
+  @@index([conversationId])
+}
+
+model Category {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String
+  createdAt   DateTime @default(now())
+
+  items Item[]
 }
 
 model Favorite {
@@ -54,7 +103,7 @@ model Favorite {
   item      Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
   itemId    String
   createdAt DateTime @default(now())
-  
+
   @@id([userId, itemId])
   @@index([userId])
   @@index([itemId])

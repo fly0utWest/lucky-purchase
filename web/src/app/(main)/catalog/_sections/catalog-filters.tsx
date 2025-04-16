@@ -40,13 +40,11 @@ export function CatalogFilters({
     handleInputChange,
     setSearchParam,
     searchParams: filterParams,
-    refetch,
     results,
     isLoading,
-    isError,
+    refetch,
   } = useSearch("", {
     minChars: 0,
-    enabled: true,
   });
 
   useEffect(() => {
@@ -54,7 +52,8 @@ export function CatalogFilters({
     if (categoryFromUrl) {
       setSearchParam("category", categoryFromUrl);
     }
-  }, [searchParams, setSearchParam]);
+    refetch();
+  }, [searchParams, setSearchParam, refetch]);
 
   useEffect(() => {
     setLoading(isLoading);
