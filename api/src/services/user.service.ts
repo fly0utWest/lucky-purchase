@@ -1,5 +1,5 @@
 import { prisma } from "../../config/db";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { unlink } from "fs/promises";
 import { UpdateUserDTO, RegisterUserDTO } from "../validators/user.validator";
 
