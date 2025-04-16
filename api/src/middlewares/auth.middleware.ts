@@ -37,6 +37,14 @@ export function authenticateJWTSocket(
   next: (error: unknown) => void
 ) {
   try {
+    const token = socket.handshake.auth[0] || socket.handshake.headers.authorization?.split(" ")[1]
+
+    if (!token) {
+      throw new SocketError("Отказано в доступе: токен не был предоставлен.", 403) 
+    }
+
+    const decodedUserId = jwt.verify(token, JWT_SECRET)
+
   } catch (error) {
     next(error);
   }
