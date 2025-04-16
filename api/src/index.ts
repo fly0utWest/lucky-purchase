@@ -9,10 +9,16 @@ import { notFoundHandler } from "./middlewares/notFound.middleware";
 import itemRouter from "./routes/item.routes";
 import path from "path";
 import searchRoutes from "./routes/search.routes";
+import { createServer } from "node:http";
+import { createSocketIO } from "../config/chat";
 
 const PORT = process.env.PORT || 7777;
 
 const app = express();
+
+const websocketServer = createServer(app);
+
+createSocketIO(websocketServer);
 
 app.use(cors({ origin: "*" }));
 app.use(express.json());
