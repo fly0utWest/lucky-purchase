@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { getUserByLogin } from "../services/user.service";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { AppError } from "../utils/errors";
 import { LoginUserDTO } from "../validators/auth.validator";
 
