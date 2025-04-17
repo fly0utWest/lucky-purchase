@@ -1,5 +1,4 @@
-import { Item } from "@prisma/client";
-import { CreateItemSchema } from "../validators/item.validator";
+import { Item, User, Category } from "@prisma/client";
 
 export interface AuthResponse {
   token: string;
@@ -23,6 +22,30 @@ export interface IsFavoritedResponse {
 
 export interface CreateItemResponse {
   item: Item;
+}
+
+export interface GetItemsResponse {
+  items: Item[];
+  count: number;
+}
+type UserSelect = {
+  id: true;
+  name: true;
+  createdAt: true;
+  avatar: true;
+};
+
+type CategorySelect = {
+  id: true;
+  name: true;
+};
+
+type SelectedUser = Pick<User, keyof UserSelect>;
+type SelectedCategory = Pick<Category, keyof CategorySelect>;
+
+export interface GetItemByIdResponse extends Omit<Item, "user" | "category"> {
+  user: SelectedUser;
+  category: SelectedCategory;
 }
 
 export interface AppErrorResponse {
@@ -51,11 +74,14 @@ export type SuccessResponse =
   | ToggleFavoriteResponse
   | GetUserFavoritesResponse
   | IsFavoritedResponse
-  | CreateItemResponse;
+  | CreateItemResponse
+  | GetItemsResponse
+  | GetItemByIdResponse;
 
 export type ErrorResponse =
   | AppErrorResponse
   | ValidationErrorResponse
   | PrismaErrorResponse
   | ServerErrorResponse;
+
 export type ApiResponse = SuccessResponse | ErrorResponse;
