@@ -2,6 +2,8 @@ import { prisma } from "../../config/db";
 import bcrypt from "bcryptjs";
 import { unlink } from "fs/promises";
 import { UpdateUserDTO, RegisterUserDTO } from "../validators/user.validator";
+import { AppError } from "../utils/errors";
+import { UserCreationResponse } from "../types/responses";
 
 const autheniticatedUserSelectFields = {
   id: true,
@@ -22,12 +24,28 @@ const autheniticatedUserSelectFields = {
   },
 };
 
-export async function createUser({ login, password, name }: RegisterUserDTO) {
+export async function createUser({
+  login,
+  password,
+  name,
+}: RegisterUserDTO): Promise<UserCreationResponse> {
+  const existentUser = await getUserByLogin(login);
+  if (existentUser) {
+    throw new AppError("Пользователь уже зарегистрирован", 400);
+  }
+
   const encryptedPassword = await bcrypt.hash(password, 10);
 
-  return prisma.user.create({
+  console.log(`[УСПЕХ] пользователь ${login} зарегистрирован`);
+  const {
+    id,
+    login: createdLogin,
+    createdAt,
+  } = await prisma.user.create({
     data: { login, name, password: encryptedPassword },
   });
+
+  return { id, login: createdLogin, createdAt };
 }
 
 export async function getUserByLogin(login: string) {

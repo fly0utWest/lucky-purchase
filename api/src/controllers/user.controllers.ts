@@ -12,16 +12,11 @@ export const registerUserHandler = asyncHandler(
   async (req, res) => {
     const { login, name, password } = res.locals.validatedData;
 
-    const existentUser = await getUserByLogin(login);
-    if (existentUser) {
-      throw new AppError("Пользователь уже зарегистрирован", 400);
-    }
 
-    const user = await createUser({ login, name, password });
-    console.log(`[УСПЕХ] пользователь ${login} зарегистрирован`);
+    const result = await createUser({ login, name, password });
     return res
       .status(201)
-      .json({ id: user.id, login: user.login, createdAt: user.createdAt });
+      .json(result);
   }
 );
 

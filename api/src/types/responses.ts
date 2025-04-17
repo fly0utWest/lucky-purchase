@@ -72,6 +72,12 @@ export interface SearchItemsResponse {
   count: number;
 }
 
+export interface UserCreationResponse {
+  id: string;
+  login: string;
+  createdAt: Date;
+}
+
 // Error responses
 export interface AppErrorResponse {
   error: string;
@@ -103,7 +109,8 @@ export type SuccessResponse =
   | GetItemsResponse
   | GetItemByIdResponse
   | GetCategoriesResponse
-  | SearchItemsResponse;
+  | SearchItemsResponse
+  | UserCreationResponse;
 
 export type ErrorResponse =
   | AppErrorResponse
