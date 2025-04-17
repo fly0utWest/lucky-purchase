@@ -55,7 +55,6 @@ export function CatalogFilters({
     } else {
       clearSearch();
     }
-
     refetch();
   }, [searchParams, clearSearch, setSearchParam, refetch]);
 
