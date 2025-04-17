@@ -50,14 +50,13 @@ export function CatalogFilters({
 
   useEffect(() => {
     const categoryFromUrl = searchParams.get("category");
+
     if (categoryFromUrl) {
       setSearchParam("category", categoryFromUrl);
     } else {
       clearSearch();
     }
-
-    refetch();
-  }, [searchParams, clearSearch, setSearchParam, refetch]);
+  }, [searchParams]);
 
   useEffect(() => {
     setLoading(isLoading);

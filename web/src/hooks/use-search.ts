@@ -118,7 +118,6 @@ export function useSearch(
         );
       },
       enabled: shouldSearch,
-      staleTime: 5 * 60 * 1000,
     });
 
   const handleInputChange = useCallback(
