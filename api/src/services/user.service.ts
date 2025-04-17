@@ -2,6 +2,7 @@ import { prisma } from "../../config/db";
 import bcrypt from "bcryptjs";
 import { unlink } from "fs/promises";
 import { UpdateUserDTO, RegisterUserDTO } from "../validators/user.validator";
+import { AppError } from "../utils/errors";
 
 const autheniticatedUserSelectFields = {
   id: true,
@@ -84,7 +85,11 @@ export async function updateUserById(
     });
 
     if (oldUser?.avatar) {
-      unlink(`${process.cwd()}/static/users/avatars/${oldUser.avatar}`);
+      try {
+        await unlink(`${process.cwd()}/static/users/avatars/${oldUser.avatar}`);
+      } catch (error) {
+        console.log("[ПРЕДУПРЕЖДЕНИЕ] Не удалось удалить аватар");
+      }
     }
   }
 
@@ -95,7 +100,13 @@ export async function updateUserById(
     });
 
     if (oldUser?.background) {
-      unlink(`${process.cwd()}/static/users/backgrounds/${oldUser.background}`);
+      try {
+        await unlink(
+          `${process.cwd()}/static/users/backgrounds/${oldUser.background}`
+        );
+      } catch (error) {
+        console.log("[ПРЕДУПРЕЖДЕНИЕ] Не удалось удалить фон");
+      }
     }
   }
 
@@ -103,7 +114,6 @@ export async function updateUserById(
     const encryptedPassword = await bcrypt.hash(data.password!, 10);
     data.password = encryptedPassword;
   }
-
 
   const user = await prisma.user.update({
     where: { id: userId },
