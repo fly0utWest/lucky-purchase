@@ -48,6 +48,31 @@ export interface GetItemByIdResponse extends Omit<Item, "user" | "category"> {
   category: SelectedCategory;
 }
 
+export interface GetCategoriesResponse {
+  categories: Category[];
+  count: number;
+}
+
+interface Pagination {
+  total: number;
+  skip: number;
+  take: number;
+  hasMore: boolean;
+}
+
+type CategorySearchSelecction = Pick<Category, "name">;
+
+interface SearchItemSelecton extends Omit<Item, "category"> {
+  category: CategorySearchSelecction;
+}
+
+export interface SearchItemsResponse {
+  items: SearchItemSelecton[];
+  pagination?: Pagination;
+  count: number;
+}
+
+// Error responses
 export interface AppErrorResponse {
   error: string;
 }
@@ -76,7 +101,9 @@ export type SuccessResponse =
   | IsFavoritedResponse
   | CreateItemResponse
   | GetItemsResponse
-  | GetItemByIdResponse;
+  | GetItemByIdResponse
+  | GetCategoriesResponse
+  | SearchItemsResponse;
 
 export type ErrorResponse =
   | AppErrorResponse

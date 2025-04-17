@@ -1,12 +1,19 @@
 import { prisma } from "../../config/db";
 import { Prisma } from "@prisma/client";
 import { SearchDTO } from "../validators/search.validator";
+import { GetCategoriesResponse, SearchItemsResponse } from "../types/responses";
 
-export async function getCategories() {
-  return prisma.category.findMany();
+export async function getCategories(): Promise<GetCategoriesResponse> {
+  const categories = await prisma.category.findMany();
+
+  console.log("[УСПЕХ] Категории были запрошены");
+  return { categories, count: categories.length };
 }
 
-export async function searchItem(params: SearchDTO) {
+export async function searchItems(
+  params: SearchDTO,
+  includePagination: boolean = false
+): Promise<SearchItemsResponse> {
   const {
     query: encodedQuery,
     sortBy,
@@ -102,13 +109,16 @@ export async function searchItem(params: SearchDTO) {
     where: whereClause,
   });
 
-  return {
-    items,
-    pagination: {
-      total,
-      skip,
-      take,
-      hasMore: skip + take < total,
-    },
-  };
+  return includePagination
+    ? {
+        items,
+        pagination: {
+          total,
+          skip,
+          take,
+          hasMore: skip + take < total,
+        },
+        count: items.length,
+      }
+    : { items, count: items.length };
 }

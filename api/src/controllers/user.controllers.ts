@@ -1,4 +1,3 @@
-import { Request, Response } from "express";
 import {
   getUserByLogin,
   createUser,
@@ -10,7 +9,7 @@ import { getAuthenticatedUserById } from "../services/user.service";
 import asyncHandler from "../utils/asyncHandler";
 
 export const registerUserHandler = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req, res) => {
     const { login, name, password } = res.locals.validatedData;
 
     const existentUser = await getUserByLogin(login);

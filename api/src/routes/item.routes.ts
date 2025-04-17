@@ -1,5 +1,5 @@
 import Router, { RequestHandler } from "express";
-import { validate } from "../middlewares/validate.middleware";
+import { validate } from "../middlewares/validation.middleware";
 import { CreateItemSchema, GetItemsSchema } from "../validators/item.validator";
 import {
   getItemsHandler,

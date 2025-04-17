@@ -4,7 +4,7 @@ import {
   getUserByIdHandler,
   registerUserHandler,
 } from "../controllers/user.controllers";
-import { validate } from "../middlewares/validate.middleware";
+import { validate } from "../middlewares/validation.middleware";
 import {
   RegisterUserSchema,
   UpdateUserAvatarSchema,
