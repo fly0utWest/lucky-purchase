@@ -87,7 +87,6 @@ export default function SettingsPage() {
     <div className="container mx-auto py-8 space-y-8">
       <Card className="overflow-hidden">
         <div className="h-48 bg-gradient-to-r from-primary/10 to-primary/5 relative">
-
           {authenticatedUser?.background ? (
             <Image
               src={`${env.NEXT_PUBLIC_API_BASE_URL}/static/users/backgrounds/${authenticatedUser?.background}`}
@@ -110,18 +109,18 @@ export default function SettingsPage() {
               className="hidden"
               ref={backgroundInputRef}
               onChange={handleBackgroundChange}
-
             />
           </div>
         </div>
         <div className="p-6 -mt-16">
           <div className="flex flex-col items-center gap-6">
             <div className="relative">
-
               <Avatar className="h-32 w-32 rounded-full border-4 border-background overflow-hidden bg-primary/10">
-                <AvatarImage
-                  src={`${env.NEXT_PUBLIC_STATIC_URL}/users/avatars/${authenticatedUser?.avatar}`}
-                />
+                {authenticatedUser === null ? null : (
+                  <AvatarImage
+                    src={`${env.NEXT_PUBLIC_STATIC_URL}/users/avatars/${authenticatedUser?.avatar}`}
+                  />
+                )}
                 <AvatarFallback>
                   <User2 />
                 </AvatarFallback>
@@ -145,7 +144,6 @@ export default function SettingsPage() {
           </div>
         </div>
       </Card>
-
 
       <form className="space-y-8" onSubmit={onSubmit}>
         <Card className="p-6">

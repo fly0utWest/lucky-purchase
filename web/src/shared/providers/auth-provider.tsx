@@ -11,33 +11,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     useAuthStore();
   const [isInitialized, setIsInitialized] = useState(false);
 
-  console.log("[AuthProvider] Начальное состояние: ", {
-    token,
-    authenticatedUser,
-    isInitialized,
-  });
-
-  // Инициализация из localStorage
   useEffect(() => {
     if (!isInitialized && typeof window !== "undefined") {
       try {
         const stored = localStorage.getItem("auth-storage");
-        console.log("[AuthProvider] Сохраненное состояние: ", stored);
 
         if (stored) {
           const parsed = JSON.parse(stored);
-          console.log("[AuthProvider] Считанное состояние: ", parsed);
 
           if (parsed?.state?.token) {
-            console.log(
-              "[AuthProvider] Токен найден в localstorage:",
-              parsed.state.token
-            );
             setToken(parsed.state.token);
           }
         }
       } catch (e) {
-        console.error("Ошибка при чтении данных из localStorage:", e);
       }
       setIsInitialized(true);
     }
@@ -46,7 +32,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { data, error, isLoading } = useQuery<AuthenticatedUser | null, Error>({
     queryKey: ["user", token],
     queryFn: async () => {
-      console.log("[AuthProvider] Получаем пользователя с токеном: ", token);
       if (!token) return null;
       return fetchWrapper(
         `/user/me`,
@@ -67,22 +52,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!isInitialized) return;
 
-    console.log("[AuthProvider] Эффект триггернуло: ", { data, error, token });
 
     if (error) {
-      console.error("Ошибка при получении данных пользователя:", error);
       logout();
       return;
     }
 
     if (data) {
-      console.log("[AuthProvider] Сохраняем пользователя: ", data);
       setAuthenticatedUser(data);
     }
   }, [data, error, logout, setAuthenticatedUser, token, isInitialized]);
 
   if (!isInitialized || (isLoading && token)) {
-    console.log("[AuthProvider] Загружаем стейт...");
     return null;
   }
 

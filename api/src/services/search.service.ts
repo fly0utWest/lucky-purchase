@@ -23,7 +23,9 @@ export async function searchItem(params: SearchDTO) {
   query = decodeURIComponent(encodedQuery);
 
   const trimmedQuery = query.trim();
-  console.log("Поисковый запрос после декодирования:", trimmedQuery);
+  console.log(
+    `[ИНФО] ${trimmedQuery.length > 0 ? `Поисковый запрос: ${trimmedQuery}` : "Был выполнен поиск недавних объявлений"}`
+  );
 
   const includedCategoryFields = { select: { name: true } };
   const whereClause: Prisma.ItemWhereInput = {};
@@ -68,14 +70,6 @@ export async function searchItem(params: SearchDTO) {
     category = decodeURIComponent(encodedCategory);
     whereClause.category = { name: category };
   }
-
-  console.log("Параметры запроса:", {
-    trimmedQuery,
-    minPrice,
-    maxPrice,
-    category,
-    whereClause,
-  });
 
   let orderBy: Prisma.ItemOrderByWithRelationInput = {};
   switch (sortBy) {

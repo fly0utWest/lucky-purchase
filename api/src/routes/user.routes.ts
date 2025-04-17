@@ -13,7 +13,7 @@ import {
   UpdateUserSchema,
 } from "../validators/user.validator";
 import { authenticateJWT } from "../middlewares/auth.middleware";
-import { UUIDSchema } from "../services/shared.validator";
+import { UUIDSchema } from "../validators/shared.validator";
 import { updateUserByIdHandler } from "../controllers/user.controllers";
 import {
   avatarUploader,

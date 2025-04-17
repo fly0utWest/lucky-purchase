@@ -131,13 +131,13 @@ function SellerCard({ user }: SellerCardProps) {
       <div className="space-y-4 p-6">
         <div className="flex items-center gap-4">
           <Avatar className="h-24 w-24 rounded-full">
-            <AvatarImage
-              src={`${env.NEXT_PUBLIC_STATIC_URL}/users/avatars/${
-                user!.avatar
-              }`}
-            />
+            {user?.avatar === null ? null : (
+              <AvatarImage
+                src={`${env.NEXT_PUBLIC_STATIC_URL}/users/avatars/${user?.avatar}`}
+              />
+            )}
             <AvatarFallback className="rounded-full uppercase">
-              {user!.name[0]}
+              <User2 />
             </AvatarFallback>
           </Avatar>
           <div>

@@ -1,9 +1,6 @@
 import { z } from "zod";
 import { User } from "@prisma/client";
-import {
-  fileNamePattern,
-  invalidFileFormatMessage,
-} from "../services/shared.validator";
+import { fileNamePattern, invalidFileFormatMessage } from "./shared.validator";
 
 export const RegisterUserSchema: z.ZodType<
   Pick<User, "login" | "password" | "name">

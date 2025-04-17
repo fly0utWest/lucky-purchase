@@ -18,7 +18,6 @@ import React from "react";
 import { env } from "@/env.mjs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-
 export default function ProfilePage() {
   const { slug } = useParams();
   const router = useRouter();
@@ -91,9 +90,11 @@ export default function ProfilePage() {
           <div className="flex flex-col items-center md:flex-row md:items-start gap-6">
             <div className="relative">
               <Avatar className="h-32 w-32 rounded-full border-4 border-background overflow-hidden bg-primary/10">
-                <AvatarImage
-                  src={`${env.NEXT_PUBLIC_STATIC_URL}/users/avatars/${user?.avatar}`}
-                />
+                {user?.avatar === null ? null : (
+                  <AvatarImage
+                    src={`${env.NEXT_PUBLIC_STATIC_URL}/users/avatars/${user?.avatar}`}
+                  />
+                )}
                 <AvatarFallback>
                   {isOwnProfile && !authenticatedUser?.background ? (
                     <Link
