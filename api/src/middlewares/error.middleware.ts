@@ -2,64 +2,61 @@ import { Request, Response, NextFunction } from "express";
 import { AppError } from "../utils/errors";
 import { ZodError } from "zod";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
-import { ApiResponse, ErrorResponse } from "../types/responses";
+import { ApiResponse } from "../types/responses";
 
-export function errorHandler(
+export const errorHandler = (
   err: unknown,
   req: Request,
   res: Response<ApiResponse>,
   next: NextFunction
-) {
+) => {
   if (err instanceof AppError) {
     console.error(`[ОШИБКА] ${err.statusCode}, ${err.message}`);
-    return res.status(err.statusCode).json({ error: err.message });
+    res.status(err.statusCode).json({ error: err.message });
+    return;
   }
-
   if (err instanceof ZodError) {
     const errors = err.errors.map((err) => ({
       path: err.path.join("."),
       text: err.message,
     }));
     console.error(`[ОШИБКА] 400, валидация не прошла успешно, ${errors}`);
-    return res
-      .status(400)
-      .json({ message: "Валидация не прошла успешно!", errors });
+    res.status(400).json({ message: "Валидация не прошла успешно!", errors });
+    return;
   }
-
   if (err instanceof PrismaClientKnownRequestError) {
     console.error(
       `[ОШИБКА ПРИЗМЫ ${err.code}] ${err.message}, Мета: ${JSON.stringify(err.meta)}`
     );
-
     switch (err.code) {
       case "P2002":
         console.error(
           `[КОНФЛИКТ] Дубликат для ${Array.isArray(err.meta?.target) ? err.meta.target.join(", ") : err.meta?.target}`
         );
-        return res
+        res
           .status(409)
           .json({ message: "Ресурс уже существует!", errors: err.meta });
-
+        return;
       case "P2025":
         console.error(`[НЕ НАЙДЕНО] Ресурс не существует`);
-        return res
+        res
           .status(404)
           .json({ message: "Ресурс не найден!", errors: err.meta });
-
+        return;
       case "P2003":
         console.error(`[ОШИБКА FK] Поле ${err.meta?.field_name}`);
-        return res
+        res
           .status(400)
           .json({ message: "Ошибка целостности данных!", errors: err.meta });
-
+        return;
       default:
         console.error(`[ОШИБКА ВАЛИДАЦИИ] Код ${err.code}`);
-        return res
+        res
           .status(400)
           .json({ message: "Валидация не прошла успешно!", errors: err.meta });
+        return;
     }
   }
-
   console.error("Произошла неожиданная ошибка:", err);
-  return res.status(500).json({ error: "Внутренняя ошибка сервера" });
-}
+  res.status(500).json({ error: "Внутренняя ошибка сервера" });
+};

@@ -78,6 +78,25 @@ export interface UserCreationResponse {
   createdAt: Date;
 }
 
+export interface UserByIdResponse {
+  id: string;
+  name: string;
+  avatar: string | null;
+  background: string | null;
+  createdAt: Date;
+}
+
+export interface AuthenticatedUserResponse {
+  id: string;
+  name: string;
+  login: string;
+  avatar: string | null;
+  background: string | null;
+  createdAt: Date;
+  favorites: string[];
+  items: string[];
+}
+
 // Error responses
 export interface AppErrorResponse {
   error: string;
@@ -110,7 +129,9 @@ export type SuccessResponse =
   | GetItemByIdResponse
   | GetCategoriesResponse
   | SearchItemsResponse
-  | UserCreationResponse;
+  | UserCreationResponse
+  | UserByIdResponse
+  | AuthenticatedUserResponse;
 
 export type ErrorResponse =
   | AppErrorResponse

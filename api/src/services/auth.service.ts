@@ -1,9 +1,9 @@
 import jwt from "jsonwebtoken";
-import { getUserByLogin } from "../services/user.service";
 import bcrypt from "bcryptjs";
 import { AppError } from "../utils/errors";
 import { LoginUserDTO } from "../validators/auth.validator";
 import { AuthResponse } from "../types/responses";
+import { prisma } from "../../config/db";
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
@@ -17,7 +17,7 @@ export const authenticateUser = async ({
   login,
   password,
 }: LoginUserDTO): Promise<AuthResponse> => {
-  const user = await getUserByLogin(login);
+  const user = await prisma.user.findUnique({ where: { login } });
 
   if (!user) {
     throw new AppError("Неправильные данные для входа", 401);

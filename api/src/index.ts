@@ -1,4 +1,4 @@
-import express from "express";
+import express, { RequestHandler } from "express";
 import "@dotenvx/dotenvx/config";
 import userRoutes from "./routes/user.routes";
 import authRoutes from "./routes/auth.routes";
