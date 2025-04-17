@@ -31,6 +31,7 @@ app.get("/", (req, res) => {
 app.get("/favicon.ico", (req, res) => {
   res.status(204).end();
 });
+
 app.use("/user", userRoutes);
 app.use("/item", itemRouter);
 app.use("/auth", authRoutes);

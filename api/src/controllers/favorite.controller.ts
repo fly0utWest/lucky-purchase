@@ -1,46 +1,27 @@
 import asyncHandler from "../utils/asyncHandler";
 import { Response, Request } from "express";
 import {
-  addToFavorites,
-  removeFromFavorites,
+  toggleFavorite,
   getUserFavorites,
   isItemFavorited,
 } from "../services/favorite.service";
 import { ToggleFavoriteDTO } from "../validators/favorite.validator";
 
-export const toggleFavoriteHandler = asyncHandler(
-  async (req: Request, res: Response) => {
-    const { userId } = res.locals;
-    const { itemId, action }: ToggleFavoriteDTO = res.locals.validatedData;
-    let resItem;
+export const toggleFavoriteHandler = asyncHandler(async (req, res) => {
+  const { userId } = res.locals;
+  const { itemId, action }: ToggleFavoriteDTO = res.locals.validatedData;
+  let item = await toggleFavorite(userId, itemId, action);
 
-    if (action === "add") {
-      resItem = await addToFavorites(userId, itemId);
-    } else if (action === "remove") {
-      resItem = await removeFromFavorites(userId, itemId);
-    }
+  return res.status(action === "add" ? 201 : 200).json(item);
+});
 
-    console.log(
-      `[УСПЕХ] Пользователь с id ${userId} ${action === "add" ? "добавил" : "удалил"} товар с id ${itemId} ${action === "add" ? "в" : "из"} избранное${action === "add" ? "" : "го"}`
-    );
-    res.status(action === "add" ? 201 : 200).json({ ...resItem, action });
-  }
-);
+export const getFavoritesListHandler = asyncHandler(async (req, res) => {
+  const { userId } = res.locals;
 
-export const getFavoritesListHandler = asyncHandler(
-  async (req: Request, res, Response) => {
-    const { userId } = res.locals;
+  const userFavoritesList = await getUserFavorites(userId);
 
-    const userFavoritesList = await getUserFavorites(userId);
-
-    const count = userFavoritesList.length;
-
-    console.log(
-      `[УСПЕХ] Список избранных объявлений пользователя ${userId} был запрошен.`
-    );
-    res.status(200).json({ items: userFavoritesList, count });
-  }
-);
+  return res.status(200).json(userFavoritesList);
+});
 
 export const checkFavoriteStatusHandler = asyncHandler(
   async (req: Request, res: Response) => {
@@ -49,6 +30,6 @@ export const checkFavoriteStatusHandler = asyncHandler(
 
     const isFavorited = await isItemFavorited(userId, itemId as string);
 
-    res.status(200).json(isFavorited);
+    return res.status(200).json(isFavorited);
   }
 );

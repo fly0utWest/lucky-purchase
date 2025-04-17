@@ -6,7 +6,7 @@ import { removeItemById } from "../services/item.service";
 import { UUIDDTO } from "../validators/shared.validator";
 
 export const createItemHandler = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req, res) => {
     const { ...validatedData }: CreateItemDTO = res.locals.validatedData;
 
     const newItem = await createItem({
@@ -14,14 +14,12 @@ export const createItemHandler = asyncHandler(
       userId: res.locals.userId,
     });
 
-    console.log(
-      `[УСПЕХ] Объявление добавлено пользователем с id ${res.locals.userId}`
-    );
     return res.status(201).json(newItem);
   }
 );
+
 export const getItemsHandler = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req, res) => {
     const { limit, skip, sort, userId }: GetItemsDTO = res.locals.validatedData;
     const items = await getItems({ limit, skip, sort, userId });
 

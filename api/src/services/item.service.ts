@@ -1,22 +1,25 @@
 import { prisma } from "../../config/db";
 import { CreateItemDTO, GetItemsDTO } from "../validators/item.validator";
-import multer from "multer";
-import path from "path";
-import crypto from "crypto";
-import { Request } from "express";
 import { unlink } from "fs/promises";
 import { AppError } from "../utils/errors";
+import { CreateItemResponse } from "../types/responses";
 
-export async function createItem(data: CreateItemDTO & { userId: string }) {
+export async function createItem(
+  data: CreateItemDTO & { userId: string }
+): Promise<CreateItemResponse> {
   const { userId, categoryId, ...itemData } = data;
 
-  return prisma.item.create({
+  const createdItem = await prisma.item.create({
     data: {
       ...itemData,
       category: { connect: { id: categoryId } },
       user: { connect: { id: userId } },
     },
   });
+
+  console.log(`[УСПЕХ] Объявление добавлено пользователем с id ${userId}`);
+
+  return { item: createdItem };
 }
 
 export async function getItems({ limit, skip, sort, userId }: GetItemsDTO) {
