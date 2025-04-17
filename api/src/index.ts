@@ -1,4 +1,4 @@
-import express from "express";
+import express, { RequestHandler } from "express";
 import "@dotenvx/dotenvx/config";
 import userRoutes from "./routes/user.routes";
 import authRoutes from "./routes/auth.routes";
@@ -31,6 +31,7 @@ app.get("/", (req, res) => {
 app.get("/favicon.ico", (req, res) => {
   res.status(204).end();
 });
+
 app.use("/user", userRoutes);
 app.use("/item", itemRouter);
 app.use("/auth", authRoutes);

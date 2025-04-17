@@ -1,19 +1,24 @@
 import jwt from "jsonwebtoken";
-import { getUserByLogin } from "../services/user.service";
 import bcrypt from "bcryptjs";
 import { AppError } from "../utils/errors";
 import { LoginUserDTO } from "../validators/auth.validator";
+import { AuthResponse } from "../types/responses";
+import { prisma } from "../../config/db";
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
-export async function generateToken(userId: string) {
+async function generateToken(userId: string): Promise<string> {
   return jwt.sign({ userId }, JWT_SECRET, {
     expiresIn: "30 days",
   });
 }
 
-export const authenticateUser = async ({ login, password }: LoginUserDTO) => {
-  const user = await getUserByLogin(login);
+export const authenticateUser = async ({
+  login,
+  password,
+}: LoginUserDTO): Promise<AuthResponse> => {
+  const user = await prisma.user.findUnique({ where: { login } });
+
   if (!user) {
     throw new AppError("Неправильные данные для входа", 401);
   }
@@ -24,5 +29,6 @@ export const authenticateUser = async ({ login, password }: LoginUserDTO) => {
   }
 
   const token = await generateToken(user.id);
+  console.log(`[УСПЕХ] пользователь ${login} авторизовался`);
   return { token };
 };

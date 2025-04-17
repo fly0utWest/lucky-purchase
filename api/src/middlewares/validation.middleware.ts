@@ -1,11 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import { ZodError, ZodSchema } from "zod";
+import { ApiResponse } from "../types/responses";
 
 export function validate(
   schema: ZodSchema,
   type: "body" | "params" | "userId" | "query" = "body"
 ) {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response<ApiResponse>, next: NextFunction) => {
     let data;
 
     switch (type) {

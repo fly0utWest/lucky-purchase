@@ -3,6 +3,11 @@ import bcrypt from "bcryptjs";
 import { unlink } from "fs/promises";
 import { UpdateUserDTO, RegisterUserDTO } from "../validators/user.validator";
 import { AppError } from "../utils/errors";
+import {
+  AuthenticatedUserResponse,
+  UserByIdResponse,
+  UserCreationResponse,
+} from "../types/responses";
 
 const autheniticatedUserSelectFields = {
   id: true,
@@ -23,20 +28,33 @@ const autheniticatedUserSelectFields = {
   },
 };
 
-export async function createUser({ login, password, name }: RegisterUserDTO) {
+export async function createUser({
+  login,
+  password,
+  name,
+}: RegisterUserDTO): Promise<UserCreationResponse> {
+  const existentUser = await prisma.user.findUnique({ where: { login } });
+
+  if (existentUser) {
+    throw new AppError("Пользователь уже зарегистрирован", 400);
+  }
+
   const encryptedPassword = await bcrypt.hash(password, 10);
 
-  return prisma.user.create({
+  console.log(`[УСПЕХ] пользователь ${login} зарегистрирован`);
+  const {
+    id,
+    login: createdLogin,
+    createdAt,
+  } = await prisma.user.create({
     data: { login, name, password: encryptedPassword },
   });
+
+  return { id, login: createdLogin, createdAt };
 }
 
-export async function getUserByLogin(login: string) {
-  return prisma.user.findUnique({ where: { login } });
-}
-
-export async function getUserById(userId: string) {
-  return prisma.user.findUnique({
+export async function getUserById(userId: string): Promise<UserByIdResponse> {
+  const user = await prisma.user.findUnique({
     where: { id: userId },
     select: {
       id: true,
@@ -46,16 +64,31 @@ export async function getUserById(userId: string) {
       createdAt: true,
     },
   });
+
+  if (!user) {
+    throw new AppError("Пользователь не найден", 404);
+  }
+
+  console.log(`[УСПЕХ] Пользователь по id ${user.id} запрошен`);
+
+  return user;
 }
 
-export async function getAuthenticatedUserById(userId: string) {
+export async function getAuthenticatedUserById(
+  userId: string
+): Promise<AuthenticatedUserResponse> {
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: autheniticatedUserSelectFields,
   });
 
-  if (!user) return null;
+  if (!user) {
+    throw new AppError("Пользователь не найден", 404);
+  }
 
+  console.log(
+    `[УСПЕХ] Данные авторизованного пользователя ${user.login} запрошены`
+  );
   return {
     ...user,
     favorites: user.favorites.map((fav) => fav.itemId),
@@ -63,21 +96,10 @@ export async function getAuthenticatedUserById(userId: string) {
   };
 }
 
-export interface AuthenticatedUserResponse {
-  id: string;
-  name: string;
-  login: string;
-  avatar: string | null;
-  background: string | null;
-  createdAt: Date;
-  favorites: string[];
-  items: string[];
-}
-
 export async function updateUserById(
   userId: string,
   data: UpdateUserDTO
-): Promise<AuthenticatedUserResponse | null> {
+): Promise<AuthenticatedUserResponse> {
   if ("avatar" in data) {
     const oldUser = await prisma.user.findUnique({
       where: { id: userId },
@@ -120,6 +142,12 @@ export async function updateUserById(
     data,
     select: autheniticatedUserSelectFields,
   });
+
+  if (!user) {
+    throw new AppError("Пользователь не найден", 404);
+  }
+
+  console.log(`[УСПЕХ] Пользователь ${user.login} обновлен`);
 
   return {
     ...user,
