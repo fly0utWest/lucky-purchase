@@ -43,6 +43,7 @@ export function CatalogFilters({
     results,
     isLoading,
     refetch,
+    clearSearch,
   } = useSearch("", {
     minChars: 0,
   });
@@ -51,9 +52,11 @@ export function CatalogFilters({
     const categoryFromUrl = searchParams.get("category");
     if (categoryFromUrl) {
       setSearchParam("category", categoryFromUrl);
+    } else {
+      clearSearch();
     }
     refetch();
-  }, [searchParams, setSearchParam, refetch]);
+  }, [searchParams, clearSearch, setSearchParam, refetch]);
 
   useEffect(() => {
     setLoading(isLoading);
