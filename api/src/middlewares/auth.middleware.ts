@@ -34,18 +34,35 @@ export function authenticateJWT(
 
 export function authenticateJWTSocket(
   socket: Socket,
-  next: (error: unknown) => void
+  next: (error?: Error) => void
 ) {
   try {
-    const token = socket.handshake.auth[0] || socket.handshake.headers.authorization?.split(" ")[1]
+    // Try to get token from auth object first, then from headers
+    const token =
+      socket.handshake.auth.token ||
+      socket.handshake.headers.authorization?.split(" ")[1];
 
     if (!token) {
-      throw new SocketError("Отказано в доступе: токен не был предоставлен.", 403) 
+      throw new SocketError(
+        "Отказано в доступе: токен не был предоставлен.",
+        401
+      );
     }
 
-    const decodedUserId = jwt.verify(token, JWT_SECRET)
+    const decoded = jwt.verify(token, JWT_SECRET) as jwt.JwtPayload;
 
+    if (typeof decoded === "string" || !decoded.userId) {
+      throw new SocketError("Отказано в доступе: повреждённый токен", 403);
+    }
+
+    socket.data.userId = decoded.userId;
+
+    next();
   } catch (error) {
-    next(error);
+    next(
+      error instanceof Error
+        ? error
+        : new SocketError("Ошибка аутентификации", 403)
+    );
   }
 }

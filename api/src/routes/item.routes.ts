@@ -10,7 +10,7 @@ import {
 import { authenticateJWT } from "../middlewares/auth.middleware";
 import itemUploader from "../../config/storage/item.storage";
 import { addFilesToBody } from "../middlewares/upload.middleware";
-import { UUIDSchema } from "../services/shared.validator";
+import { UUIDSchema } from "../validators/shared.validator";
 
 const router = Router();
 

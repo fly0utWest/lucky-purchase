@@ -1,10 +1,5 @@
-import { Item } from "@prisma/client";
 import { z } from "zod";
-import { UUIDSchema } from "../services/shared.validator";
-import {
-  fileNamePattern,
-  invalidFileFormatMessage,
-} from "../services/shared.validator";
+import { fileNamePattern, invalidFileFormatMessage } from "./shared.validator";
 
 export const CreateItemSchema = z.object({
   title: z.string(),

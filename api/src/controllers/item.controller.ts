@@ -3,7 +3,7 @@ import { createItem, getItems, getItemById } from "../services/item.service";
 import asyncHandler from "../utils/asyncHandler";
 import { CreateItemDTO, GetItemsDTO } from "../validators/item.validator";
 import { removeItemById } from "../services/item.service";
-import { UUIDDTO } from "../services/shared.validator";
+import { UUIDDTO } from "../validators/shared.validator";
 
 export const createItemHandler = asyncHandler(
   async (req: Request, res: Response) => {
