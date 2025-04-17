@@ -54,7 +54,6 @@ import { useAuthStore } from "@/store/authStore";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { env } from "@/env.mjs";
 
-// Navigation items - базовые пункты меню для всех пользователей
 const commonNavItems = [
   {
     title: "Домой",
@@ -68,7 +67,6 @@ const commonNavItems = [
   },
 ];
 
-// Main categories
 const categoryItems = [
   {
     title: "Электроника",
@@ -120,7 +118,6 @@ const categoryItems = [
   },
 ];
 
-// Account menu items
 const accountItems = [
   {
     title: "Аккаунт",
@@ -149,7 +146,6 @@ export function AppSidebar() {
   const [mounted, setMounted] = useState(false);
   const { setOpenMobile } = useSidebar();
 
-  // Формируем полное меню в зависимости от авторизации
   const navItems = [...commonNavItems];
 
   const handleMobileClose = () => {
@@ -167,7 +163,6 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarContent>
-        {/* Основные пункты навигации */}
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -204,10 +199,8 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Разделитель */}
         <SidebarSeparator className="my-2" />
 
-        {/* Блок категорий */}
         <SidebarGroup>
           <SidebarGroupLabel className="px-3">
             Популярные категории
@@ -237,7 +230,6 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      {/* Футер только с авторизацией */}
       <SidebarFooter>
         {authenticatedUser ? (
           <SidebarMenuItem className="list-none">
@@ -248,9 +240,11 @@ export function AppSidebar() {
                   className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                 >
                   <Avatar className="h-10 w-10 rounded-full">
-                    <AvatarImage
-                      src={`${env.NEXT_PUBLIC_STATIC_URL}/users/avatars/${authenticatedUser.avatar}`}
-                    />
+                    {authenticatedUser.avatar === null ? null : (
+                      <AvatarImage
+                        src={`${env.NEXT_PUBLIC_STATIC_URL}/users/avatars/${authenticatedUser.avatar}`}
+                      />
+                    )}
                     <AvatarFallback className="rounded-full uppercase">
                       {authenticatedUser.name[0]}
                     </AvatarFallback>
