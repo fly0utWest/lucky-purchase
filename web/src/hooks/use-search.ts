@@ -135,7 +135,7 @@ export function useSearch(
   const clearSearch = useCallback(() => {
     setSearchInput("");
     setDebouncedQuery("");
-    setSearchParams((prev) => ({ ...prev, query: "" }));
+    setSearchParams((prev) => ({ ...initialParams, query: "" }));
   }, []);
 
   const setSearchParam = useCallback(
