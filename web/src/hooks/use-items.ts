@@ -132,7 +132,6 @@ export function useItems() {
     return createItemAsync(formData);
   };
 
-  // Return functions and state flags
   return {
     createItem,
     deleteItem,

@@ -24,7 +24,7 @@ createSocketIO(websocketServer);
 app.use(
   cors({
     origin:
-    process.env.NODE_ENV === "production" ? process.env.ORIGIN_URL : "*",
+      process.env.NODE_ENV === "production" ? process.env.ORIGIN_URL : "*",
     allowedHeaders: ["Content-Type", "Authorization"],
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
