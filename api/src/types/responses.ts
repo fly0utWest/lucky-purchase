@@ -84,13 +84,7 @@ export interface UserByIdResponse {
   createdAt: Date;
 }
 
-export interface AuthenticatedUserResponse {
-  id: string;
-  name: string;
-  login: string;
-  avatar: string | null;
-  background: string | null;
-  createdAt: Date;
+export interface AuthenticatedUserResponse extends Omit<User, "password"> {
   favorites: string[];
   items: string[];
 }
