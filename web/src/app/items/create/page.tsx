@@ -219,8 +219,8 @@ export default function CreateItemPage() {
                   className="relative aspect-square overflow-hidden rounded-lg bg-muted"
                 >
                   <Button
-                    variant={"destructive"}
-                    className="absolute rounded-full right-2 top-2"
+                    variant={"secondary"}
+                    className="absolute rounded-full right-2 top-2 p-3 "
                     onClick={() => deleteImage(index)}
                   >
                     <X size={32} />
