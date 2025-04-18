@@ -9,7 +9,6 @@ import WhyUs from "./_sections/why-us";
 import { fetchWrapper } from "@/lib/utils";
 import RecentItems from "./_sections/recent-items";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import Link from "next/link";
 
 interface Items {
   items: Item[];

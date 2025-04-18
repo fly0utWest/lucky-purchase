@@ -38,14 +38,6 @@ export default function Footer() {
               <OkIcon className="h-6 w-6" />{" "}
               <span className="md:hidden">Одноклассники</span>
             </Link>
-            <Link
-              href="https://wa.me"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Phone className="h-5 w-5" />{" "}
-              <span className="md:hidden">WhatsApp</span>
-            </Link>
           </div>
         </div>
         <div>
