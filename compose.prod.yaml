@@ -22,6 +22,9 @@ services:
       DATABASE_URL: "${DATABASE_URL:-postgresql://admin:admin@postgres:11111/lucky_purchase}"
       PORT: ${API_PORT_INTERNAL:-7777}
       JWT_SECRET: "${JWT_SECRET}"
+      JWT_EXPIRATION: "${JWT_EXPIRATION:-24h}"
+      NODE_ENV: "${NODE_ENV:-production}"
+      ORIGIN_URL: "${ORIGIN_URL}"
     volumes:
       - ./api/static:/app/static
     restart: always
@@ -39,6 +42,7 @@ services:
     environment:
       NEXT_PUBLIC_API_BASE_URL: "${NEXT_PUBLIC_API_BASE_URL}"
       NEXT_PUBLIC_STATIC_URL: "${NEXT_PUBLIC_STATIC_URL}"
+      NODE_ENV: "${NODE_ENV:-production}"
     volumes:
       - ./api/static:/app/static
     restart: always
