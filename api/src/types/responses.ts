@@ -20,9 +20,7 @@ export interface IsFavoritedResponse {
   isFavorited: boolean;
 }
 
-export interface CreateItemResponse {
-  item: Item;
-}
+export interface CreateItemResponse extends Item {}
 
 export interface GetItemsResponse {
   items: Item[];

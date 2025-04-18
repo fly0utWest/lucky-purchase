@@ -23,7 +23,7 @@ export async function createItem(
 
   console.log(`[УСПЕХ] Объявление добавлено пользователем с id ${userId}`);
 
-  return { item: createdItem };
+  return { ...createdItem };
 }
 
 export async function getItems({
