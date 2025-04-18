@@ -11,6 +11,7 @@ import path from "path";
 import searchRoutes from "./routes/search.routes";
 import { createServer } from "node:http";
 import { createSocketIO } from "../config/chat";
+import helmet from "helmet";
 
 const PORT = process.env.PORT || 7777;
 
@@ -20,7 +21,15 @@ const websocketServer = createServer(app);
 
 createSocketIO(websocketServer);
 
-app.use(cors({ origin: "*" }));
+app.use(
+  cors({
+    origin:
+      process.env.NODE_ENV === "produuction" ? process.env.ORIGIN_URL : "*",
+    allowedHeaders: ["Content-Type", "Authorization"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+  })
+);
+app.use(helmet({ crossOriginResourcePolicy: { policy: "same-site" } }));
 app.use(express.json());
 
 app.use("/static", express.static(path.join(process.cwd(), "static")));
