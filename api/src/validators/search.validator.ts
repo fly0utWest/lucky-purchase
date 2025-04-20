@@ -7,7 +7,6 @@ export const SearchSchema = z
       .enum(["newest", "oldest", "expensive", "cheap"])
       .optional()
       .default("newest"),
-    sortDirection: z.enum(["asc", "desc"]).optional().default("desc"),
     minPrice: z.number().positive().optional(),
     maxPrice: z.number().positive().optional(),
     category: z.string().optional(),
