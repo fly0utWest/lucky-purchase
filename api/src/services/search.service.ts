@@ -17,7 +17,6 @@ export async function searchItems(
   const {
     query: encodedQuery,
     sortBy,
-    sortDirection,
     minPrice,
     maxPrice,
     category: encodedCategory,
