@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import ClipboardCopyButton from "@/components/clipboard-copy-button";
 import { Item } from "@/shared/models";
 import { formatPrice, formatDate } from "@/lib/utils";
-import { Heart, MessageCircle, Calendar, User, Trash } from "lucide-react";
+import { Heart, Calendar, User, Trash } from "lucide-react";
 import { useFavorite } from "@/hooks/use-favorite";
 import { useAuthStore } from "@/store/authStore";
 import { useToast } from "@/shared/providers/toast-provider";
@@ -44,10 +44,6 @@ export function ItemSidebar({ item }: ItemSidebarProps) {
     toggleFavorite(item.id);
   };
 
-  const handleContactSeller = () => {
-    console.log("Contact seller", item.user!.id);
-  };
-
   const handleDeleteItem = async () => {
     try {
       await deleteItem(item.id);
@@ -70,10 +66,6 @@ export function ItemSidebar({ item }: ItemSidebarProps) {
           </div>
 
           <div className="flex flex-col gap-3">
-            <Button size="lg" className="w-full" onClick={handleContactSeller}>
-              <MessageCircle className="mr-2 h-5 w-5" />
-              Написать продавцу
-            </Button>
             <div className="grid grid-cols-2 gap-3">
               <Button
                 variant={isFavorite(item.id) ? "default" : "outline"}

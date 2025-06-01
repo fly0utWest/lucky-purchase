@@ -136,12 +136,7 @@ export default function ProfilePage() {
                         Выйти
                       </Button>
                     </>
-                  ) : (
-                    <Button>
-                      <MessageSquare className="mr-2 h-5 w-5" />
-                      Написать сообщение
-                    </Button>
-                  )}
+                  ) : null}
                 </div>
               </div>
             </div>
